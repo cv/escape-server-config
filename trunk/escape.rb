@@ -41,7 +41,7 @@ Environment.create_table!
 Owner.create_table!
 Value.create_table!
 
-class Escape < Ramaze::Controller
+class MainController < Ramaze::Controller
     def index
         'Hello, World!'
     end
