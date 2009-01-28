@@ -1,5 +1,6 @@
 
 class App < Sequel::Model(:apps)
+    many_to_many :environments
     set_schema do
         primary_key :id
         text :name

@@ -5,7 +5,7 @@ require 'ramaze/spec/helper'
 
 require __DIR__('../start')
 
-describe ConfigController do
+describe EnvironmentsController do
     behaves_like 'http', 'xpath'
     ramaze  :view_root => __DIR__('../view'),
             :public_root => __DIR__('../public')
@@ -22,41 +22,37 @@ describe ConfigController do
         if DB[:owners].where(:name => 'nobody').empty?
             Owner.new(:name => 'nobody', :email => 'nobody@nowhere.com').save
         end
+
+        if DB[:environments].where(:name => 'default').empty?
+            Environment.new(:name => 'default').save
+        end
     end
 
-    it 'should get /config' do
-        got = get('/config')
+    it 'should get /environments' do
+        got = get('/environments')
         got.status.should == 200
     end
 
-    it 'should return 404 for an unknown app' do
-        got = get('/config/unknown')
+    it 'should return 404 for an unknown environment' do
+        got = get('/environments/unknown')
         got.status.should == 404
     end
 
-    it 'should create an app on put /config/appname' do
-        got = put('/config/appname')
+    it 'should create an app on put /environments/default/appname' do
+        got = put('/environments/default/appname')
         got.status.should == 201
 
-        got = get('/config/appname')
+        got = get('/environments/default')
         got.status.should == 200
+        p "Body is #{got.body}"
+        #got.body.should.include "appname"
     end
 
     it 'should not allow duplicate app names' do
-        got = put('/config/appname')
+        got = put('/environments/default/appname')
         got.status.should == 201
 
-        got = put('/config/appname')
+        got = put('/environments/default/appname')
         got.status.should == 403
-    end
-
-    it 'should put /config' do
-        got = put('/config')
-        got.status.should == 400
-    end
-
-    it 'should post /config' do
-        got = post('/config')
-        got.status.should == 200
     end
 end

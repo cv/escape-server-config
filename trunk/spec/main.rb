@@ -23,11 +23,9 @@ describe MainController do
         got.at('//div').text.strip.should == MainController.new.notemplate
     end
 
-    it 'should have /config wired in' do
-        got = get('/config')
+    it 'should have /environments wired in' do
+        got = get('/environments')
         got.status.should == 200
     end
 end
-
-require 'spec/config'
 
