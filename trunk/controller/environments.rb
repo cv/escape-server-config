@@ -7,15 +7,27 @@ class EnvironmentsController < Ramaze::Controller
             envs = DB[:environments]
             if env == nil # List environments
                 return envs.all
-            elsif key == nil # List
+            elsif app == nil # List apps in the environment
+                envs = DB[:environments].where(:name => env)
+                if envs.empty?
+                    response.status = 404
+                else
+                    apps = DB[:apps].where(:environment => Environment[:name => env][:id])
+                    return apps.all
+                end
+            elsif key == nil # List keys and values for app in environment
                 myenv = envs.where(:name => env)
                 if myenv.empty? # Env does not exist
                     response.status = 404
                 else
                     apps = DB[:apps]
-                    return apps.all
+                    if apps.empty?
+                        response.status = 404
+                    else
+                        return apps.all
+                    end
                 end
-            else
+            else # We're getting value for specific key
                 values = DB[:values].where(:key => key, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
                 if values.empty? 
                     # Not in the specified env, is it in default?
@@ -42,7 +54,7 @@ class EnvironmentsController < Ramaze::Controller
                 end
             elsif key == nil # You're putting an app
                 begin
-                    myapp = App.create(:name => app)
+                    myapp = App.create(:name => app, :environment => Environment[:name => env][:id])
                     response.status = 201
                 rescue
                     response.status = 403

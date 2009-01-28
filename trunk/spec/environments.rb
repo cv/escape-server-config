@@ -20,11 +20,11 @@ describe EnvironmentsController do
         Owner.create_table!
         Value.create_table!
         if DB[:owners].where(:name => 'nobody').empty?
-            Owner.new(:name => 'nobody', :email => 'nobody@nowhere.com').save
+            Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com')
         end
 
         if DB[:environments].where(:name => 'default').empty?
-            Environment.new(:name => 'default').save
+            Environment.create(:name => 'default')
         end
     end
 
@@ -146,5 +146,27 @@ describe EnvironmentsController do
         got.status.should == 200
         got.body.should == newvalue
         got.body.should.not == value
+    end
+
+    it 'should list apps in an environment' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = get('/environments/default')
+        got.status.should == 200
+        got.body.should.include "appname"
+    end
+
+    it 'should return 404 for non existing key' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = get('/environments/default/appname/badkey')
+        got.status.should == 404
+    end
+
+    it 'should return 404 for non existing app' do
+        got = get('/environments/default/badapp')
+        got.status.should == 404
     end
 end
