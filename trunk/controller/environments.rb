@@ -54,7 +54,6 @@ class EnvironmentsController < Ramaze::Controller
                     myvalue = Value.create(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
                     response.status = 201
                 else             # We're updating the config
-                    p " Updating key #{key} to value #{value}"
                     myvalue = values.first
                     Value.update(myvalue.update(:value => value))
                     response.status = 200
