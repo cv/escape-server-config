@@ -60,8 +60,11 @@ describe EnvironmentsController do
         got.status.should == 201
 
         value = "default.value"
-        #got = put('/environments/default/appname/key', :value => value)
         got = put('/environments/default/appname/key', :input => value)
         got.status.should == 201
+
+        got = get('/environments/default/appname/key')
+        got.status.should == 200
+        got.body.should == value
     end
 end

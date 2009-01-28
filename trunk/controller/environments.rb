@@ -7,13 +7,20 @@ class EnvironmentsController < Ramaze::Controller
             envs = DB[:environments]
             if env == nil # List environments
                 return envs.all
-            else
+            elsif key == nil
                 myenv = envs.where(:name => env)
                 if myenv.empty? # Env does not exist
                     response.status = 404
                 else
                     apps = DB[:apps]
                     return apps.all
+                end
+            else
+                values = DB[:values].where(:key => key, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
+                if values.empty?
+                    response.status = 404
+                else
+                    return values.first[:value]
                 end
             end
         elsif request.post? || request.put?
@@ -29,10 +36,8 @@ class EnvironmentsController < Ramaze::Controller
                 end
             else
                 value = request.body.read
-                p "Trying to set a key called #{key} to the value", value
                 values = DB[:values].where(:app => app, :environment => env, :key => key)
                 if values.empty? # New one, let's create
-                    #myvalue = Value.new(:app => app, :environment => env, :key => key, :value => value)
                     myvalue = Value.new(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
                     myvalue.save
                     response.status = 201
