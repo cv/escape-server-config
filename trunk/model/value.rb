@@ -7,5 +7,5 @@ class Value < Sequel::Model(:values)
     end
 end
 
-Value.create_table!
+init_model(Value)
 

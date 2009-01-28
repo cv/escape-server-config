@@ -4,7 +4,9 @@ class App < Sequel::Model(:apps)
         primary_key :id
         text :name
     end
+
+    validates_uniqueness_of :name
 end
 
-App.create_table!
+init_model(App)
 

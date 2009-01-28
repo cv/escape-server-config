@@ -6,5 +6,5 @@ class Owner < Sequel::Model(:owners)
     end
 end
 
-Owner.create_table!
+init_model(Owner)
 

@@ -10,21 +10,38 @@ describe ConfigController do
     ramaze  :view_root => __DIR__('../view'),
             :public_root => __DIR__('../public')
 
-    it 'should list applications on GET /config' do
+    before do
+        # Make sure all tables are clean before we start
+        DB.tables.each { |table|
+            DB[table].delete
+        }
+    end
+
+    it 'should get /config' do
         got = get('/config')
         got.status.should == 200
-        got.body.should == ""
+    end
+
+    it 'should return 404 for an unknown app' do
+        got = get('/config/unknown')
+        got.status.should == 404
+    end
+
+    it 'should create an app on put /config/appname' do
+        got = put('/config/appname')
+        got.status.should == 201
+
+        got = get('/config/appname')
+        got.status.should == 200
     end
 
     it 'should put /config' do
         got = put('/config')
-        got.status.should == 200
-        got.body.should == "put me"
+        got.status.should == 501
     end
 
     it 'should post /config' do
         got = post('/config')
         got.status.should == 200
-        got.body.should == "post me"
     end
 end
