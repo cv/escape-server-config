@@ -92,4 +92,58 @@ describe EnvironmentsController do
         got.status.should == 200
         got.body.should == value
     end
+
+    it 'should not allow duplicate environment names' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = put('/environments/myenv')
+        got.status.should == 403
+    end
+
+    it 'should allow us to update a value' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        value = "default.value"
+        got = put('/environments/default/appname/key', :input => value)
+        got.status.should == 201
+
+        got = get('/environments/default/appname/key')
+        got.status.should == 200
+        got.body.should == value
+
+        newvalue = "new.value"
+        got = put('/environments/default/appname/key', :input => newvalue)
+        got.status.should == 200
+
+        got = get('/environments/default/appname/key')
+        got.status.should == 200
+        got.body.should == newvalue
+    end
+
+#    it 'should not return the default value if it is set for the given environment' do
+#        got = put('/environments/default/appname')
+#        got.status.should == 201
+#
+#        value = "default.value"
+#        got = put('/environments/default/appname/key', :input => value)
+#        got.status.should == 201
+#
+#        got = get('/environments/default/appname/key')
+#        got.status.should == 200
+#        got.body.should == value
+#
+#        got = put('/environments/myenv')
+#        got.status.should == 201
+#
+#        newvalue = "new.value"
+#        got = put('/environments/myenv/appname/key', :input => newvalue)
+#        got.status.should == 201
+#
+#        got = get('/environments/myenv/appname/key')
+#        got.status.should == 200
+#        got.body.should == newvalue
+#        got.body.should.not == value
+#    end
 end

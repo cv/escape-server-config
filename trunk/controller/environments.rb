@@ -35,28 +35,29 @@ class EnvironmentsController < Ramaze::Controller
                 response.status = 400
             elsif app == nil # You're putting an env
                 begin
-                    myenv = Environment.new(:name => env)
-                    myenv.save
+                    myenv = Environment.create(:name => env)
                     response.status = 201
                 rescue
                     response.status = 403
                 end
             elsif key == nil # You're putting an app
                 begin
-                    myapp = App.new(:name => app)
-                    myapp.save
+                    myapp = App.create(:name => app)
                     response.status = 201
                 rescue
                     response.status = 403
                 end
             else             # You're putting a value to a key
                 value = request.body.read
-                values = DB[:values].where(:app => app, :environment => env, :key => key)
+                values = DB[:values].where(:app => App[:name => app][:id], :environment => Environment[:name => env][:id], :key => key)
                 if values.empty? # New one, let's create
-                    myvalue = Value.new(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
-                    myvalue.save
+                    myvalue = Value.create(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
                     response.status = 201
                 else             # We're updating the config
+                    p " Updating key #{key} to value #{value}"
+                    myvalue = values.first
+                    Value.update(myvalue.update(:value => value))
+                    response.status = 200
                 end
             end
         end
