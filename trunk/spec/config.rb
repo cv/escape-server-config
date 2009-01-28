@@ -12,9 +12,16 @@ describe ConfigController do
 
     before do
         # Make sure all tables are clean before we start
-        DB.tables.each { |table|
-            DB[table].delete
-        }
+        #DB.tables.each { |table|
+        #    DB[table].delete!
+        #}
+        App.create_table!
+        Environment.create_table!
+        Owner.create_table!
+        Value.create_table!
+        if DB[:owners].where(:name => 'nobody').empty?
+            Owner.new(:name => 'nobody', :email => 'nobody@nowhere.com').save
+        end
     end
 
     it 'should get /config' do
@@ -35,9 +42,17 @@ describe ConfigController do
         got.status.should == 200
     end
 
+    it 'should not allow duplicate app names' do
+        got = put('/config/appname')
+        got.status.should == 201
+
+        got = put('/config/appname')
+        got.status.should == 403
+    end
+
     it 'should put /config' do
         got = put('/config')
-        got.status.should == 501
+        got.status.should == 400
     end
 
     it 'should post /config' do

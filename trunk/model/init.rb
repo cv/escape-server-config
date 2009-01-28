@@ -5,7 +5,11 @@ require 'sequel'
 DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
 
 def init_model(model)
-    model.create_table! unless model.table_exists?
+    if model.table_exists?
+        DB[model.table_name].update_sql
+    else
+        model.create_table! 
+    end
 end
 
 # Here go your requires for models:
@@ -15,9 +19,4 @@ require 'model/app'
 require 'model/environment'
 require 'model/owner'
 require 'model/value'
-
-# Update the databases if needed
-DB.tables.each { |table|
-    DB[table].update_sql
-}
 

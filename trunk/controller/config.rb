@@ -10,18 +10,25 @@ class ConfigController < Ramaze::Controller
                     ret += app[:name]
                 }
             else
-                if apps.where(:name => app).count == 0
+                myapp = apps.where(:name => app)
+                if myapp.count == 0
                     response.status = 404
+                else
+                    envs = DB[:environments].where(:app => myapp.first)
                 end
             end
             return ret
         elsif request.put?
             if app == nil
-                response.status = 501
+                response.status = 400
             else
-                myapp = App.new(:name => app)
-                myapp.save
-                response.status = 201
+                begin
+                    myapp = App.new(:name => app)
+                    myapp.save
+                    response.status = 201
+                rescue
+                    response.status = 403
+                end
             end
         elsif request.post?
             'post me'
