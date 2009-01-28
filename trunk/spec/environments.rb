@@ -67,4 +67,29 @@ describe EnvironmentsController do
         got.status.should == 200
         got.body.should == value
     end
+
+    it 'should be able to create new environment' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == ""
+    end
+
+    it 'should return the default value for an existing environment for which there is no explicit value' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        value = "default.value"
+        got = put('/environments/default/appname/key', :input => value)
+        got.status.should == 201
+        
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = get('/environments/myenv/appname/key')
+        got.status.should == 200
+        got.body.should == value
+    end
 end
