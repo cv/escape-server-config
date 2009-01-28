@@ -44,8 +44,7 @@ describe EnvironmentsController do
 
         got = get('/environments/default')
         got.status.should == 200
-        p "Body is #{got.body}"
-        #got.body.should.include "appname"
+        got.body.should.include "appname"
     end
 
     it 'should not allow duplicate app names' do
@@ -54,5 +53,15 @@ describe EnvironmentsController do
 
         got = put('/environments/default/appname')
         got.status.should == 403
+    end
+
+    it 'should set a key and value for default' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        value = "default.value"
+        #got = put('/environments/default/appname/key', :value => value)
+        got = put('/environments/default/appname/key', :input => value)
+        got.status.should == 201
     end
 end

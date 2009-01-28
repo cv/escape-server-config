@@ -1,7 +1,6 @@
 
 class Environment < Sequel::Model(:environments)
-    many_to_one :owner
-    many_to_many :app
+    many_to_many :apps
     set_schema do
         primary_key :id
         text :name

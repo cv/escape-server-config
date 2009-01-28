@@ -16,26 +16,29 @@ class EnvironmentsController < Ramaze::Controller
                     return apps.all
                 end
             end
-        elsif request.put?
-            p "We're putting..."
+        elsif request.post? || request.put?
             if env == nil
-                p "No env specified - where do we put it?"
                 response.status = 400
-            else
-                p "Creating new app #{app} in environment #{env}"
+            elsif key == nil
                 begin
                     myapp = App.new(:name => app)
-                    p " - Made the app"
                     myapp.save
-                    p " - Saved the app"
                     response.status = 201
                 rescue
-                    p " - Something exploded"
                     response.status = 403
                 end
+            else
+                value = request.body.read
+                p "Trying to set a key called #{key} to the value", value
+                values = DB[:values].where(:app => app, :environment => env, :key => key)
+                if values.empty? # New one, let's create
+                    #myvalue = Value.new(:app => app, :environment => env, :key => key, :value => value)
+                    myvalue = Value.new(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
+                    myvalue.save
+                    response.status = 201
+                else             # We're updating the config
+                end
             end
-        elsif request.post?
-            'post me'
         end
     end
 end

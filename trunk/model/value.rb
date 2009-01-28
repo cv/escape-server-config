@@ -1,9 +1,12 @@
 
 class Value < Sequel::Model(:values)
+    many_to_one :apps
+    many_to_one :environments
     set_schema do
-        set_primary_key [:app, :environment]
         text :key
         text :value
+        foreign_key :app, :table => :apps
+        foreign_key :environment, :table => :environments
     end
 end
 
