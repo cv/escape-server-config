@@ -1,0 +1,53 @@
+body {
+   font-family: Helvetica, Geneva, Arial, sans-serif;
+   font-size: small;
+   font-color: #000;
+   background:lightgrey;
+}
+a:link, a:active, a:visited {
+   color: #CD0000;
+}
+div#outer{
+	height:100%;
+	width:100%;
+	align:center;
+	background:lightgrey;
+}
+div#inner {
+   width: 90%;
+   height:90%
+   background:white
+   	width:80%;
+	background:white;
+	margin-left:auto;
+	margin-right:auto;
+	border:1px solid #D0E5F4;
+}
+p { 
+background:white
+   	width:90%;
+   line-height: 150%;
+}
+div#header {
+   width: 90%;
+   text-align: center;
+   background:white
+   padding-bottom: 15px;
+}
+div#content h3 {
+   margin-top: 15px;
+   width: 90%;
+   background:white
+}
+div#front {
+	align:center;
+	font-size:medium;
+	height:400px;
+}
+div#ffscrollbarfix {
+	position: absolute;
+	top: 0;
+	bottom: -0.1px;
+	width: 1em;
+	z-index: -1;
+}
