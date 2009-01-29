@@ -1,73 +1,93 @@
 
 class EnvironmentsController < Ramaze::Controller
-    map('/environments')
 
     def index(env = nil, app = nil, key = nil)
+        # Getting...
         if request.get?
-            envs = DB[:environments]
-            if env == nil # List environments
-                return envs.all
-            elsif app == nil # List apps in the environment
-                envs = DB[:environments].where(:name => env)
-                if envs.empty?
+            # List all environments
+            if env == nil
+                return Environment
+
+
+            # List all apps in specified environment
+            elsif app == nil 
+                myenv = Environment[:name => env]
+                if myenv.nil?
                     response.status = 404
                 else
-                    apps = DB[:apps].where(:environment => Environment[:name => env][:id])
+                    apps = DB[:apps].where(:environment => myenv[:id])
                     return apps.all
                 end
-            elsif key == nil # List keys and values for app in environment
-                myenv = envs.where(:name => env)
-                if myenv.empty? # Env does not exist
+
+
+            # List keys and values for app in environment
+            elsif key == nil 
+                myenv = Environment[:name => env]
+                if myenv.nil? # Env does not exist
                     response.status = 404
                 else
-                    apps = DB[:apps]
-                    if apps.empty?
+                    apps = App[:environment => myenv[:id]]
+                    if apps.nil?
                         response.status = 404
                     else
                         return apps.all
                     end
                 end
-            else # We're getting value for specific key
-                values = DB[:values].where(:key => key, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
-                if values.empty? 
+
+
+            # We're getting value for specific key
+            else 
+                values = Value[:key => key, :app => App[:name => app][:id], :environment => Environment[:name => env][:id]]
+                if values.nil? 
                     # Not in the specified env, is it in default?
-                    values = DB[:values].where(:key => key, :app => App[:name => app][:id], :environment => Environment[:name => "default"][:id])
-                    
-                    if values.empty?
+                    values = Value[:key => key, :app => App[:name => app][:id], :environment => Environment[:name => "default"][:id]]
+                    if values.nil?
                         response.status = 404
                     else
-                        return values.first[:value]
+                        return values[:value]
                     end
                 else
-                    return values.first[:value]
+                    return values[:value]
                 end
             end
+
+
+        # Setting...
         elsif request.post? || request.put?
-            if env == nil # Undefined
+            # Undefined
+            if env == nil 
                 response.status = 400
-            elsif app == nil # You're putting an env
+
+
+            # You're putting an env
+            elsif app == nil 
                 begin
-                    myenv = Environment.create(:name => env)
+                    Environment.create(:name => env)
                     response.status = 201
                 rescue
                     response.status = 403
                 end
-            elsif key == nil # You're putting an app
+
+
+            # You're putting an app
+            elsif key == nil 
                 begin
-                    myapp = App.create(:name => app, :environment => Environment[:name => env][:id])
+                    App.create(:name => app, :environment => Environment[:name => env][:id])
                     response.status = 201
                 rescue
                     response.status = 403
                 end
-            else             # You're putting a value to a key
+
+
+            # You're putting a value to a key
+            else             
                 value = request.body.read
-                values = DB[:values].where(:app => App[:name => app][:id], :environment => Environment[:name => env][:id], :key => key)
-                if values.empty? # New one, let's create
-                    myvalue = Value.create(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
+                myvalue = Value[:app => App[:name => app][:id], :environment => Environment[:name => env][:id], :key => key]
+                if myvalue.nil? # New one, let's create
+                    Value.create(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
                     response.status = 201
                 else             # We're updating the config
-                    myvalue = values.first
-                    Value.update(myvalue.update(:value => value))
+                    myvalue.update(:value => value)
                     response.status = 200
                 end
             end

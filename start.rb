@@ -6,7 +6,7 @@ require 'ramaze'
 $LOAD_PATH.unshift(__DIR__)
 
 # Initialize controllers and models
-require 'controller/init'
 require 'model/init'
+require 'controller/init'
 
 Ramaze.start :adapter => :webrick, :port => 7000
