@@ -13,7 +13,6 @@ describe MainController do
     it 'should show start page' do
         got = get('/')
         got.status.should == 200
-        puts got.body
         got.at('//title').text.strip.should == MainController.new.index
     end
 
