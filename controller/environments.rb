@@ -5,12 +5,12 @@ class EnvironmentsController < Ramaze::Controller
         # Getting...
         if request.get?
             # List all environments
-            if env == nil
+            if env.nil?
                 return Environment
 
 
             # List all apps in specified environment
-            elsif app == nil 
+            elsif app.nil?
                 myenv = Environment[:name => env]
                 if myenv.nil?
                     response.status = 404
@@ -21,7 +21,7 @@ class EnvironmentsController < Ramaze::Controller
 
 
             # List keys and values for app in environment
-            elsif key == nil 
+            elsif key.nil?
                 myenv = Environment[:name => env]
                 if myenv.nil? # Env does not exist
                     response.status = 404
@@ -55,12 +55,12 @@ class EnvironmentsController < Ramaze::Controller
         # Setting...
         elsif request.post? || request.put?
             # Undefined
-            if env == nil 
+            if env.nil?
                 response.status = 400
 
 
             # You're putting an env
-            elsif app == nil 
+            elsif app.nil?
                 begin
                     Environment.create(:name => env)
                     response.status = 201
@@ -70,7 +70,7 @@ class EnvironmentsController < Ramaze::Controller
 
 
             # You're putting an app
-            elsif key == nil 
+            elsif key.nil?
                 begin
                     App.create(:name => app, :environment => Environment[:name => env][:id])
                     response.status = 201
@@ -83,10 +83,12 @@ class EnvironmentsController < Ramaze::Controller
             else             
                 value = request.body.read
                 myvalue = Value[:app => App[:name => app][:id], :environment => Environment[:name => env][:id], :key => key]
-                if myvalue.nil? # New one, let's create
+                # New one, let's create
+                if myvalue.nil?
                     Value.create(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
                     response.status = 201
-                else             # We're updating the config
+                # We're updating the config
+                else             
                     myvalue.update(:value => value)
                     response.status = 200
                 end
