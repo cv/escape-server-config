@@ -15,7 +15,8 @@ class EnvironmentsController < Ramaze::Controller
                 if myenv.nil?
                     response.status = 404
                 else
-                    apps = DB[:apps].where(:environment => myenv[:id])
+                    #apps = DB[:apps].where(:environment => myenv[:id])
+                    apps = DB[:apps]
                     return apps.all
                 end
 
