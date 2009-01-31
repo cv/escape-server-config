@@ -47,11 +47,9 @@ class EnvironmentsController < Ramaze::Controller
         if myenv.nil?
             response.status = 404
         else
-            # TODO: Create a test that shows we need the line below
-            #apps = DB[:apps].where(:environment => myenv[:id])
             # TODO: Clean this up
-            apps = DB[:apps]
-            return apps.all
+            #apps = DB[:apps].where(:environment => myenv[:id])
+            #return apps.all
         end
     end
 
@@ -59,17 +57,13 @@ class EnvironmentsController < Ramaze::Controller
     def listKeys(env, app)
         # List keys and values for app in environment
         myenv = Environment[:name => env]
+        myapp = App[:name => app]
         if myenv.nil? # Env does not exist
             response.status = 404
-        else
-            # TODO: Write a test that show the line below is needed
-            #apps = App[:environment => myenv[:id], :environment => myenv[:id]]
-            apps = App[:environment => myenv[:id]]
-            if apps.nil?
-                response.status = 404
-            else
-                return apps.all
-            end
+        elsif myapp.nil? # App does not exist
+            response.status = 404
+        else # App and Env exists = is app in env?
+            # TODO: Write a test that shows we need to do this
         end
     end
 
@@ -100,7 +94,13 @@ class EnvironmentsController < Ramaze::Controller
 
     def createApp(env, app)
         begin
-            App.create(:name => app, :environment => Environment[:name => env][:id])
+            newapp = App.create(:name => app)
+            newapp.add_environment(Environment[:name => 'default'])
+
+            if env != 'default'
+                newapp.add_environment(Environment[:name => env])
+            end
+
             response.status = 201
         rescue
             response.status = 403

@@ -15,6 +15,7 @@ describe EnvironmentsController do
         Environment.create_table!
         Owner.create_table!
         Value.create_table!
+        AppsEnvironments.create_table!
 
         if DB[:owners].where(:name => 'nobody').empty?
             Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com')
