@@ -33,8 +33,7 @@ describe EnvironmentsController do
 
         got = get('/environments/default')
         got.status.should == 200
-        # TODO: Fix test
-        #got.body.should.include "appname"
+        got.body.should.include "appname"
     end
 
     it 'should not allow duplicate app names' do
@@ -51,8 +50,7 @@ describe EnvironmentsController do
 
         got = get('/environments/default')
         got.status.should == 200
-        # TODO: Fix test
-        #got.body.should.include "appname"
+        got.body.should.include "appname"
     end
 
     it 'should return 404 for non existing app' do
@@ -60,35 +58,35 @@ describe EnvironmentsController do
         got.status.should == 404
     end
 
-#    it 'should only list apps in the specified environment' do
-#        got = put('/environments/default/appname')
-#        got.status.should == 201
-#
-#        got = put('/environments/myenv')
-#        got.status.should == 201
-#
-#        got = put('/environments/myenv/myapp')
-#        got.status.should == 201
-#
-#        got = get('/environments/myenv')
-#        got.status.should == 200
-#        got.body.should.not.include "appname"
-#        got.body.should.include "myapp"
-#    end
+    it 'should only list apps in the specified environment' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
 
-#    it 'should always add new apps to the default environment' do
-#        got = put('/environments/default/appname')
-#        got.status.should == 201
-#
-#        got = put('/environments/myenv')
-#        got.status.should == 201
-#
-#        got = put('/environments/myenv/myapp')
-#        got.status.should == 201
-#
-#        got = get('/environments/default')
-#        got.status.should == 200
-#        got.body.should.include "appname"
-#        got.body.should.include "myapp"
-#    end
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should.not.include "appname"
+        got.body.should.include "myapp"
+    end
+
+    it 'should always add new apps to the default environment' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+
+        got = get('/environments/default')
+        got.status.should == 200
+        got.body.should.include "appname"
+        got.body.should.include "myapp"
+    end
 end

@@ -1,4 +1,6 @@
 
+require 'json'
+
 class EnvironmentsController < Ramaze::Controller
     map('/environments')
 
@@ -47,9 +49,11 @@ class EnvironmentsController < Ramaze::Controller
         if myenv.nil?
             response.status = 404
         else
-            # TODO: Clean this up
-            #apps = DB[:apps].where(:environment => myenv[:id])
-            #return apps.all
+            apps = []
+            myenv.apps.each do |app|
+                apps += [app[:name]]
+            end
+            return apps.to_json
         end
     end
 
