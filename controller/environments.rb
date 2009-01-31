@@ -62,12 +62,10 @@ class EnvironmentsController < Ramaze::Controller
         # List keys and values for app in environment
         myenv = Environment[:name => env]
         myapp = App[:name => app]
-        if myenv.nil? # Env does not exist
+        if myenv.nil? || myapp.nil? # Env does not exist
             response.status = 404
-        elsif myapp.nil? # App does not exist
-            response.status = 404
-        else # App and Env exists = is app in env?
-            # TODO: Write a test that shows we need to do this
+        else 
+            # TODO: Get the list of keys for the application. Iterate through the list a call getValue(env, app, key). Return the lot
         end
     end
 
