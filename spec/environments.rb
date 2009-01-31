@@ -43,7 +43,7 @@ describe EnvironmentsController do
 
         got = get('/environments/myenv')
         got.status.should == 200
-        got.body.should == ""
+        got.body.should == "[]"
     end
 
     it 'should not allow duplicate environment names' do
