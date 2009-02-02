@@ -12,4 +12,7 @@ task :test => [:clean] do
     end
 end
 
-
+desc 'Start up the server'
+task :run do
+    ruby 'start.ru'
+end
