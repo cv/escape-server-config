@@ -3,27 +3,16 @@
 require 'ramaze'
 require 'ramaze/spec/helper'
 
+require __DIR__('helper/db_helper')
 require __DIR__('../start')
 
-describe EnvironmentsController do
-    behaves_like 'http', 'xpath'
+describe EnvironmentsController, 'Application bits' do
+    behaves_like 'http', 'db_helper'
     ramaze  :view_root => __DIR__('../view'),
             :public_root => __DIR__('../public')
 
     before do
-        App.create_table!
-        Environment.create_table!
-        Owner.create_table!
-        Value.create_table!
-        AppsEnvironments.create_table!
-
-        if DB[:owners].where(:name => 'nobody').empty?
-            Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com')
-        end
-
-        if DB[:environments].where(:name => 'default').empty?
-            Environment.create(:name => 'default')
-        end
+        reset_db
     end
 
     # App tests
