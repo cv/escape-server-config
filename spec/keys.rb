@@ -20,7 +20,7 @@ describe EnvironmentsController do
         AppsKeys.create_table!
 
         if DB[:owners].where(:name => 'nobody').empty?
-            Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com')
+            Owner.create(:name => 'nobody', :email => 'root@localhost')
         end
 
         if DB[:environments].where(:name => 'default').empty?
