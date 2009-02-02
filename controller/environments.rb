@@ -9,7 +9,7 @@ class EnvironmentsController < Ramaze::Controller
         if request.get?
             # List all environments
             if env.nil?
-                return Environment
+                listEnvs()
             # List all apps in specified environment
             elsif app.nil?
                 listApps(env)
@@ -43,17 +43,25 @@ class EnvironmentsController < Ramaze::Controller
 
     private
 
+    def listEnvs
+        envs = Array.new
+        Environment.all.each do |env|
+            envs.push(env[:name])
+        end
+        return envs.sort.to_json
+    end
+
     def listApps(env)
         # List all apps in specified environment
         myenv = Environment[:name => env]
         if myenv.nil?
             response.status = 404
         else
-            apps = []
+            apps = Array.new
             myenv.apps.each do |app|
-                apps += [app[:name]]
+                apps.push(app[:name])
             end
-            return apps.to_json
+            return apps.sort.to_json
         end
     end
 
@@ -66,6 +74,7 @@ class EnvironmentsController < Ramaze::Controller
             response.status = 404
         else 
             # TODO: Get the list of keys for the application. Iterate through the list a call getValue(env, app, key). Return the lot
+            
         end
     end
 
@@ -111,9 +120,12 @@ class EnvironmentsController < Ramaze::Controller
 
     def setValue(env, app, key)
         value = request.body.read
-        myvalue = Value[:app => App[:name => app][:id], :environment => Environment[:name => env][:id], :key => key]
+        #myvalue = Value[:app => App[:name => app][:id], :environment => Environment[:name => env][:id], :key => key]
+        myapp = App[:name => app]
+        mykey = Key[:name => key, :app_id => myapp[:id]]
         # New one, let's create
-        if myvalue.nil?
+        if mykey.nil?
+            mykey = Key.create(:name => key, :app_id => myapp[:id])
             Value.create(:key => key, :value => value, :app => App[:name => app][:id], :environment => Environment[:name => env][:id])
             response.status = 201
         # We're updating the config

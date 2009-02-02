@@ -1,11 +1,12 @@
 
 class Value < Sequel::Model(:values)
+
     set_schema do
         primary_key :id
-        text :key
         text :value
-        foreign_key :app, :table => :apps
-        foreign_key :environment, :table => :environments
+        
+        foreign_key :key_id, :table => :keys
+        foreign_key :environment_id, :table => :environments
     end
 end
 

@@ -27,9 +27,10 @@ describe EnvironmentsController do
     end
 
     # Environment tests
-    it 'should get /environments' do
+    it 'should get /environments and list them' do
         got = get('/environments')
         got.status.should == 200
+        got.body.should.include "default"
     end
 
     it 'should return 404 for an unknown environment' do
