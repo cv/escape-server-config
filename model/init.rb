@@ -4,7 +4,8 @@ require 'sequel'
 require 'logger'
 
 DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
-DB.loggers << Logger.new($stdout)
+# Uncomment line below to turn on SQL debugging
+#DB.loggers << Logger.new($stdout)
 
 def init_model(model)
     if model.table_exists?

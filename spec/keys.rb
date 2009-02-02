@@ -133,7 +133,6 @@ describe EnvironmentsController do
         got.body.should == value
     end
 
-#   TODO: Make this test pass
     it 'should list all the keys and values when just asking for the app name in the environment' do
         got = put('/environments/default/appname')
         got.status.should == 201
@@ -150,11 +149,10 @@ describe EnvironmentsController do
 
         got = get('/environments/default/appname')
         got.status.should == 200
-        p got.body
-#        got.body.should.not == ""
-#        got.body.should.include == key1
-#        got.body.should.include == key2
-#        got.body.should.include == value1
-#        got.body.should.include == value2
+        got.body.should.not == ""
+        got.body.should.include key1
+        got.body.should.include key2
+        got.body.should.include value1
+        got.body.should.include value2
     end
 end
