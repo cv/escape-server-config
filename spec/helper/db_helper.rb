@@ -14,11 +14,11 @@ module DBHelper
         AppsEnvironments.create_table!
         AppsKeys.create_table!
 
-        if DB[:owners].where(:name => 'nobody').empty?
-            Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com')
+        if Owner[:name => 'nobody'].nil?
+            Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing')
         end
 
-        if DB[:environments].where(:name => 'default').empty?
+        if Environment[:name => 'default'].nil?
             Environment.create(:name => 'default')
         end
     end

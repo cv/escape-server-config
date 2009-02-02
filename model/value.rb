@@ -10,5 +10,5 @@ class Value < Sequel::Model(:values)
     end
 end
 
-init_model(Value)
+EscData.init_model(Value)
 

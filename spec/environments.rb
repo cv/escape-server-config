@@ -19,7 +19,7 @@ describe EnvironmentsController, 'Environment bits' do
     it 'should get /environments and list them' do
         got = get('/environments')
         got.status.should == 200
-        got.body.should.include "default"
+        got.body.should == '["default"]'
     end
 
     it 'should return 404 for an unknown environment' do

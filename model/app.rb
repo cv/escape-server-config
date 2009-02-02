@@ -11,5 +11,5 @@ class App < Sequel::Model(:apps)
     validates_uniqueness_of :name
 end
 
-init_model(App)
+EscData.init_model(App)
 

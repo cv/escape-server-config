@@ -9,5 +9,5 @@ class Key < Sequel::Model(:keys)
 
 end
 
-init_model(Key)
+EscData.init_model(Key)
 

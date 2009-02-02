@@ -10,5 +10,5 @@ class Environment < Sequel::Model(:environments)
     validates_uniqueness_of :name
 end
 
-init_model(Environment)
+EscData.init_model(Environment)
 

@@ -6,7 +6,7 @@ class AppsEnvironments < Sequel::Model
     end
 end
 
-init_model(AppsEnvironments)
+EscData.init_model(AppsEnvironments)
 
 class AppsKeys < Sequel::Model
     set_schema do
@@ -15,5 +15,5 @@ class AppsKeys < Sequel::Model
     end
 end
 
-init_model(AppsKeys)
+EscData.init_model(AppsKeys)
 

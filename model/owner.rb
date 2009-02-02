@@ -4,12 +4,12 @@ class Owner < Sequel::Model(:owners)
         primary_key :id
         text :name
         text :email
+        text :password
     end
+    
+    validates_uniqueness_of :name
+    validates_uniqueness_of :email
 end
 
-init_model(Owner)
-
-if DB[:owners].where(:name => 'nobody').empty?
-    Owner.new(:name => 'nobody', :email => 'nobody@nowhere.com').save
-end
+EscData.init_model(Owner)
 
