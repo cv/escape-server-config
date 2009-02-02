@@ -150,9 +150,38 @@ describe EnvironmentsController do
         got = get('/environments/default/appname')
         got.status.should == 200
         got.body.should.not == ""
-        got.body.should.include key1
-        got.body.should.include key2
-        got.body.should.include value1
-        got.body.should.include value2
+        got.body.should.include "#{key1}=#{value1}"
+        got.body.should.include "#{key2}=#{value2}"
+    end
+
+    it 'should list values for the specified environment when asking for all' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = put('/environments/myenv/appname')
+        got.status.should == 201
+
+        key1 = "key1"
+        value1 = "value1"
+        got = put("/environments/default/appname/#{key1}", :input => value1)
+        got.status.should == 201
+
+        key2 = "key2"
+        value2 = "value2"
+        got = put("/environments/default/appname/#{key2}", :input => value2)
+        got.status.should == 201
+
+        newvalue2 = "new.value2"
+        got = put("/environments/myenv/appname/#{key2}", :input => newvalue2)
+        got.status.should == 201
+
+        got = get('/environments/myenv/appname')
+        got.status.should == 200
+        got.body.should.not == ""
+        got.body.should.include "#{key1}=#{value1}"
+        got.body.should.include "#{key2}=#{newvalue2}"
     end
 end

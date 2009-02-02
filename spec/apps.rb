@@ -36,14 +36,6 @@ describe EnvironmentsController do
         got.body.should.include "appname"
     end
 
-    it 'should not allow duplicate app names' do
-        got = put('/environments/default/appname')
-        got.status.should == 201
-
-        got = put('/environments/default/appname')
-        got.status.should == 403
-    end
-
     it 'should list apps in an environment' do
         got = put('/environments/default/appname')
         got.status.should == 201

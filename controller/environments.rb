@@ -76,6 +76,9 @@ class EnvironmentsController < Ramaze::Controller
             pairs = Array.new
             myapp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => myenv[:id]]
+                if value.nil? # Got no value in specified env, what's in default?
+                    value = Value[:key_id => key[:id], :environment_id => Environment[:name => "default"][:id]]
+                end
                 pairs.push("#{key[:name]}=#{value[:value]}\n")
             end
             return pairs.sort
@@ -123,11 +126,14 @@ class EnvironmentsController < Ramaze::Controller
 
     def createApp(env, app)
         begin
-            newapp = App.create(:name => app)
-            newapp.add_environment(Environment[:name => 'default'])
+            myapp = App[:name => app]
+            if myapp.nil?
+                myapp = App.create(:name => app)
+                myapp.add_environment(Environment[:name => 'default'])
+            end
 
             if env != 'default'
-                newapp.add_environment(Environment[:name => env])
+                myapp.add_environment(Environment[:name => env])
             end
 
             response.status = 201
