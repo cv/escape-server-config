@@ -30,7 +30,6 @@ describe EnvironmentsController, 'Authentication' do
 
     # POST /environment/myenv/myapp?owner=me
     it 'should be able to specify who the owner of an app is in a certain environment' do
-        # TODO: Fix this test. Need to create the owner 'me' first
         got = put('/environments/myenv')
         got.status.should == 201
 
@@ -52,6 +51,41 @@ describe EnvironmentsController, 'Authentication' do
         got.status.should == 404
     end
 
-    #it 'should be able to restrict changes to values for an app in a certain environment' do
-    #end
+    it 'should be able to change the owner of an environment if nobody owns it' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        Owner.create(:name => "me", :email => "me@mydomain.com", :password => "password")
+
+        got = post('/environments/myenv/appname')
+        got.status.should == 201
+
+        got = get('/environments/myenv/appname')
+        got.status.should == 200
+        got.headers['X-Owner'].should == "nobody"
+
+        got = post('/environments/myenv/appname', :owner => 'me')
+        got.status.should == 201
+
+        got = get('/environments/myenv/appname')
+        got.status.should == 200
+        got.headers['X-Owner'].should == "me"
+    end
+
+    it 'should not be able to change the owner of the default environment ever' do
+        Owner.create(:name => "me", :email => "me@mydomain.com", :password => "password")
+
+        got = post('/environments/default/appname', :owner => 'me')
+        got.status.should == 201
+
+        got = get('/environments/default/appname')
+        got.status.should == 200
+        got.headers['X-Owner'].should == "nobody"
+    end
+
+#    it 'should be able to change the ower of an environment as the owner if not nobody' do
+#    end
+
+#    it 'should be able to restrict changes to values for an app in a certain environment' do
+#    end
 end

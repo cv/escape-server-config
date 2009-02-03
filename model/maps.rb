@@ -18,12 +18,14 @@ end
 EscData.init_model(AppsKeys)
 
 class OwnerAppEnv < Sequel::Model
-    set_primary_key [:app_id, :environment_id]
     set_schema do
+        primary_key :id
         integer :app_id
         integer :environment_id
         integer :owner_id
     end
+
+    validates_uniqueness_of([:app_id, :environment_id])
 end
 
 EscData.init_model(OwnerAppEnv)

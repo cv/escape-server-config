@@ -129,37 +129,38 @@ class EnvironmentsController < Ramaze::Controller
     end
 
     def createApp(env, app)
-        begin
-            myapp = App[:name => app]
-            myenv = Environment[:name => env]
+        myapp = App[:name => app]
+        myenv = Environment[:name => env]
 
-            owner = request['owner']
-            if owner.nil?
-                myowner = Owner[:name => "nobody"]
-            else
-                myowner = Owner[:name => owner]
-                if myowner.nil?
-                    response.status = 404 if myowner.nil?
-                    return "Unknown owner..."
-                end
+        owner = request['owner']
+        if owner.nil?
+            myowner = Owner[:name => "nobody"]
+        else
+            myowner = Owner[:name => owner]
+            if myowner.nil?
+                response.status = 404 if myowner.nil?
+                return "Unknown owner..."
             end
-
-            if myapp.nil?
-                defaultenv = Environment[:name => 'default']
-                myapp = App.create(:name => app)
-                myapp.add_environment(defaultenv)
-                OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => defaultenv[:id], :owner_id => Owner[:name => "nobody"][:id])
-            end
-
-            if env != 'default'
-                myapp.add_environment(myenv)
-                OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => myenv[:id], :owner_id => myowner[:id])
-            end
-
-            response.status = 201
-        rescue
-            response.status = 403
         end
+
+        if myapp.nil?
+            defaultenv = Environment[:name => 'default']
+            myapp = App.create(:name => app)
+            myapp.add_environment(defaultenv)
+            OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => defaultenv[:id], :owner_id => Owner[:name => "nobody"][:id])
+        end
+
+        if env != 'default'
+            myapp.add_environment(myenv)
+            curowner = OwnerAppEnv[:app_id => myapp[:id], :environment_id => myenv[:id]]
+            if curowner.nil?
+                OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => myenv[:id], :owner_id => myowner[:id])
+            else
+                curowner.update(:owner_id => myowner[:id])
+            end
+        end
+
+        response.status = 201
     end
 
     def setValue(env, app, key)
