@@ -73,6 +73,10 @@ class EnvironmentsController < Ramaze::Controller
         if myenv.nil? || myapp.nil? # Env does not exist
             response.status = 404
         else 
+            # TODO: The next few lines are damn scary! Need some nice helper methods somewhere...
+            ownermap = OwnerAppEnv[:app_id => myapp[:id], :environment_id => myenv[:id]]
+            owner = Owner[:id => ownermap[:owner_id]]
+            response.headers["X-Owner"] = owner[:name]
             pairs = Array.new
             myapp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => myenv[:id]]
@@ -127,13 +131,29 @@ class EnvironmentsController < Ramaze::Controller
     def createApp(env, app)
         begin
             myapp = App[:name => app]
+            myenv = Environment[:name => env]
+
+            owner = request['owner']
+            if owner.nil?
+                myowner = Owner[:name => "nobody"]
+            else
+                myowner = Owner[:name => owner]
+                if myowner.nil?
+                    response.status = 404 if myowner.nil?
+                    return "Unknown owner..."
+                end
+            end
+
             if myapp.nil?
+                defaultenv = Environment[:name => 'default']
                 myapp = App.create(:name => app)
-                myapp.add_environment(Environment[:name => 'default'])
+                myapp.add_environment(defaultenv)
+                OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => defaultenv[:id], :owner_id => Owner[:name => "nobody"][:id])
             end
 
             if env != 'default'
-                myapp.add_environment(Environment[:name => env])
+                myapp.add_environment(myenv)
+                OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => myenv[:id], :owner_id => myowner[:id])
             end
 
             response.status = 201

@@ -13,6 +13,7 @@ module DBHelper
         Value.create_table!
         AppsEnvironments.create_table!
         AppsKeys.create_table!
+        OwnerAppEnv.create_table!
 
         if Owner[:name => 'nobody'].nil?
             Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing')
