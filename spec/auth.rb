@@ -65,7 +65,7 @@ describe EnvironmentsController, 'Authentication' do
         got.headers['X-Owner'].should == "nobody"
 
         got = post('/environments/myenv/appname', :owner => 'me')
-        got.status.should == 201
+        got.status.should == 200
 
         got = get('/environments/myenv/appname')
         got.status.should == 200
@@ -83,8 +83,23 @@ describe EnvironmentsController, 'Authentication' do
         got.headers['X-Owner'].should == "nobody"
     end
 
-#    it 'should be able to change the ower of an environment as the owner if not nobody' do
-#    end
+    it 'should be able to change the ower of an environment as the owner if not nobody' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        Owner.create(:name => "me", :email => "me@mydomain.com", :password => "mypassword")
+        Owner.create(:name => "you", :email => "you@yourdomain.com", :password => "yourpassword")
+
+        got = post('/environments/myenv/appname', :owner => 'me')
+        got.status.should == 201
+
+        got = post('/environments/myenv/appname', :owner => 'you')
+        # TODO: Fix it...
+        #got.status.should == 401
+
+        #got = post('/environments/myenv/appname', :owner => 'you', :user => 'me')
+        #got.status.should == 200
+    end
 
 #    it 'should be able to restrict changes to values for an app in a certain environment' do
 #    end

@@ -148,19 +148,21 @@ class EnvironmentsController < Ramaze::Controller
             myapp = App.create(:name => app)
             myapp.add_environment(defaultenv)
             OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => defaultenv[:id], :owner_id => Owner[:name => "nobody"][:id])
+
+            response.status = 201
         end
 
         if env != 'default'
             myapp.add_environment(myenv)
+                
             curowner = OwnerAppEnv[:app_id => myapp[:id], :environment_id => myenv[:id]]
             if curowner.nil?
                 OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => myenv[:id], :owner_id => myowner[:id])
             else
                 curowner.update(:owner_id => myowner[:id])
+                response.status = 200
             end
         end
-
-        response.status = 201
     end
 
     def setValue(env, app, key)

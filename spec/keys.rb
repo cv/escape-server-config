@@ -149,7 +149,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         got = put('/environments/myenv/appname')
-        got.status.should == 201
+        got.status.should == 200
 
         key1 = "key1"
         value1 = "value1"
