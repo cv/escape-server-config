@@ -15,13 +15,22 @@ div#outer{
 }
 div#inner {
    width: 90%;
-   height:90%
-   background:white
-   	width:80%;
+   height:90%;
 	background:white;
 	margin-left:auto;
 	margin-right:auto;
 	border:1px solid #D0E5F4;
+}
+div#sidebar {
+   width: 30%;
+   height:100%;
+   float:left;
+   background:white;
+}
+div#footer {
+   align:center;
+   width: 90%;
+   clear:both;
 }
 p { 
 background:white
@@ -34,10 +43,10 @@ div#header {
    background:white
    padding-bottom: 15px;
 }
-div#content h3 {
-   margin-top: 15px;
-   width: 90%;
-   background:white
+div#content {
+   width: 70%;
+   background:white;
+   float:right;
 }
 div#front {
 	align:center;

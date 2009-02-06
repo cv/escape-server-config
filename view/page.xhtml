@@ -9,6 +9,39 @@
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <meta http-equiv="expires" content="0" />
 <link href="/css/escape.css" title="escape" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#envs').click(function(){
+			$.getJSON("/environments", function(data){
+				var list = "<ul>";
+				$.each(data, function(i, item){
+					list += ('<li id="' + item + '">' + item + '</li>');	
+				});
+				list += "</ul>";
+				$('#sidebar').html(list);
+				
+				$('#sidebar li').click(function(){
+					var thisEnv = $(this).attr("id");
+					var url = "/environments/" + thisEnv;
+						$.getJSON(url, function(data){	var list = "<ul>";
+							$.each(data, function(i, item){
+								list += ('<li id="' + thisEnv + "-" item + '">' + item + '</li>');	
+							});
+							list += "</ul>";
+							$('#sidebar #' + thisEnv).append(list);
+							
+						});
+						$('#sidebar li li').click(function(){
+							var thisEnv = $(this).attr("id");
+				})
+				
+
+			});
+		})
+	});
+	
+</script>
 </head>
 <body id="body">
 <div id="outer">
@@ -17,15 +50,22 @@
 			<img src='/images/logo.jpg' align='left'/>
 			<h2>ESCAPE</h2>
 			<hr />
-			<a href='/manage'>Manage Configuration</a>
+				<p id="envs">Environments</p>
+				<a href='/show/applications'>Applications</a>
 			<hr />
 			<br />
 			<br />
 		</div>
+		<div id="sidebar">
+			
+		</div>
 		<div id="content">
-		      #@content
+		      #@content		
 		</div>
 		<br />
+		<div id="footer">
+		      <center>Esc c.2009</center>
+		</div>
 	</div>
 </div>
 </body>
