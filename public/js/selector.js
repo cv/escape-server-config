@@ -36,9 +36,10 @@ validateName = function(name) {
 
 $(document).ready(function() {
     $('#env_list').change(function() {
-        $('#env_list option:selected').each(function() {
-            loadSelectorDataFromUrl('#app_list', '/environments/' + $(this).text());
-        });
+        var envName = $(this).val();
+        if (envName != null) {
+            loadSelectorDataFromUrl('#app_list', '/environments/' + envName);
+        }
     }).change();
 
     loadSelectorDataFromUrl('#env_list', '/environments');
@@ -53,6 +54,28 @@ $(document).ready(function() {
                 data: {},
                 success: function(data, textStatus) {
                     loadSelectorDataFromUrl('#env_list', '/environments');
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error creating new environment '" + newName);
+                },
+                });
+            
+        } else {
+            alert("Not going to create new environment called " + newName);
+        }
+    });
+
+    $('#new_app_form').submit(function() {
+        var newName = $('#new_app_name').val();
+        var envName = $('#env_list').val();
+        if (validateName(newName)) {
+            $('#new_app_name').val("");
+            $.ajax({
+                type: "POST",
+                url: "/environments/" + envName + "/" + newName,
+                data: {},
+                success: function(data, textStatus) {
+                    loadSelectorDataFromUrl('#app_list', '/environments/' + $('#env_list').val());
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error creating new environment '" + newName);
