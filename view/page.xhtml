@@ -10,6 +10,8 @@
 <meta http-equiv="expires" content="0" />
 <link href="/css/escape.css" title="escape" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="/js/jquery.js"></script>
+<script type="text/javascript" src="/js/editor.js"></script>
+<script type="text/javascript" src="/js/selector.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#env').click(function(){
@@ -60,6 +62,21 @@
 		</div>
 		<div id="content">
 		      #@content		
+		</div>
+		<div id="selector">
+            <label for="environments_list">Environment</label><br />
+
+            <select id="environments_list" name="environments_list">
+            <option value="">--  --</option>
+            </select><br /><br />
+
+            <label for="app_list">Application</label><br />
+            <select id="app_list" name="app_list">
+            <option value="">--  --</option>
+            </select>
+
+		</div>
+		<div id="editor">
 		</div>
 		<br />
 		<div id="footer">
