@@ -18,7 +18,8 @@
 		// Get nested list of environments/apps
 		$('#env').click(function(){
 			getListofEnvsAndApps();
-		})	
+			makeCollapsible();
+		})
 	});
 </script>
 </head>
@@ -30,13 +31,13 @@
 			<h2>ESCAPE</h2>
 			<hr />
 				<p id="env">Environments</p>
-				<a href='/show/applications'>Applications</a>
+				<a href="javascript:void(0);" class="expand">Expand All</a> 
+				<a href="javascript:void(0);" class="contract">Contract All</a>
 			<hr />
 			<br />
 			<br />
 		</div>
 		<div id="sidebar">
-			
 		</div>
 		<div id="content">
 		      #@content		
