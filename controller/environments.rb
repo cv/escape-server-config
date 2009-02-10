@@ -138,6 +138,7 @@ class EnvironmentsController < Ramaze::Controller
             response.status = 201
         rescue
             response.status = 403
+            return "Error creating environment. The name might already exist..."
         end
     end
 

@@ -27,8 +27,17 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 404
     end
 
-    it 'should be able to create new environment' do
+    it 'should be able to create new environment using PUT' do
         got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == "[]"
+    end
+
+    it 'should be able to create new environment using POST' do
+        got = post('/environments/myenv')
         got.status.should == 201
 
         got = get('/environments/myenv')

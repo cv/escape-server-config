@@ -42,17 +42,22 @@
 		      #@content		
 		</div>
 		<div id="selector">
-            <label for="environments_list">Environment</label><br />
+            <label for="env_list">Environment</label><br/>
+            <select id="env_list" name="env_list">
+            </select><br/><br/>
+            <form id="new_env_form" action="javascript:;">
+                <input type="text" id="new_env_name" name="new_env_name"/> 
+                <input type="submit" value="Create New Environment"/><br/><br/>
+            </form>
+            
 
-            <select id="environments_list" name="environments_list">
-            <option value="">--  --</option>
-            </select><br /><br />
-
-            <label for="app_list">Application</label><br />
+            <label for="app_list">Application</label><br/>
             <select id="app_list" name="app_list">
-            <option value="">--  --</option>
-            </select>
-
+            </select><br/><br/>
+            <form id="new_app_form" action="javascript:;">
+                <input type="text" id="new_app_name" name="new_app_name"/> 
+                <input type="submit" value="Create New Application"/><br/><br/>
+            </form>
 		</div>
 		<div id="editor">
 		</div>

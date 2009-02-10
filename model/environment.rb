@@ -25,3 +25,7 @@ end
 
 EscData.init_model(Environment)
 
+if Environment[:name => 'default'].nil?
+    Environment.create(:name => 'default')
+end
+
