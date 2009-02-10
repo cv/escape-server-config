@@ -12,7 +12,7 @@
 <script type="text/javascript" src="/js/jquery.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#envs').click(function(){
+		$('#env').click(function(){
 			$.getJSON("/environments", function(data){
 				var list = "<ul>";
 				$.each(data, function(i, item){
@@ -20,27 +20,26 @@
 				});
 				list += "</ul>";
 				$('#sidebar').html(list);
-				
-				$('#sidebar li').click(function(){
+				$('#sidebar li').click(function(envclick){
 					var thisEnv = $(this).attr("id");
 					var url = "/environments/" + thisEnv;
-						$.getJSON(url, function(data){	var list = "<ul>";
-							$.each(data, function(i, item){
-								list += ('<li id="' + thisEnv + "-" item + '">' + item + '</li>');	
+						$.getJSON(url, function(data){
+							var list = "<ul>";
+							$.each(data, function(i, thisApp){	
+								list += "<li id='" + thisApp + "'>" + thisApp + "</li>";	
 							});
 							list += "</ul>";
-							$('#sidebar #' + thisEnv).append(list);
-							
+							$('#sidebar #' + thisEnv).append(list);	
+					});
+						$('#sidebar li li').click(function(appclick){
+							var thisApp = $(this).attr("id");
+							var url = "/environments/" + thisEnv + "/" + thisApp;
+							$('#content').html(url);		
 						});
-						$('#sidebar li li').click(function(){
-							var thisEnv = $(this).attr("id");
-				})
-				
-
+				});
 			});
 		})
 	});
-	
 </script>
 </head>
 <body id="body">
@@ -50,7 +49,7 @@
 			<img src='/images/logo.jpg' align='left'/>
 			<h2>ESCAPE</h2>
 			<hr />
-				<p id="envs">Environments</p>
+				<p id="env">Environments</p>
 				<a href='/show/applications'>Applications</a>
 			<hr />
 			<br />
