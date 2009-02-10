@@ -16,7 +16,7 @@ describe EnvironmentsController, 'Key/Value bits' do
     end
 
     # Key/Value tests
-    it 'should set a key and value for default' do
+    it 'should set a key and value for default, default return should be text/plain but we can ask for application/json' do
         got = put('/environments/default/appname')
         got.status.should == 201
 
@@ -27,6 +27,13 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = get('/environments/default/appname/key')
         got.status.should == 200
         got.body.should == value
+        got.content_type.should == "text/plain"
+
+        got = get('/environments/default/appname/key', :headers => {"Accept" => "application/json"})
+        got.status.should == 200
+        got.body.should == value
+        got.content_type.should == "application/json"
+
     end
 
     it 'should return the default value for an existing environment for which there is no explicit value' do
@@ -120,7 +127,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should == value
     end
 
-    it 'should list all the keys and values when just asking for the app name in the environment' do
+    it 'should list all the keys and values when just asking for the app name in the environment, default should be text/plain but should do application/json if asked' do
         got = put('/environments/default/appname')
         got.status.should == 201
 
@@ -139,6 +146,14 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should.not == ""
         got.body.should.include "#{key1}=#{value1}"
         got.body.should.include "#{key2}=#{value2}"
+        got.content_type.should == "text/plain"
+        
+        got = get('/environments/default/appname')
+        got.status.should == 200
+        got.body.should.not == ""
+        got.body.should.include "#{key1}=#{value1}"
+        got.body.should.include "#{key2}=#{value2}"
+        #got.content_type.should == "application/json"
     end
 
     it 'should list values for the specified environment when asking for all' do
@@ -171,4 +186,5 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should.include "#{key1}=#{value1}"
         got.body.should.include "#{key2}=#{newvalue2}"
     end
+
 end

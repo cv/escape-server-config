@@ -58,7 +58,7 @@ $(document).ready(function() {
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error creating new environment '" + newName);
                 },
-                });
+            });
             
         } else {
             alert("Not going to create new environment called " + newName);

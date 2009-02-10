@@ -98,6 +98,8 @@ class EnvironmentsController < Ramaze::Controller
                 end
                 pairs.push("#{key[:name]}=#{value[:value]}\n")
             end
+            p request.methods.sort
+            response.headers["Content-Type"] = "text/plain"
             return pairs.sort
         end
     end
@@ -129,6 +131,9 @@ class EnvironmentsController < Ramaze::Controller
                 return "No default value"
             end
         end
+
+        p request.methods.sort
+        response.headers["Content-Type"] = "text/plain"
         return value[:value]
     end
 
