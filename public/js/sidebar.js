@@ -61,3 +61,13 @@ makeCollapsible = function() {
 	});
 
 }
+
+$(document).ready(function() {
+    makeCollapsible();
+    // Get nested list of environments/apps
+    $('#env').click(function(){
+        makeCollapsible();
+    })
+    getListofEnvsAndApps();
+});
+

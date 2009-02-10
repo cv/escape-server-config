@@ -72,7 +72,7 @@ $(document).ready(function() {
             $.ajax({
                 type: "POST",
                 url: "/environments/" + "/" + $('#env_list').val() + "/" + $('#app_list').val() + "/" + newName,
-                data: "default value",
+                data: "",
                 complete: function(XMLHttpRequest, textStatus) {
                     $('#app_list').change();
                 },
