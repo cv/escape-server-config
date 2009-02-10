@@ -32,25 +32,25 @@ getListofEnvsAndApps = function() {
 
 
 makeCollapsible = function() {
-	var $subHead = $('.children').parent();
+	var subHead = $('.children').parent();
 	$('#content').html(subHead)
 	//By Default put the Menu in collapsed state
 	$('.children').parent().children('ul').slideUp('fast');
 
 	//Expand All Code
 	$('.expand').click(function() {
-			$subHead.children('ul').slideDown('fast');
-			$('img', $subHead).attr('src', toggleMinus);
+			subHead.children('ul').slideDown('fast');
+			$('img', subHead).attr('src', toggleMinus);
 	});
 
 	//Contract All Code
 	$('.contract').click(function() {
-			$subHead.attr('src', toggleMinus).children('ul').slideUp('fast');
-			$('img', $subHead).attr('src', togglePlus);
+			subHead.attr('src', toggleMinus).children('ul').slideUp('fast');
+			$('img', subHead).attr('src', togglePlus);
 	});
 
 	//Expand or Contract one particular Nested ul
-	$('img', $subHead).addClass('clickable').click(function() {
+	$('img', subHead).addClass('clickable').click(function() {
 	var toggleSrc = $(this).attr('src');
 	if ( toggleSrc == toggleMinus ) {
 	$(this).attr('src', togglePlus).parent().children('ul').slideUp('fast');
