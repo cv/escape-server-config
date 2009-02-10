@@ -11,17 +11,31 @@ editPropertiesFor = function(env, app) {
             $.each(data.split('\n'), function(i, item) {
                 table += "<tr>";
                 $.each(item.split('=', 2), function(j, jtem) {
-                    table += "<td>" + jtem + "</td>";
+                    var tag = (j % 2) ? "td" : "th";
+                    table += "<" + tag + ">" + jtem + "</" + tag + ">";
                 });
             });
-            table += "<tr><td></td><td></td></tr>";
             table += "</table>";
             $('#editor').html(table);
             $.uiTableEdit($('#key_value_table'), {
                 editDone: function(newText, oldText, e, td) {
-                    alert("Changed " + oldText + " to " + newText);
+                    var key;
+                    var value;
+                    //alert("Changed " + oldText + " to " + newText);
                     $.each(td.siblings().andSelf(), function(i, item) {
-                        alert("Sibling " + $(item).text());
+                        if (i % 2) {
+                            value = $(item).text();
+                        } else {
+                            key = $(item).text();
+                        }
+                    });
+                    $.ajax({
+                        type: "POST",
+                        url: "/environments/" + env + "/" + app + "/" + key,
+                        data: value,
+                        complete: function(XMLHttpRequest, textStatus) {
+                            $('#app_list').change();  
+                        },
                     });
                 },
             });
