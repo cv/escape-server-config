@@ -12,35 +12,13 @@
 <script type="text/javascript" src="/js/jquery.js"></script>
 <script type="text/javascript" src="/js/editor.js"></script>
 <script type="text/javascript" src="/js/selector.js"></script>
+<script type="text/javascript" src="/js/sidebar.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
+		// Get nested list of environments/apps
 		$('#env').click(function(){
-			$.getJSON("/environments", function(data){
-				var list = "<ul>";
-				$.each(data, function(i, item){
-					list += ('<li id="' + item + '">' + item + '</li>');	
-				});
-				list += "</ul>";
-				$('#sidebar').html(list);
-				$('#sidebar li').click(function(envclick){
-					var thisEnv = $(this).attr("id");
-					var url = "/environments/" + thisEnv;
-						$.getJSON(url, function(data){
-							var list = "<ul>";
-							$.each(data, function(i, thisApp){	
-								list += "<li id='" + thisApp + "'>" + thisApp + "</li>";	
-							});
-							list += "</ul>";
-							$('#sidebar #' + thisEnv).append(list);	
-					});
-						$('#sidebar li li').click(function(appclick){
-							var thisApp = $(this).attr("id");
-							var url = "/environments/" + thisEnv + "/" + thisApp;
-							$('#content').html(url);		
-						});
-				});
-			});
-		})
+			getListofEnvsAndApps();
+		})	
 	});
 </script>
 </head>
