@@ -60,3 +60,17 @@ div#ffscrollbarfix {
 	width: 1em;
 	z-index: -1;
 }
+/*div#side-header {
+   position:absolute;
+   top:120px;
+   width: 30%;
+   height:10%;
+   float:left;
+   background:white;
+}*/
+div#hidden {
+   display: none;
+}
+li {
+	list-style:none;
+}

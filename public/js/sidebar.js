@@ -14,26 +14,19 @@ getListofEnvsAndApps = function() {
 						list += "<li id='" + thisApp + "'>" + thisApp + "</li>";	
 					});
 					list += "</ul>";
-					$('#sidebar #' + thisEnv).append(list);
-					
-					$('#sidebar li li').click(function(appclick){
-						var thisEnv = $(this).parents("li:first").attr("id");
-						var thisApp = $(this).attr("id");
-						var url = "/environments/" + thisEnv + "/" + thisApp;
-						$('#content').html(url);		
-					});
+					$('#hidden #' + thisEnv).append(list);					
 				});
 			list += ('</li>');
 		});
 		list += "</ul>";
-		$('#sidebar').html(list);				
+		$('#hidden').html(list);				
 	});
 }
 
 
 makeCollapsible = function() {
 	var subHead = $('.children').parent();
-	$('#content').html(subHead)
+	$('#sidebar').html(subHead)
 	//By Default put the Menu in collapsed state
 	$('.children').parent().children('ul').slideUp('fast');
 
@@ -57,6 +50,14 @@ makeCollapsible = function() {
 	} else{
 	$(this).attr('src', toggleMinus).parent().children('ul').slideDown('fast');
 	};
+	});
+	
+	// Click on an app to get stuff in the content pane
+	$('#sidebar li li').click(function(appclick){
+		var thisEnv = $(this).parents("li:first").attr("id");
+		var thisApp = $(this).attr("id");
+		var url = "/environments/" + thisEnv + "/" + thisApp;
+		$('#content').html(url);		
 	});
 
 }

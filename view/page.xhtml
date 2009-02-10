@@ -14,10 +14,13 @@
 <script type="text/javascript" src="/js/selector.js"></script>
 <script type="text/javascript" src="/js/sidebar.js"></script>
 <script type="text/javascript">
+		getListofEnvsAndApps();
+</script>
+<script type="text/javascript">
 	$(document).ready(function() {
+		makeCollapsible();
 		// Get nested list of environments/apps
 		$('#env').click(function(){
-			getListofEnvsAndApps();
 			makeCollapsible();
 		})
 	});
@@ -28,16 +31,22 @@
 	<div id="inner">
 		<div id="header">
 			<img src='/images/logo.jpg' align='left'/>
+			<hr />
 			<h2>ESCAPE</h2>
 			<hr />
-				<p id="env">Environments</p>
-				<a href="javascript:void(0);" class="expand">Expand All</a> 
-				<a href="javascript:void(0);" class="contract">Contract All</a>
+			<br clear="all"/>
+		</div>
+		<div id="side-header">
 			<hr />
-			<br />
-			<br />
+				<a id="env"> Show Environments</a>
+				<a href="javascript:void(0);" class="expand">Expand All</a> 
+				<a href="javascript:void(0);" class="contract">Collapse All</a>
+			<hr />
+			<br clear="all"/>
 		</div>
 		<div id="sidebar">
+		</div>
+		<div id="hidden">
 		</div>
 		<div id="content">
 		      #@content		
