@@ -44,12 +44,12 @@ makeCollapsible = function() {
 
 	//Expand or Contract one particular Nested ul
 	$('img', subHead).addClass('clickable').click(function() {
-	var toggleSrc = $(this).attr('src');
-	if ( toggleSrc == toggleMinus ) {
-	$(this).attr('src', togglePlus).parent().children('ul').slideUp('fast');
-	} else{
-	$(this).attr('src', toggleMinus).parent().children('ul').slideDown('fast');
-	};
+	    var toggleSrc = $(this).attr('src');
+	    if ( toggleSrc == toggleMinus ) {
+	        $(this).attr('src', togglePlus).parent().children('ul').slideUp('fast');
+	    } else{
+	        $(this).attr('src', toggleMinus).parent().children('ul').slideDown('fast');
+	    };
 	});
 	
 	// Click on an app to get stuff in the content pane

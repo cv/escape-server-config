@@ -3,20 +3,28 @@ editPropertiesFor = function(env, app) {
     $('#editor').empty();
     $('#editor').append("Editing /environments/" + env + "/" + app + "<br/><br/>");    
 
-    //$.getJSON("/environments/" + env + "/" + app, function(data) {
-    //    $('#editor').append("<pre>");
-    //    $.each(data, function(i, item){
-    //        alert("Data: " + item);
-    //    });
-    //    $('#editor').append("</pre>");
-    //});
     $.ajax({
         type: "GET",
         url: "/environments/" + env + "/" + app,
         success: function(data, textStatus) {
-            $('#editor').append("<pre>");
-            $('#editor').append(data);
-            $('#editor').append("</pre>");
+            var table = '<table border="1" id="key_value_table"><tr><th>Key</th><th>Value</th></tr>';
+            $.each(data.split('\n'), function(i, item) {
+                table += "<tr>";
+                $.each(item.split('=', 2), function(j, jtem) {
+                    table += "<td>" + jtem + "</td>";
+                });
+            });
+            table += "<tr><td></td><td></td></tr>";
+            table += "</table>";
+            $('#editor').html(table);
+            $.uiTableEdit($('#key_value_table'), {
+                editDone: function(newText, oldText, e, td) {
+                    alert("Changed " + oldText + " to " + newText);
+                    $.each(td.siblings().andSelf(), function(i, item) {
+                        alert("Sibling " + $(item).text());
+                    });
+                },
+            });
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             alert("Error getting properties for app '" + app + "' in environment '" + env + "'");
