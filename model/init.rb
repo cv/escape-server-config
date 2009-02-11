@@ -17,22 +17,31 @@
 require 'sequel'
 require 'logger'
 
+# SQLite is the default database - require ruby sqlite3 libs
 DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
+
+# MySQL - requires ruby mysql client
+#DB = Sequel.mysql('escape', :user => 'root', :password => '', :host => 'localhost')
+
+# Postgres - requires ruby postgres client
+# NOTE: Currently broken due to auto increment issues in Sequel 2.10.0
+#DB = Sequel.connect('postgres://esc:password@localhost/escape')
+
+# Oracle - requires ruby-oci8 gem
+# NOTE: Currently broken due to auto increment issues in Sequel 2.10.0
+#DB = Sequel.connect('oracle://escape:escape@localhost/XE')
+
 # Uncomment line below to turn on SQL debugging
 #DB.loggers << Logger.new($stdout)
 
 module EscData
     def EscData.init_model(model)
         if model.table_exists?
-            DB[model.table_name].update_sql
+            # TODO: Schema upgrade stuff
         else
-            model.create_table! 
+            model.create_table
         end
     end
-
-    def EscData.setup_statics
-    end
-
 end
 
 # Here go your requires for models:
@@ -44,6 +53,4 @@ require 'model/owner'
 require 'model/key'
 require 'model/value'
 require 'model/maps'
-
-EscData.setup_statics
 

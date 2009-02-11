@@ -14,10 +14,10 @@
 
 class Key < Sequel::Model(:keys)
     set_schema do
-        primary_key :id
-        text :name
+        primary_key :id, :type=>Integer, :null => false
+        String :name
 
-        foreign_key :app_id, :table => :apps
+        foreign_key :app_id, :table => :apps, :type=>Integer
     end
 
 end

@@ -15,11 +15,11 @@
 class Value < Sequel::Model(:values)
 
     set_schema do
-        primary_key :id
-        text :value
+        primary_key :id, :type=>Integer, :null => false
+        String :value
         
-        foreign_key :key_id, :table => :keys
-        foreign_key :environment_id, :table => :environments
+        foreign_key :key_id, :table => :keys, :type=>Integer
+        foreign_key :environment_id, :table => :environments, :type=>Integer
     end
 end
 

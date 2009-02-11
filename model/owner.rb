@@ -14,10 +14,10 @@
 
 class Owner < Sequel::Model(:owners)
     set_schema do
-        primary_key :id
-        text :name
-        text :email
-        text :password
+        primary_key :id, :type=>Integer, :null => false
+        String :name
+        String :email
+        String :password
     end
     
     validates_uniqueness_of :name

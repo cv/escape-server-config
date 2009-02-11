@@ -16,8 +16,8 @@ class Environment < Sequel::Model(:environments)
     many_to_many :apps
 
     set_schema do
-        primary_key :id
-        text :name
+        primary_key :id, :type=>Integer, :null => false
+        String :name
     end
 
     validates_uniqueness_of :name
