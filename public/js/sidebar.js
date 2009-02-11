@@ -19,16 +19,12 @@ var EscSidebar = function() {
                         $.each(appData, function(i, thisApp) {
                             appList += "<li id='" + thisApp + "_app'>" + thisApp + "</li>";
                         });
-                        if (thisEnv == "default") {
-                            appList += '<li><form id="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name" name="new_app_name"/></form></li>';
-                        }
+                        appList += '<li><form id="' + thisEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/></form></li>';
                         appList += "</ul>";
                         $(target + ' #' + thisEnv + '_env').append(appList);
                         // Collapse all the childrens...
                         $('.children').parent().children('ul').slideUp('fast');
-                        if (thisEnv == "default") {
-                            $(target + " #new_app_form").submit(EscSidebar.createNewApp);
-                        }
+                        $(target + " .new_app_form").submit(EscSidebar.createNewApp);
                     });
                     envList += ('</li>');
                 });
@@ -74,10 +70,10 @@ var EscSidebar = function() {
         },
 
         createNewApp : function() {
-            var newName = $('#new_app_name').val();
-            var envName = "default";
+            var envName = $(this).attr("id").replace('_new_app_form', '');
+            var newName = $(this).find(":input").val();
             if (EscSidebar.validateAppName(newName)) {
-                $('#new_app_name').val("");
+                $(this).find(":input").val("");
                 $.ajax({
                     type: "POST",
                     url: "/environments/" + envName + "/" + newName,
@@ -142,5 +138,41 @@ $(document).ready(function() {
     EscSidebar.getListofEnvsAndApps('#sidebar');
     $('#new_key').hide();
     $('#editor').hide();
+
+/* Bloody droppables!!!
+    $('#floater').draggable({ 
+        revert: true,
+        start: function(event, ui) {
+            $(this).find('p').html("Start");
+        },
+        stop: function(event, ui) {
+            $(this).find('p').html("Stop");
+        },
+        drag: function(event, ui) {
+            $(this).find('p').html("Drag");
+        },
+        
+    });
+    $('#floater').find('p').html("Loaded Drag");
+    $('#drop').droppable({ 
+        activate: function(event, ui) {
+            $(this).find('p').html("Activate");
+        },
+        deactivate: function(event, ui) {
+            $(this).find('p').html("Deactivate");
+        },
+        over: function(event, ui) {
+            $(this).find('p').html("Over");
+        },
+        out: function(event, ui) {
+            $(this).find('p').html("Out");
+        },
+        drop: function(event, ui) {
+            $(this).find('p').html("Drop");
+            $('#drop').find('p').html("Hard Drop");
+        },
+    });
+    $('#drop').find('p').html("Loaded Drop");
+*/
 });
 
