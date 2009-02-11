@@ -14,6 +14,7 @@ var EscEditor = function() {
                 type: "GET",
                 url: "/environments/" + env + "/" + app,
                 success: function(data, textStatus) {
+                    $('#editor').html("<p>Properties for app <b>" + app + "</b> in env <b>" + env + "</b></p>");
                     var table = '<table border="1" id="key_value_table"><tr><th>Key</th><th>Value</th></tr>';
                     $.each(data.split('\n'), function(i, item) {
                         table += "<tr>";
@@ -23,7 +24,9 @@ var EscEditor = function() {
                         });
                     });
                     table += "</table>";
-                    $('#editor').html(table);
+                    $('#editor').append(table);
+                    $('#key_env_name').val(env);
+                    $('#key_app_name').val(app);
                     $.uiTableEdit($('#key_value_table'), {
                         editDone: function(newText, oldText, e, td) {
                             var key;
@@ -57,24 +60,18 @@ var EscEditor = function() {
 }();
 
 $(document).ready(function() {
-    $('#app_list').change(function() {
-        var envName = $('#env_list').val();
-        var appName = $('#app_list').val();
-        if ((envName != null) && (appName != null)) {
-            EscEditor.editPropertiesFor(envName, appName);
-        }
-    }).change();
-
     $('#new_key_form').submit(function() {
         var newName = $('#new_key_name').val();
+        var envName = $('#key_env_name').val();
+        var appName = $('#key_app_name').val();
         if (EscEditor.validateName(newName)) {
             $('#new_key_name').val("");
             $.ajax({
                 type: "POST",
-                url: "/environments/" + "/" + $('#env_list').val() + "/" + $('#app_list').val() + "/" + newName,
+                url: "/environments/" + "/" + envName + "/" + appName + "/" + newName,
                 data: "",
                 complete: function(XMLHttpRequest, textStatus) {
-                    $('#app_list').change();
+                    EscEditor.editPropertiesFor(envName, appName);
                 },
             });
         } else {

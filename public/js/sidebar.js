@@ -119,7 +119,14 @@ $(document).ready(function() {
     $('#sidebar li li').live("click", function() {
         var thisEnv = $(this).parents("li:first").attr("id").replace('_env', '');
         var thisApp = $(this).attr("id").replace('_app', '');
-        EscEditor.editPropertiesFor(thisEnv, thisApp);
+        if ((thisApp != null) && (thisApp != "")) {
+            EscEditor.editPropertiesFor(thisEnv, thisApp);
+            $('#new_key').show();
+            $('#editor').show();
+        } else {
+            $('#new_key').hide();
+            $('#editor').hide();
+        };
     });
 
     //Expand or Contract one particular Nested ul
@@ -133,5 +140,7 @@ $(document).ready(function() {
     });
 
     EscSidebar.getListofEnvsAndApps('#sidebar');
+    $('#new_key').hide();
+    $('#editor').hide();
 });
 
