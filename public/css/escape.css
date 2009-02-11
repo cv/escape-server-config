@@ -7,6 +7,13 @@ body {
 a:link, a:active, a:visited {
    color: #CD0000;
 }
+p { 
+background:white
+   	width:90%;
+}
+li {
+	list-style:none;
+}
 div#outer{
 	height:100%;
 	width:100%;
@@ -14,44 +21,67 @@ div#outer{
 	background:lightgrey;
 }
 div#inner {
+   position:relative;
    width: 90%;
    height:90%;
 	background:white;
 	margin-left:auto;
 	margin-right:auto;
-	border:1px solid #D0E5F4;
-}
-div#sidebar {
-   width: 30%;
-   height:100%;
-   float:left;
-   background:white;
-}
-div#footer {
-   align:center;
-   width: 90%;
-   clear:both;
-}
-p { 
-background:white
-   	width:90%;
-   line-height: 150%;
 }
 div#header {
-   width: 90%;
+   top:50%; 
+   height:95px; 
    text-align: center;
-   background:white
-   padding-bottom: 15px;
+   background:white;
+}
+div#left {
+   position:absolute;
+   top:109px;
+   width: 30%;
+   height:100%;
+   background:white;
+}
+div#right {
+   position:absolute;
+   top:109px;
+   right:0px;
+   width: 70%;
+   height:100%;
+   background:white;
+}
+div#side-header {
+   background:white;
+}
+div#sidebar {
+   background:white;
+
 }
 div#content {
-   width: 70%;
    background:white;
-   float:right;
+}
+div#editor {
+	background:white;
+}
+div#selector {
+	display:none;
+	background:white;
+}
+div#creator {
+	background:white;
+}
+div#new_key {
+	background:white;
+}
+div#footer {
+   clear:both;
+   color:red ;
+background:green;
+   align:center;
+
 }
 div#front {
 	align:center;
 	font-size:medium;
-	height:400px;
 }
 div#ffscrollbarfix {
 	position: absolute;
@@ -60,17 +90,6 @@ div#ffscrollbarfix {
 	width: 1em;
 	z-index: -1;
 }
-/*div#side-header {
-   position:absolute;
-   top:120px;
-   width: 30%;
-   height:10%;
-   float:left;
-   background:white;
-}*/
 div#hidden {
    display: none;
-}
-li {
-	list-style:none;
 }
