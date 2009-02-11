@@ -1,5 +1,5 @@
 body {
-   font-family: Helvetica, Geneva, Arial, sans-serif;
+   font-family: Helvetica, Arial, sans-serif;
    font-size: small;
    font-color: #000;
    background:lightgrey;
@@ -14,6 +14,30 @@ background:white
 li {
 	list-style:none;
 }
+table {
+	border-width: 0px 0px 0px 0px;
+	border-spacing: 0px;
+	border-style: none none none none;
+	border-color: white white white white;
+	border-collapse: collapse;
+	background-color: white;
+}
+table th {
+	border-width: 0px 0px 0px 0px;
+	padding: 2px 2px 2px 2px;
+	border-style: hidden hidden hidden hidden;
+	border-color: gray gray gray gray;
+	background-color: white;
+	-moz-border-radius: 0px 0px 0px 0px;
+}
+table td {
+	border-width: 0px 0px 0px 0px;
+	padding: 2px 2px 2px 2px;
+	border-style: hidden hidden hidden hidden;
+	border-color: gray gray gray gray;
+	background-color: white;
+	-moz-border-radius: 0px 0px 0px 0px;
+}
 div#outer{
 	height:100%;
 	width:100%;
@@ -23,7 +47,7 @@ div#outer{
 div#inner {
    position:relative;
    width: 90%;
-   height:90%;
+   height:650px;
 	background:white;
 	margin-left:auto;
 	margin-right:auto;
@@ -38,7 +62,7 @@ div#left {
    position:absolute;
    top:109px;
    width: 30%;
-   height:100%;
+   height:450px;
    background:white;
 }
 div#right {
@@ -46,42 +70,35 @@ div#right {
    top:109px;
    right:0px;
    width: 70%;
-   height:100%;
+   height:500px;
    background:white;
 }
 div#side-header {
    background:white;
+   height:30px;
 }
 div#sidebar {
    background:white;
-
-}
-div#content {
-   background:white;
+   height:100%;
 }
 div#editor {
 	background:white;
-}
-div#selector {
-	display:none;
-	background:white;
-}
-div#creator {
-	background:white;
+	margin-left:50px;
+	margin-right:50px;
 }
 div#new_key {
 	background:white;
+	margin-left:50px;
 }
 div#footer {
-   clear:both;
-   color:red ;
-   background:green;
+	position:relative;
+	background:white;
+	margin-left:auto;
+	margin-right:auto;
+   color:black ;
+   width:90%;
+   background:grey;
    align:center;
-
-}
-div#front {
-	align:center;
-	font-size:medium;
 }
 div#ffscrollbarfix {
 	position: absolute;

@@ -14,7 +14,7 @@ var EscEditor = function() {
                 type: "GET",
                 url: "/environments/" + env + "/" + app,
                 success: function(data, textStatus) {
-                    $('#editor').html("<p>Properties for app <b>" + app + "</b> in env <b>" + env + "</b></p>");
+                    $('#editor').html("<h2>Properties for <b>" + app + "</b> in <b>" + env + "</b></h2>");
                     var table = '<table border="1" id="key_value_table"><tr><th>Key</th><th>Value</th></tr>';
                     $.each(data.split('\n'), function(i, item) {
                         table += "<tr>";
