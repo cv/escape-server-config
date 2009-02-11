@@ -14,7 +14,7 @@
 
 class Key < Sequel::Model(:keys)
     set_schema do
-        primary_key :id, :type=>Integer, :null => false
+        primary_key :id, :type=>Integer, :null => false, :auto_increment => true
         String :name
 
         foreign_key :app_id, :table => :apps, :type=>Integer

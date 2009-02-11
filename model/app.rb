@@ -17,7 +17,7 @@ class App < Sequel::Model(:apps)
     one_to_many :keys
 
     set_schema do
-        primary_key :id, :type=>Integer, :null => false
+        primary_key :id, :type=>Integer, :null => false, :auto_increment => true
         String :name
     end
 
