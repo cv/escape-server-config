@@ -8,11 +8,6 @@ var EscSidebar = function() {
 
         togglePlus : togglePlus,
 
-        makeCollapsible : function(target, subHead) {
-            //By Default put the Menu in collapsed state
-            $('.children').parent().children('ul').slideUp('fast');
-        },
-
         getListofEnvsAndApps : function(target) {
             $.getJSON("/environments", function(envData) {
                 var envList = "<ul>";
@@ -24,10 +19,16 @@ var EscSidebar = function() {
                         $.each(appData, function(i, thisApp) {
                             appList += "<li id='" + thisApp + "_app'>" + thisApp + "</li>";
                         });
+                        if (thisEnv == "default") {
+                            appList += '<li><form id="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name" name="new_app_name"/></form></li>';
+                        }
                         appList += "</ul>";
                         $(target + ' #' + thisEnv + '_env').append(appList);
                         // Collapse all the childrens...
                         $('.children').parent().children('ul').slideUp('fast');
+                        if (thisEnv == "default") {
+                            $(target + " #new_app_form").submit(EscSidebar.createNewApp);
+                        }
                     });
                     envList += ('</li>');
                 });
@@ -39,11 +40,17 @@ var EscSidebar = function() {
         },
 
         validateEnvName : function(name) {
+            // TODO: Put some propper rules in here
             if ((name == "default") || (name == "")) {
                 return false;
             } else {
                 return true;
             }
+        },
+
+        validateAppName : function(name) {
+            // TODO: Put some propper rules in here
+            return true;
         },
 
         createNewEnv : function() {
@@ -66,14 +73,34 @@ var EscSidebar = function() {
             }
         },
 
+        createNewApp : function() {
+            var newName = $('#new_app_name').val();
+            var envName = "default";
+            if (EscSidebar.validateAppName(newName)) {
+                $('#new_app_name').val("");
+                $.ajax({
+                    type: "POST",
+                    url: "/environments/" + envName + "/" + newName,
+                    data: {},
+                    success: function(data, textStatus) {
+                        EscSidebar.getListofEnvsAndApps('#sidebar');
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Error creating new app '" + newName);
+                    },
+                });
+            } else {
+                alert("Not going to create new app called " + newName);
+            }
+        },
+
 // End of namespace
     };
 }();
 
 $(document).ready(function() {
     $('#refresh_env').click(function() {
-        var subHead = $('.children').parent();
-        EscSidebar.makeCollapsible('#sidebar', subHead);
+        EscSidebar.getListofEnvsAndApps('#sidebar');
     })
 
     //Expand All Code
