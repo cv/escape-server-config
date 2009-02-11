@@ -4,6 +4,9 @@ var EscSidebar = function() {
     var togglePlus = '/images/plus.jpg';
 
     return {
+        toggleMinus : toggleMinus,
+
+        togglePlus : togglePlus,
 
         makeCollapsible : function(target, subHead) {
             //By Default put the Menu in collapsed state
@@ -14,7 +17,7 @@ var EscSidebar = function() {
             $.getJSON("/environments", function(envData) {
                 var envList = "<ul>";
                 $.each(envData, function(i, thisEnv) {
-                    envList += ('<li id="' + thisEnv + '_env"><img src="' + toggleMinus + '" alt="collapse this section" class="expander" class="clickable"> ' + thisEnv);
+                    envList += ('<li id="' + thisEnv + '_env"><img src="' + togglePlus + '" alt="collapse this section" class="expander" class="clickable"> ' + thisEnv);
                     var url = "/environments/" + thisEnv;
                     $.getJSON(url, function(appData) {
                         appList = '<ul class="children"';
@@ -23,6 +26,8 @@ var EscSidebar = function() {
                         });
                         appList += "</ul>";
                         $(target + ' #' + thisEnv + '_env').append(appList);
+                        // Collapse all the childrens...
+                        $('.children').parent().children('ul').slideUp('fast');
                     });
                     envList += ('</li>');
                 });
@@ -66,22 +71,21 @@ var EscSidebar = function() {
 }();
 
 $(document).ready(function() {
-    // Get nested list of environments/apps
-    //$('#show_env').click(function() {
-    //    var subHead = $('.children').parent();
-    //    EscSidebar.makeCollapsible('#sidebar', subHead);
-    //})
+    $('#refresh_env').click(function() {
+        var subHead = $('.children').parent();
+        EscSidebar.makeCollapsible('#sidebar', subHead);
+    })
 
     //Expand All Code
     $('.expand').live("click", function() {
         $('.children').slideDown('fast');
-        $('img', $('.children').parent()).attr('src', toggleMinus);
+        $('img', $('.children').parent()).attr('src', EscSidebar.toggleMinus);
     });
 
     //Contract All Code
     $('.contract').live("click", function() {
-        $('.children').parent().attr('src', toggleMinus).children('ul').slideUp('fast');
-        $('img', $('.children').parent()).attr('src', togglePlus);
+        $('.children').parent().attr('src', EscSidebar.toggleMinus).children('ul').slideUp('fast');
+        $('img', $('.children').parent()).attr('src', EscSidebar.togglePlus);
     });
 
     // Click on an app to get stuff in the content pane
@@ -91,16 +95,13 @@ $(document).ready(function() {
         EscEditor.editPropertiesFor(thisEnv, thisApp);
     });
 
-    var toggleMinus = '/images/minus.jpg';
-    var togglePlus = '/images/plus.jpg';
-
     //Expand or Contract one particular Nested ul
     $('.expander').live("click", function() {
         var toggleSrc = $(this).attr('src');
-        if ( toggleSrc == toggleMinus ) {
-            $(this).attr('src', togglePlus).parent().children('ul').slideUp('fast');
+        if ( toggleSrc == EscSidebar.toggleMinus ) {
+            $(this).attr('src', EscSidebar.togglePlus).parent().children('ul').slideUp('fast');
         } else{
-            $(this).attr('src', toggleMinus).parent().children('ul').slideDown('fast');
+            $(this).attr('src', EscSidebar.toggleMinus).parent().children('ul').slideDown('fast');
         };
     });
 
