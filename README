@@ -1,0 +1,26 @@
+= ESCAPE Serves Configuration Across Plentiful Environments
+
+This application exists to help in the development and operation of custom applications. It is designed to serve environment-specific configuration to a variety of applications in a multitude of environments.
+
+It is particularly useful if your Software Development Lifecycle uses a 'build pipeline' for the promotion of code into production, but this is not a prerequisite. 
+
+For more information please go to http://code.google.com/p/escservesconfig/
+
+== Quick Start
+
+First off - this a Ruby app. Dev and tested with Ruby 1.8 on OSX.
+
+Required ruby gems:
+
+    ramaze
+    rack 
+    sequel
+    sqlite
+    json
+    
+
+If you have rackup in your path, you can start the server with './start.ru'. If not, 'ruby start.rb' will work.
+
+Once the server is up, connect on port 7000 with your favourite browser
+
+    

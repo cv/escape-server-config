@@ -1,4 +1,5 @@
 
+require 'rubygems'
 require 'ramaze'
 require 'ramaze/spec/helper'
 
