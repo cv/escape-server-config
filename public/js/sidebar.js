@@ -5,22 +5,9 @@ var EscSidebar = function() {
 
     return {
 
-        makeCollapsible : function(target) {
-            var subHead = $('.children').parent();
+        makeCollapsible : function(target, subHead) {
             //By Default put the Menu in collapsed state
             $('.children').parent().children('ul').slideUp('fast');
-
-            //Expand All Code
-            $('.expand').click(function() {
-                subHead.children('ul').slideDown('fast');
-                $('img', subHead).attr('src', toggleMinus);
-            });
-
-            //Contract All Code
-            $('.contract').click(function() {
-                subHead.attr('src', toggleMinus).children('ul').slideUp('fast');
-                $('img', subHead).attr('src', togglePlus);
-            });
 
             //Expand or Contract one particular Nested ul
             $('img', subHead).addClass('clickable').click(function() {
@@ -37,9 +24,18 @@ var EscSidebar = function() {
                 var thisEnv = $(this).parents("li:first").attr("id").replace('_env', '');
                 var thisApp = $(this).attr("id").replace('_app', '');
                 var url = "/environments/" + thisEnv + "/" + thisApp;
-                //$('#content').html(url);		
                 EscEditor.editPropertiesFor(thisEnv, thisApp);
             });
+        },
+
+        contract : function(target) {
+            target.attr('src', toggleMinus).children('ul').slideUp('fast');
+            $('img', target).attr('src', togglePlus);
+        },
+
+        expand : function(target) {
+            target.children('ul').slideDown('fast');
+            $('img', target).attr('src', toggleMinus);
         },
 
         getListofEnvsAndApps : function(target) {
@@ -100,8 +96,21 @@ var EscSidebar = function() {
 $(document).ready(function() {
     // Get nested list of environments/apps
     $('#show_env').click(function() {
-        EscSidebar.makeCollapsible('#sidebar');
+        var subHead = $('.children').parent();
+        EscSidebar.makeCollapsible('#sidebar', subHead);
     })
+
+    //Expand All Code
+    $('.expand').live("click", function() {
+        $(this).children('ul').slideDown('fast');
+        $('img', $(this)).attr('src', toggleMinus);
+    });
+
+    //Contract All Code
+    $('.contract').live("click", function() {
+        $(this).attr('src', toggleMinus).children('ul').slideUp('fast');
+        $('img', $(this)).attr('src', togglePlus);
+    });
 
     EscSidebar.getListofEnvsAndApps('#sidebar');
 });
