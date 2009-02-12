@@ -112,6 +112,10 @@ div#hidden {
    display: none;
 }
 
-#sidebar>ul>li {
+.env_list {
     font-weight: bold;
+}
+
+.app_list {
+    font-weight: normal;
 }
