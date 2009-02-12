@@ -14,6 +14,8 @@
 
 # Here goes your database connection and options:
 
+require 'rubygems'
+gem 'sequel', '>=2.10.0'
 require 'sequel'
 require 'logger'
 

@@ -1,4 +1,5 @@
 require 'rubygems'
+gem 'ramaze', '>=2009.01'
 require 'ramaze'
 
 # Add directory start.rb is in to the load path, so you can run the app from
