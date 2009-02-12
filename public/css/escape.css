@@ -3,6 +3,7 @@ body {
    font-size: small;
    font-color: #000;
    background:lightgrey;
+   overflow-y: scroll;
 }
 a:link, a:active, a:visited {
    color: #CD0000;
@@ -101,13 +102,7 @@ div#footer {
    background:grey;
    align:center;
 }
-div#ffscrollbarfix {
-	position: absolute;
-	top: 0;
-	bottom: -0.1px;
-	width: 1em;
-	z-index: -1;
-}
+
 div#hidden {
    display: none;
 }
