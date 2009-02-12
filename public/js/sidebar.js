@@ -37,7 +37,7 @@ var EscSidebar = function() {
                     });
                     envList += ('</li>');
                 });
-                envList += '<li><form id="new_env_form" action="javascript:void(0);"> +Env:<input type="text" id="new_env_name" name="new_env_name"/></form></li>';
+                envList += '<li><form id="new_env_form" action="javascript:void(0);"> +env:<input type="text" id="new_env_name" name="new_env_name"/></form></li>';
                 envList += "</ul>";
                 $(target).html(envList);
                 $(target + " #new_env_form").submit(EscSidebar.createNewEnv);
