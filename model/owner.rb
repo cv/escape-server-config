@@ -26,3 +26,7 @@ end
 
 EscData.init_model(Owner)
 
+if Owner[:name => 'nobody'].nil?
+    Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing')
+end
+
