@@ -71,4 +71,12 @@ describe EnvironmentsController, 'Application bits' do
         got.body.should.include "appname"
         got.body.should.include "myapp"
     end
+
+    it 'should allow spaces in application names' do
+        got = put('/environments/default/spaced%20out%20name')
+        got.status.should == 201
+        
+        got = get('/environments/default')
+        got.body.should.include "spaced out name"
+    end
 end

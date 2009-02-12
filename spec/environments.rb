@@ -53,4 +53,12 @@ describe EnvironmentsController, 'Environment bits' do
         got = put('/environments/myenv')
         got.status.should == 403
     end
+
+    it 'should allow spaces in environment names' do
+        got = put('/environments/spaced%20out%20name')
+        got.status.should == 201
+        
+        got = get('/environments')
+        got.body.should.include "spaced out name"
+    end
 end
