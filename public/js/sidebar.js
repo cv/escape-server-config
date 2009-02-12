@@ -2,11 +2,14 @@
 var EscSidebar = function() {
     var toggleMinus = '/images/minus.jpg';
     var togglePlus = '/images/plus.jpg';
+    var newEnvLabel = '+env:';
+    var newAppLabel = '+app:';
 
     return {
         toggleMinus : toggleMinus,
-
         togglePlus : togglePlus,
+        newEnvLabel : newEnvLabel,
+        newAppLabel : newAppLabel,
 
         getListofEnvsAndApps : function() {
             $.getJSON("/environments", function(envData) {
@@ -26,7 +29,7 @@ var EscSidebar = function() {
                         $.each(appData, function(appId, thisApp) {
                             appList += "<li class='app'>" + thisApp + "</li>";
                         });
-                        appList += '<li><form id="' + myEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"> +app:<input type="text" id="new_app_name"/></form></li>';
+                        appList += '<li><form id="' + myEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);">' + newAppLabel + '<input type="text" id="new_app_name"/></form></li>';
                         appList += "</ul>";
                         var envObj = $('#sidebar .environment:eq(' + envId + ')');
                         envObj.append(appList);
@@ -37,7 +40,7 @@ var EscSidebar = function() {
                     });
                     envList += ('</li>');
                 });
-                envList += '<li><form id="new_env_form" action="javascript:void(0);"> +env:<input type="text" id="new_env_name" name="new_env_name"/></form></li>';
+                envList += '<li><form id="new_env_form" action="javascript:void(0);">' + newEnvLabel + '<input type="text" id="new_env_name" name="new_env_name"/></form></li>';
                 envList += "</ul>";
                 $('#sidebar').html(envList);
                 $('#sidebar' + " #new_env_form").submit(EscSidebar.createNewEnv);
@@ -135,7 +138,7 @@ $(document).ready(function() {
         var thisEnv = $(this).parent().siblings("span").text();
         var thisApp = $(this).text();
 
-        if ((thisApp != null) && (thisApp != "")) {
+        if ((thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
             EscEditor.editPropertiesFor(thisEnv, thisApp);
             $('#new_key').show();
             $('#editor').show();

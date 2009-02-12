@@ -106,3 +106,9 @@ div#footer {
 div#hidden {
    display: none;
 }
+.app_list {
+    font-weight: normal;
+}
+.env_list {
+    font-weight: bold;
+}
