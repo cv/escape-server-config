@@ -96,6 +96,9 @@ class EnvironmentsController < Ramaze::Controller
                 if value.nil? # Got no value in specified env, what's in default?
                     value = Value[:key_id => key[:id], :environment_id => Environment[:name => "default"][:id]]
                 end
+                if value[:value] == "" # Got no value in specified env, what's in default?
+                    value = Value[:key_id => key[:id], :environment_id => Environment[:name => "default"][:id]]
+                end
                 pairs.push("#{key[:name]}=#{value[:value]}\n")
             end
             response.headers["Content-Type"] = "text/plain"

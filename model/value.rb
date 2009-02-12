@@ -24,4 +24,3 @@ class Value < Sequel::Model(:values)
 end
 
 EscData.init_model(Value)
-
