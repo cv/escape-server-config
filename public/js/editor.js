@@ -14,10 +14,17 @@ var EscEditor = function() {
                 type: "GET",
                 url: "/environments/" + env + "/" + app,
                 success: function(data, textStatus) {
-                    $('#editor').html("<h2>Properties for <b>" + app + "</b> in <b>" + env + "</b></h2>");
-                    var table = '<table border="1" id="key_value_table"><tr><th>Key</th><th>Value</th></tr>';
+                    $('#editor').html("<center><b>" + app + "</b> in <b>" + env + "</b></center><br />");
+                    var table = '<table class="keyvalue" id="key_value_table"><tr class="keyvalueheader"><th>Key</th><th>Value</th></tr>';
+					rowcolour = 1
                     $.each(data.split('\n'), function(i, item) {
-                        table += "<tr>";
+						if (rowcolour == 1) { //Alternating row colours
+							rowcolour = 0
+						}else {
+							rowcolour = 1
+						}
+						
+                        table += ('<tr class="tr-' + rowcolour + '">');
                         $.each(item.split('=', 2), function(j, jtem) {
                             var tag = (j % 2) ? "td" : "th";
                             table += "<" + tag + ">" + jtem + "</" + tag + ">";
