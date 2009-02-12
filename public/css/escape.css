@@ -111,3 +111,7 @@ div#ffscrollbarfix {
 div#hidden {
    display: none;
 }
+
+#sidebar>ul>li {
+    font-weight: bold;
+}

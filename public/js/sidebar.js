@@ -10,7 +10,7 @@ var EscSidebar = function() {
 
         getListofEnvsAndApps : function(target) {
             $.getJSON("/environments", function(envData) {
-                var envList = "<ul>";
+                var envList = "<ul class='env_list'>";
                 $.each(envData, function(i, thisEnv) {
                     var toggleState;
                     if ($('#sidebar').data(thisEnv + '_expanded')) {
@@ -18,13 +18,13 @@ var EscSidebar = function() {
                     } else {
                         toggleState = togglePlus;
                     };
-                    envList += ('<li id="' + thisEnv + '_env"><img src="' + toggleState + '" alt="collapse this section" class="expander" class="clickable"> ' + thisEnv);
+                    envList += ('<li id="' + thisEnv + '_env" class="environment"><img src="' + toggleState + '" alt="collapse this section" class="expander" class="clickable"> ' + thisEnv);
                     var url = "/environments/" + thisEnv;
                     $.getJSON(url, function(appData) {
                         var myEnv = thisEnv;
-                        appList = '<ul class="children"';
+                        appList = '<ul class="app_list"';
                         $.each(appData, function(i, thisApp) {
-                            appList += "<li id='" + thisApp + "_app'>" + thisApp + "</li>";
+                            appList += "<li id='" + thisApp + "_app' class='app'>" + thisApp + "</li>";
                         });
                         appList += '<li><form id="' + myEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/></form></li>';
                         appList += "</ul>";
@@ -110,8 +110,8 @@ $(document).ready(function() {
 
     //Expand All Code
     $('.expand').live("click", function() {
-        $('.children').slideDown('fast');
-        $('img', $('.children').parent()).attr('src', EscSidebar.toggleMinus);
+        $('#sidebar > ul > li > ul').slideDown('fast');
+        $('img', $('#sidebar > ul > li')).attr('src', EscSidebar.toggleMinus);
         // Loop through all envs, set collapsed = true
         $.each($('#sidebar > ul > li'), function(i, item) { 
             var myEnv = $(item).attr('id').replace('_env', '');
@@ -121,8 +121,8 @@ $(document).ready(function() {
 
     //Contract All Code
     $('.contract').live("click", function() {
-        $('.children').parent().attr('src', EscSidebar.toggleMinus).children('ul').slideUp('fast');
-        $('img', $('.children').parent()).attr('src', EscSidebar.togglePlus);
+        $('#sidebar > ul > li > ul').slideUp('fast');
+        $('img', $('#sidebar > ul > li')).attr('src', EscSidebar.togglePlus);
         // Loop through all envs, set collapsed = true
         $.each($('#sidebar > ul > li'), function(i, item) { 
             var myEnv = $(item).attr('id').replace('_env', '');
