@@ -160,41 +160,5 @@ $(document).ready(function() {
     EscSidebar.getListofEnvsAndApps('#sidebar');
     $('#new_key').hide();
     $('#editor').hide();
-
-/* Bloody droppables!!!
-    $('#floater').draggable({ 
-        revert: true,
-        start: function(event, ui) {
-            $(this).find('p').html("Start");
-        },
-        stop: function(event, ui) {
-            $(this).find('p').html("Stop");
-        },
-        drag: function(event, ui) {
-            $(this).find('p').html("Drag");
-        },
-        
-    });
-    $('#floater').find('p').html("Loaded Drag");
-    $('#drop').droppable({ 
-        activate: function(event, ui) {
-            $(this).find('p').html("Activate");
-        },
-        deactivate: function(event, ui) {
-            $(this).find('p').html("Deactivate");
-        },
-        over: function(event, ui) {
-            $(this).find('p').html("Over");
-        },
-        out: function(event, ui) {
-            $(this).find('p').html("Out");
-        },
-        drop: function(event, ui) {
-            $(this).find('p').html("Drop");
-            $('#drop').find('p').html("Hard Drop");
-        },
-    });
-    $('#drop').find('p').html("Loaded Drop");
-*/
 });
 
