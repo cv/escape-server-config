@@ -32,7 +32,7 @@ EscData.init_model(AppsKeys)
 
 class OwnerAppEnv < Sequel::Model
     set_schema do
-        primary_key :id, :type=>Integer, :null => false, :auto_increment => true
+        primary_key :id, :null => false
         Integer :app_id
         Integer :environment_id
         Integer :owner_id

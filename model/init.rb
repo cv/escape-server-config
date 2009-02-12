@@ -24,7 +24,6 @@ DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
 #DB = Sequel.mysql('escape', :user => 'root', :password => '', :host => 'localhost')
 
 # Postgres - requires ruby postgres client
-# NOTE: Currently broken due to auto increment issues in Sequel 2.10.0
 #DB = Sequel.connect('postgres://esc:password@localhost/escape')
 
 # Oracle - requires ruby-oci8 gem

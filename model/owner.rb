@@ -14,7 +14,7 @@
 
 class Owner < Sequel::Model(:owners)
     set_schema do
-        primary_key :id, :type=>Integer, :null => false, :auto_increment => true
+        primary_key :id, :null => false
         String :name
         String :email
         String :password
