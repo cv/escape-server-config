@@ -26,7 +26,7 @@ var EscSidebar = function() {
                         $.each(appData, function(i, thisApp) {
                             appList += "<li id='" + thisApp + "_app' class='app'>" + thisApp + "</li>";
                         });
-                        appList += '<li><form id="' + myEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/></form></li>';
+                        appList += '<li><form id="' + myEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"> +app:<input type="text" id="new_app_name"/></form></li>';
                         appList += "</ul>";
                         $(target + ' #' + myEnv + '_env').append(appList);
                         if (! $('#sidebar').data(myEnv + '_expanded')) {
@@ -37,7 +37,7 @@ var EscSidebar = function() {
                     });
                     envList += ('</li>');
                 });
-                envList += '<li><form id="new_env_form" action="javascript:void(0);"><input type="text" id="new_env_name" name="new_env_name"/></form></li>';
+                envList += '<li><form id="new_env_form" action="javascript:void(0);"> +Env:<input type="text" id="new_env_name" name="new_env_name"/></form></li>';
                 envList += "</ul>";
                 $(target).html(envList);
                 $(target + " #new_env_form").submit(EscSidebar.createNewEnv);
