@@ -12,18 +12,27 @@ var EscSidebar = function() {
             $.getJSON("/environments", function(envData) {
                 var envList = "<ul>";
                 $.each(envData, function(i, thisEnv) {
-                    envList += ('<li id="' + thisEnv + '_env"><img src="' + togglePlus + '" alt="collapse this section" class="expander" class="clickable"> ' + thisEnv);
+                    var toggleState;
+                    if ($('#sidebar').data(thisEnv + '_collapsed')) {
+                        toggleState = togglePlus;
+                    } else {
+                        toggleState = toggleMinus;
+                    };
+                    envList += ('<li id="' + thisEnv + '_env"><img src="' + toggleState + '" alt="collapse this section" class="expander" class="clickable"> ' + thisEnv);
                     var url = "/environments/" + thisEnv;
                     $.getJSON(url, function(appData) {
+                        var myEnv = thisEnv;
                         appList = '<ul class="children"';
                         $.each(appData, function(i, thisApp) {
                             appList += "<li id='" + thisApp + "_app'>" + thisApp + "</li>";
                         });
-                        appList += '<li><form id="' + thisEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/></form></li>';
+                        appList += '<li><form id="' + myEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/></form></li>';
                         appList += "</ul>";
-                        $(target + ' #' + thisEnv + '_env').append(appList);
-                        // Collapse all the childrens...
-                        $('.children').parent().children('ul').slideUp('fast');
+                        $(target + ' #' + myEnv + '_env').append(appList);
+                        if ($('#sidebar').data(myEnv + '_collapsed')) {
+                            // Collapse all the childrens...
+                            $('#' + myEnv + '_env').children('ul').slideUp('fast');
+                        } 
                         $(target + " .new_app_form").submit(EscSidebar.createNewApp);
                     });
                     envList += ('</li>');
@@ -128,9 +137,12 @@ $(document).ready(function() {
     //Expand or Contract one particular Nested ul
     $('.expander').live("click", function() {
         var toggleSrc = $(this).attr('src');
+        var thisEnv = $(this).parent().attr('id').replace('_env', '');
         if ( toggleSrc == EscSidebar.toggleMinus ) {
+            $('#sidebar').data(thisEnv + '_collapsed', true);
             $(this).attr('src', EscSidebar.togglePlus).parent().children('ul').slideUp('fast');
         } else{
+            $('#sidebar').data(thisEnv + '_collapsed', false);
             $(this).attr('src', EscSidebar.toggleMinus).parent().children('ul').slideDown('fast');
         };
     });
