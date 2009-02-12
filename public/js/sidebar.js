@@ -13,10 +13,10 @@ var EscSidebar = function() {
                 var envList = "<ul>";
                 $.each(envData, function(i, thisEnv) {
                     var toggleState;
-                    if ($('#sidebar').data(thisEnv + '_collapsed')) {
-                        toggleState = togglePlus;
-                    } else {
+                    if ($('#sidebar').data(thisEnv + '_expanded')) {
                         toggleState = toggleMinus;
+                    } else {
+                        toggleState = togglePlus;
                     };
                     envList += ('<li id="' + thisEnv + '_env"><img src="' + toggleState + '" alt="collapse this section" class="expander" class="clickable"> ' + thisEnv);
                     var url = "/environments/" + thisEnv;
@@ -29,7 +29,7 @@ var EscSidebar = function() {
                         appList += '<li><form id="' + myEnv + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/></form></li>';
                         appList += "</ul>";
                         $(target + ' #' + myEnv + '_env').append(appList);
-                        if ($('#sidebar').data(myEnv + '_collapsed')) {
+                        if (! $('#sidebar').data(myEnv + '_expanded')) {
                             // Collapse all the childrens...
                             $('#' + myEnv + '_env').children('ul').slideUp('fast');
                         } 
@@ -70,7 +70,7 @@ var EscSidebar = function() {
                         EscSidebar.getListofEnvsAndApps('#sidebar');
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert("Error creating new environment '" + newName);
+                        alert("Error creating new environment '" + newName +"'");
                     },
                 });
             } else {
@@ -91,7 +91,7 @@ var EscSidebar = function() {
                         EscSidebar.getListofEnvsAndApps('#sidebar');
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert("Error creating new app '" + newName);
+                        alert("Error creating new app '" + newName + "'");
                     },
                 });
             } else {
@@ -112,12 +112,22 @@ $(document).ready(function() {
     $('.expand').live("click", function() {
         $('.children').slideDown('fast');
         $('img', $('.children').parent()).attr('src', EscSidebar.toggleMinus);
+        // Loop through all envs, set collapsed = true
+        $.each($('#sidebar > ul > li'), function(i, item) { 
+            var myEnv = $(item).attr('id').replace('_env', '');
+            $('#sidebar').data(myEnv + '_expanded', true);
+        });
     });
 
     //Contract All Code
     $('.contract').live("click", function() {
         $('.children').parent().attr('src', EscSidebar.toggleMinus).children('ul').slideUp('fast');
         $('img', $('.children').parent()).attr('src', EscSidebar.togglePlus);
+        // Loop through all envs, set collapsed = true
+        $.each($('#sidebar > ul > li'), function(i, item) { 
+            var myEnv = $(item).attr('id').replace('_env', '');
+            $('#sidebar').data(myEnv + '_expanded', false);
+        });
     });
 
     // Click on an app to get stuff in the content pane
@@ -139,10 +149,10 @@ $(document).ready(function() {
         var toggleSrc = $(this).attr('src');
         var thisEnv = $(this).parent().attr('id').replace('_env', '');
         if ( toggleSrc == EscSidebar.toggleMinus ) {
-            $('#sidebar').data(thisEnv + '_collapsed', true);
+            $('#sidebar').data(thisEnv + '_expanded', false);
             $(this).attr('src', EscSidebar.togglePlus).parent().children('ul').slideUp('fast');
         } else{
-            $('#sidebar').data(thisEnv + '_collapsed', false);
+            $('#sidebar').data(thisEnv + '_expanded', true);
             $(this).attr('src', EscSidebar.toggleMinus).parent().children('ul').slideDown('fast');
         };
     });
