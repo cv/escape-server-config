@@ -38,6 +38,23 @@ describe EnvironmentsController, 'Key/Value bits' do
 
     end
 
+    it 'should set the key in the default environment when we add it to a different environment' do
+    
+        got = put('/environments/newenv')
+        got.status.should == 201
+
+        got = put('/environments/newenv/appname')
+        got.status.should == 201
+    
+        value = "default.value"
+        got = put('/environments/newenv/appname/key', :input => value)
+        got.status.should == 201
+            
+        got = get('/environments/default/appname/key')
+        got.status.should == 200
+        
+    end
+
     it 'should return the default value for an existing environment for which there is no explicit value' do
         got = put('/environments/default/appname')
         got.status.should == 201

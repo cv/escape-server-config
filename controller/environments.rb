@@ -199,6 +199,8 @@ class EnvironmentsController < Ramaze::Controller
         if mykey.nil?
             mykey = Key.create(:name => key, :app_id => myapp[:id])
             myapp.add_key(mykey)
+            defaultenv = Environment[:name => 'default']
+            Value.create(:key_id => mykey[:id], :environment_id => defaultenv[:id], :value => value)
             Value.create(:key_id => mykey[:id], :environment_id => myenv[:id], :value => value)
             response.status = 201
         # We're updating the config
