@@ -21,6 +21,6 @@ Required ruby gems:
 
 If you have rackup in your path, you can start the server with './start.ru'. If not, 'ruby start.rb' will work.
 
-Once the server is up, connect on port 7000 with your favourite browser
+Once the server is up, connect on port 7000 with your favourite browser (firefox cough cough)
 
     
