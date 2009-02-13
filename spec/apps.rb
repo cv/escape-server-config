@@ -72,11 +72,16 @@ describe EnvironmentsController, 'Application bits' do
         got.body.should.include "myapp"
     end
 
-    it 'should allow spaces in application names' do
+    it 'should not allow apps to be created in non existing environments' do
+        got = put('/environments/badenv/badapp')
+        got.status.should == 404
+    end
+
+    it 'should only accept \A[a-zA-Z0-9_-]+\Z as environment name' do
         got = put('/environments/default/spaced%20out%20name')
-        got.status.should == 201
+        got.status.should == 403
         
-        got = get('/environments/default')
-        got.body.should.include "spaced out name"
+        got = put('/environments/default/Legal-env_name')
+        got.status.should == 201
     end
 end

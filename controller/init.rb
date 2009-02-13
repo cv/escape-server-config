@@ -22,4 +22,3 @@ end
 require 'controller/main'
 require 'controller/environments'
 require 'controller/manage'
-require 'controller/show'

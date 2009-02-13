@@ -17,6 +17,11 @@ describe EnvironmentsController, 'Environment bits' do
     end
 
     # Environment tests
+    it 'should not accept put on /environments' do
+        got = put('/environments/')
+        got.status.should == 400
+    end
+
     it 'should get /environments and list them' do
         got = get('/environments')
         got.status.should == 200
@@ -54,11 +59,14 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 403
     end
 
-    it 'should allow spaces in environment names' do
-        got = put('/environments/spaced%20out%20name')
+    it 'should only accept \A[a-zA-Z0-9_-]+\Z as environment name' do
+        got = put('/environments/Legal-env_name0')
         got.status.should == 201
-        
-        got = get('/environments')
-        got.body.should.include "spaced out name"
+
+        got = put('/environments/not%20legal')
+        got.status.should == 403
+
+        got = put('/environments/not.legal')
+        got.status.should == 403
     end
 end

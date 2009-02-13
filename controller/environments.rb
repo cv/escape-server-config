@@ -139,18 +139,34 @@ class EnvironmentsController < Ramaze::Controller
     end
 
     def createEnv(env)
-        begin
+        msg = nil
+        if not env =~ /\A[a-zA-Z0-9_-]+\Z/
+            response.status = 403
+            msg = "Invalid environment name. Valid characters are a-z, A-Z, 0-9, _ and -"
+        elsif Environment[:name => env]
+            response.status = 403
+            msg = "Environment already exists."
+        else
             Environment.create(:name => env)
             response.status = 201
-        rescue
-            response.status = 403
-            return "Error creating environment. The name might already exist..."
+            msg = "Environment created."
         end
+        return msg
     end
 
     def createApp(env, app)
+        if not app =~ /\A[a-zA-Z0-9_-]+\Z/
+            response.status = 403
+            return "Invalid application name. Valid characters are a-z, A-Z, 0-9, _ and -"
+        end
+
         myapp = App[:name => app]
         myenv = Environment[:name => env]
+
+        if myenv.nil?
+            response.status = 404
+            return "Environment #{env} does not exist"
+        end
 
         owner = request['owner']
         if owner.nil?
