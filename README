@@ -17,6 +17,7 @@ Required ruby gems:
     sequel
     sqlite
     json
+    mongrel
     
 
 If you have rackup in your path, you can start the server with './start.ru'. If not, 'ruby start.rb' will work.

@@ -1,11 +1,10 @@
 
 require 'rake/clean'
+require 'rake/packagetask'
 require 'rexml/document'
 
-releaseDir = 'release'
-
 CLEAN.include('escape.db')
-CLEAN.include(releaseDir)
+CLEAN.include('dist')
 
 task :default => [:test]
 
@@ -23,10 +22,5 @@ end
 
 desc 'Create release package'
 task :release => [:clean] do
-    mkdir releaseDir
-    sh "svn info --xml" do |ok, res|
-        if ok
-            xmlData = res
-        end
-    end
+    sh "bash release.sh"
 end
