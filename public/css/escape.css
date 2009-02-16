@@ -107,8 +107,10 @@ div#hidden {
    display: none;
 }
 .application_list {
+    font-size: medium;
     font-weight: normal;
 }
 .environment_list {
+    font-size: large;
     font-weight: bold;
 }
