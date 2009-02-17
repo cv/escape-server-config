@@ -118,8 +118,10 @@ $(document).ready(function() {
         // Loop through all envs, set collapsed = true
         $.each($('#sidebar > ul > li > span'), function(id, span) { 
             var name = $(span).text();
-            $('#sidebar').data(name + '_expanded', true);
-            EscSidebar.loadApplicationsForEnvironment(id, name);
+            if (! $('#sidebar').data(name + '_expanded')) {
+                $('#sidebar').data(name + '_expanded', true);
+                EscSidebar.loadApplicationsForEnvironment(id, name);
+            };
         });
     });
 
