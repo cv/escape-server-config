@@ -15,6 +15,9 @@ background:white
 li {
 	list-style:none;
 }
+img
+{  border-style: none;
+}
 table.keyvalue {
 	width:100%;
 	table-layout:fixed;

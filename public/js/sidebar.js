@@ -16,9 +16,9 @@ var EscSidebar = function() {
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
                 $.each(appData, function(appId, thisApp) {
-                    appList += "<li class='application'>" + thisApp + "</li>";
+                    appList += "<li class='application'>" + thisApp + " <img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/></li>";
                 });
-                appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);">' + newAppLabel + '<input type="text" id="new_app_name"/></form></li>';
+                appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/>&nbsp;<img src="/images/add.png" alt="Add a new application" /></form></li>';
                 appList += "</ul>";
                 var envObj = $('#sidebar .environment:eq(' + envId + ')');
                 envObj.append(appList);
@@ -41,7 +41,7 @@ var EscSidebar = function() {
                     envList += ('<li class="environment"><img src="' + toggleState + '" class="expander_img" class="clickable"><span>' + envName + '</span>');
                     envList += ('</li>');
                 });
-                envList += '<li><form id="new_env_form" action="javascript:void(0);">' + newEnvLabel + '<input type="text" id="new_env_name" name="new_env_name"/></form></li>';
+                envList += '<li><form id="new_env_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new environment"/> <input type="text" id="new_env_name" name="new_env_name"/></form></li>';
                 envList += "</ul>";
                 $('#sidebar').html(envList);
                 $('#sidebar' + " #new_env_form").submit(EscSidebar.createNewEnv);
