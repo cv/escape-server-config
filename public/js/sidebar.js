@@ -139,9 +139,10 @@ $(document).ready(function() {
 
     // Click on an app to get stuff in the content pane
     $('.appedit').live("click", function() {
-        var thisEnv = $(this).parent().siblings("span").text();
-        var thisApp = $(this).text();
 
+        var thisEnv = $(this).parent().parent().siblings("span").text();
+        var thisApp = $(this).parent().text();
+    
         if ((thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
             EscEditor.editPropertiesFor(thisEnv, thisApp);
             $('#new_key').show();
