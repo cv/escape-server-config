@@ -16,7 +16,7 @@ var EscSidebar = function() {
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
                 $.each(appData, function(appId, thisApp) {
-                    appList += "<li class='application'>" + thisApp + " <img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/></li>";
+                    appList += "<li class='application'>" + thisApp + " <img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/> <img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/></li>";
                 });
                 appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/>&nbsp;<img src="/images/add.png" alt="Add a new application" /></form></li>';
                 appList += "</ul>";
@@ -138,7 +138,7 @@ $(document).ready(function() {
     });
 
     // Click on an app to get stuff in the content pane
-    $('#sidebar li li').live("click", function() {
+    $('.appedit').live("click", function() {
         var thisEnv = $(this).parent().siblings("span").text();
         var thisApp = $(this).text();
 
