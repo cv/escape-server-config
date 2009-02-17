@@ -77,11 +77,14 @@ describe EnvironmentsController, 'Application bits' do
         got.status.should == 404
     end
 
-    it 'should only accept \A[a-zA-Z0-9_-]+\Z as environment name' do
+    it 'should only accept \A[.a-zA-Z0-9_-]+\Z as environment name' do
         got = put('/environments/default/spaced%20out%20name')
         got.status.should == 403
         
-        got = put('/environments/default/Legal-env_name')
+        got = put('/environments/default/Legal-app_name')
+        got.status.should == 201
+
+        got = put('/environments/default/still.legal')
         got.status.should == 201
     end
 end

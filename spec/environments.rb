@@ -59,14 +59,14 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 403
     end
 
-    it 'should only accept \A[a-zA-Z0-9_-]+\Z as environment name' do
+    it 'should only accept \A[.a-zA-Z0-9_-]+\Z as environment name' do
         got = put('/environments/Legal-env_name0')
         got.status.should == 201
 
-        got = put('/environments/not%20legal')
-        got.status.should == 403
+        got = put('/environments/still.legal')
+        got.status.should == 201
 
-        got = put('/environments/not.legal')
+        got = put('/environments/not%20legal')
         got.status.should == 403
     end
 end

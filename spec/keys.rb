@@ -192,4 +192,14 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should.include "#{key2}=#{newvalue2}"
     end
 
+    it 'should only accept \A[.a-zA-Z0-9_-]+\Z as key name' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = put('/environments/default/appname/this.is.valid_key-name')
+        got.status.should == 201
+
+        got = put('/environments/default/appname/not%20legal')
+        got.status.should == 403
+    end
 end

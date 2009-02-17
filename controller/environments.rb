@@ -53,7 +53,6 @@ class EnvironmentsController < Ramaze::Controller
         end
     end
 
-
     private
 
     def listEnvs
@@ -140,9 +139,9 @@ class EnvironmentsController < Ramaze::Controller
 
     def createEnv(env)
         msg = nil
-        if not env =~ /\A[a-zA-Z0-9_-]+\Z/
+        if not env =~ /\A[.a-zA-Z0-9_-]+\Z/
             response.status = 403
-            msg = "Invalid environment name. Valid characters are a-z, A-Z, 0-9, _ and -"
+            msg = "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
         elsif Environment[:name => env]
             response.status = 403
             msg = "Environment already exists."
@@ -155,9 +154,9 @@ class EnvironmentsController < Ramaze::Controller
     end
 
     def createApp(env, app)
-        if not app =~ /\A[a-zA-Z0-9_-]+\Z/
+        if not app =~ /\A[.a-zA-Z0-9_-]+\Z/
             response.status = 403
-            return "Invalid application name. Valid characters are a-z, A-Z, 0-9, _ and -"
+            return "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
         end
 
         myapp = App[:name => app]
@@ -202,6 +201,11 @@ class EnvironmentsController < Ramaze::Controller
     end
 
     def setValue(env, app, key)
+        if not key =~ /\A[.a-zA-Z0-9_-]+\Z/
+            response.status = 403
+            return "Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+        end
+
         value = request.body.read
         myapp = App[:name => app]
         if myapp.nil?

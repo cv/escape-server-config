@@ -75,7 +75,7 @@ $(document).ready(function() {
             $('#new_key_name').val("");
             $.ajax({
                 type: "POST",
-                url: "/environments/" + "/" + envName + "/" + appName + "/" + newName,
+                url: "/environments/" + envName + "/" + appName + "/" + newName,
                 data: "",
                 complete: function(XMLHttpRequest, textStatus) {
                     EscEditor.editPropertiesFor(envName, appName);
