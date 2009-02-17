@@ -39,6 +39,7 @@ var EscSidebar = function() {
                         toggleState = togglePlus;
                     };
                     envList += ('<li class="environment"><img src="' + toggleState + '" class="expander_img" class="clickable"><span>' + envName + '</span>');
+					envList += (" <img class='envdelete' src='/images/delete.png' alt='Delete " + envName +" environment'/>")
                     envList += ('</li>');
                 });
                 envList += '<li><form id="new_env_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new environment"/> <input type="text" id="new_env_name" name="new_env_name"/></form></li>';
@@ -137,7 +138,7 @@ $(document).ready(function() {
         });
     });
 
-    // Click on an app to get stuff in the content pane
+    // Click on an app edit button to get stuff in the content pane
     $('.appedit').live("click", function() {
 
         var thisEnv = $(this).parent().parent().siblings("span").text();
@@ -150,6 +151,33 @@ $(document).ready(function() {
         } else {
             $('#new_key').hide();
             $('#editor').hide();
+        };
+    });
+
+    // Click on an app delete button
+    $('.appdelete').live("click", function() {
+
+        var thisEnv = $(this).parent().parent().siblings("span").text();
+        var thisApp = $(this).parent().text();
+    
+        if ((thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
+			// Delete the app
+			alert(thisApp + " in " + thisEnv + " Deleting!")
+        } else {
+           // Throw something meaningful.
+			alert(thisApp + " in " + thisEnv + " has NOT been deleted. Something went wrong.")
+        };
+    });
+
+    // Click on an env delete button
+    $('.envdelete').live("click", function() {
+        var thisEnv = $(this).siblings("span").text();
+        if ((thisEnv != null) && (thisEnv!= "") && (thisEnv != EscSidebar.newEnvLabel)) {
+			// Delete the app
+			alert(thisEnv + " Deleting!")
+        } else {
+           // Throw something meaningful.
+			alert(thisEnv + " has NOT been deleted. Something went wrong.")
         };
     });
 
