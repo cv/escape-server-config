@@ -25,16 +25,19 @@ li.application {
 img
 {  border-style: none;
 }
+img.appedit {
+/*	float: right;*/
+}
 table.keyvalue {
 	width:100%;
 	table-layout:fixed;
 	white-space:normal;
 	overflow:hidden;
-	border-width: 0px 0px 0px 0px;
-	padding: 2px 2px 2px 2px;
-	border-style: hidden hidden hidden hidden;
-	border-color: gray gray gray gray;
-	-moz-border-radius: 0px 0px 0px 0px;
+	border-width: 0px;
+	padding: 2px;
+	border-style: hidden ;
+	border-color: gray;
+	-moz-border-radius: 0px;
 }
 tr.keyvalueheader {
 	background-color:grey;
@@ -92,11 +95,11 @@ div#side-header {
 div#sidebar {
    background:white;
    height:100%;
+margin-left:0px;
 }
 div#editor {
 	background:white;
 	margin-left:30px;
-/*	margin-right:30px;*/
 }
 div#new_key {
 	background:white;

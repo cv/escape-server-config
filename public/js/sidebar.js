@@ -16,7 +16,7 @@ var EscSidebar = function() {
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
                 $.each(appData, function(appId, thisApp) {
-                    appList += "<li class='application'>" + thisApp + " <img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/> <img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/></li>";
+                    appList += "<li class='application'>" + thisApp + "<span>&nbsp;<img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/> <img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/></span></li>";
                 });
                 appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/>&nbsp;<img src="/images/add.png" alt="Add a new application" /></form></li>';
                 appList += "</ul>";
@@ -124,6 +124,7 @@ $(document).ready(function() {
                 EscSidebar.loadApplicationsForEnvironment(id, name);
             };
         });
+		EscSidebar.loadEnvironments();
     });
 
     //Contract All Code
@@ -136,6 +137,7 @@ $(document).ready(function() {
             $('#sidebar').data(myEnv + '_expanded', false);
             $(this).siblings('ul').empty();
         });
+		EscSidebar.loadEnvironments();
     });
 
     // Click on an app edit button to get stuff in the content pane
