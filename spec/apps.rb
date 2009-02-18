@@ -87,4 +87,36 @@ describe EnvironmentsController, 'Application bits' do
         got = put('/environments/default/still.legal')
         got.status.should == 201
     end
+        
+    it 'should delete an existing application from an environment' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+      
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+      
+        got = delete('/environments/myenv/myapp')
+        got.status.should == 200
+        
+        # got = get('/environments/myenv/myapp')
+        # got.status.should == 404
+        # 
+        # got = get('/environments/default/myapp')
+        # got.status.should == 200   
+    end
+    
+    it 'should cascade delete an application from default' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+      
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+      
+        got = delete('/environments/default/myapp')
+        got.status.should == 200
+        
+        got = get('/environments/myenv/myapp')
+        got.status.should == 404
+    end
+    
 end

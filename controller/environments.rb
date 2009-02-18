@@ -119,21 +119,18 @@ class EnvironmentsController < Ramaze::Controller
         if myapp.nil?
             response.status = 404
             return "Application #{app} does not exist"
-        else
-            App[:name => app].delete
-            response.status = 200
         end
 
-        # if env = 'default'
-        #         
-        #     curowner = OwnerAppEnv[:app_id => myapp[:id], :environment_id => myenv[:id]]
-        #     if curowner.nil?
-        #         OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => myenv[:id], :owner_id => myowner[:id])
-        #     else
-        #         curowner.update(:owner_id => myowner[:id])
-        #         response.status = 200
-        #     end
-        # end
+        if env == "default"
+            myapp.delete
+            response.status = 200
+        else
+            # This does not work. Need to talk about mapping tables.          
+            # myAppEnv = AppsEnvironment[:app_id => myapp[:id], :environment_id => myenv[:id]]
+            # myAppEnv.delete
+            # response.status = 200
+        end
+
     end
 
     def listEnvs
