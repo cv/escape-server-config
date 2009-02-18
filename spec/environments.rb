@@ -69,4 +69,21 @@ describe EnvironmentsController, 'Environment bits' do
         got = put('/environments/not%20legal')
         got.status.should == 403
     end
+    
+    it 'should delete an existing environment' do
+        got = put('/environments/delete_me')
+        got.status.should == 201
+      
+        got = delete('/environments/delete_me')
+        got.status.should == 200
+        
+        got = get('/environments/delete_me')
+        got.status.should == 404
+    end
+    
+    it 'should not delete a missing environment' do
+        got = delete('/environments/i_dont_exist')
+        got.status.should == 404
+    end
+    
 end

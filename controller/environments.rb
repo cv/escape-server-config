@@ -50,10 +50,43 @@ class EnvironmentsController < Ramaze::Controller
             else             
                 setValue(env, app, key)
             end
+        
+        # Deleting...
+        elsif request.delete?
+            # Undefined
+            if env.nil?
+                response.status = 400
+            # You're deleting an env
+            elsif app.nil?
+                deleteEnv(env)
+            # You're deleting an app
+            elsif key.nil?
+                deleteApp(env, app)
+            # You're deleting a key
+            else             
+                deleteKey(env, app, key)
+            end
         end
+        
     end
 
     private
+
+    def deleteEnv(env)
+        msg = nil
+        if not env =~ /\A[.a-zA-Z0-9_-]+\Z/
+            response.status = 403
+            msg = "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+        elsif Environment[:name => env]
+            Environment[:name => env].delete
+            response.status = 200
+            msg = "Environment deleted."
+        else
+            response.status = 404
+            msg = "Environment " + env + " does not exist"
+        end
+        return msg
+    end
 
     def listEnvs
         envs = Array.new

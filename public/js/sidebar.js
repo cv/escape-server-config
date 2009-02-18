@@ -176,7 +176,17 @@ $(document).ready(function() {
         var thisEnv = $(this).siblings("span").text();
         if ((thisEnv != null) && (thisEnv!= "") && (thisEnv != EscSidebar.newEnvLabel)) {
 			// Delete the app
-			alert(thisEnv + " Deleting!")
+			$.ajax({
+                type: "DELETE",
+                url: "/environments/" + thisEnv,
+                data: {},
+                success: function(data, textStatus) {
+                    EscSidebar.loadEnvironments();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error deleting '" + newName +"': " + XMLHttpRequest.responseText);
+                },
+            })
         } else {
            // Throw something meaningful.
 			alert(thisEnv + " has NOT been deleted. Something went wrong.")
