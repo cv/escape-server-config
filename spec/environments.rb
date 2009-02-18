@@ -86,4 +86,24 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 404
     end
     
+    it 'should not delete the default environment' do
+        got = delete('/environments/default')
+        got.status.should == 403
+    end
+    
+    it 'should delete an existing application from an environment' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+      
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+      
+        got = delete('/environments/myenv/myapp')
+        got.status.should == 200
+        
+        got = get('/environments/myenv/myapp')
+        got.status.should == 404
+        
+    end
+    
 end

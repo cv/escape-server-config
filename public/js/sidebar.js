@@ -164,7 +164,17 @@ $(document).ready(function() {
     
         if ((thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
 			// Delete the app
-			alert(thisApp + " in " + thisEnv + " Deleting!")
+			$.ajax({
+                type: "DELETE",
+                url: "/environments/" + thisEnv + "/" + thisApp,
+                data: {},
+                success: function(data, textStatus) {
+                    EscSidebar.loadEnvironments();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error deleting '" + thisApp +"': " + XMLHttpRequest.responseText);
+                },
+            })
         } else {
            // Throw something meaningful.
 			alert(thisApp + " in " + thisEnv + " has NOT been deleted. Something went wrong.")
@@ -175,7 +185,7 @@ $(document).ready(function() {
     $('.envdelete').live("click", function() {
         var thisEnv = $(this).siblings("span").text();
         if ((thisEnv != null) && (thisEnv!= "") && (thisEnv != EscSidebar.newEnvLabel)) {
-			// Delete the app
+			// Delete the env
 			$.ajax({
                 type: "DELETE",
                 url: "/environments/" + thisEnv,
@@ -184,7 +194,7 @@ $(document).ready(function() {
                     EscSidebar.loadEnvironments();
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error deleting '" + newName +"': " + XMLHttpRequest.responseText);
+                    alert("Error deleting '" + thisEnv +"': " + XMLHttpRequest.responseText);
                 },
             })
         } else {

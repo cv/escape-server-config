@@ -77,7 +77,10 @@ class EnvironmentsController < Ramaze::Controller
         if not env =~ /\A[.a-zA-Z0-9_-]+\Z/
             response.status = 403
             msg = "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
-        elsif Environment[:name => env]
+        elsif env == "default"
+            response.status = 403
+            msg = "Not allowed to delete default environment!"
+        elsif Environment[:name => env] 
             Environment[:name => env].delete
             response.status = 200
             msg = "Environment deleted."
@@ -86,6 +89,51 @@ class EnvironmentsController < Ramaze::Controller
             msg = "Environment " + env + " does not exist"
         end
         return msg
+    end
+
+    def deleteApp(env, app)
+        if not app =~ /\A[.a-zA-Z0-9_-]+\Z/
+            response.status = 403
+            return "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+        end
+
+        myapp = App[:name => app]
+        myenv = Environment[:name => env]
+
+        if myenv.nil?
+            response.status = 404
+            return "Environment #{env} does not exist"
+        end
+
+        owner = request['owner']
+        if owner.nil?
+            myowner = Owner[:name => "nobody"]
+        else
+            myowner = Owner[:name => owner]
+            if myowner.nil?
+                response.status = 404 if myowner.nil?
+                return "Unknown owner..."
+            end
+        end
+
+        if myapp.nil?
+            response.status = 404
+            return "Application #{app} does not exist"
+        else
+            App[:name => app].delete
+            response.status = 200
+        end
+
+        # if env = 'default'
+        #         
+        #     curowner = OwnerAppEnv[:app_id => myapp[:id], :environment_id => myenv[:id]]
+        #     if curowner.nil?
+        #         OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => myenv[:id], :owner_id => myowner[:id])
+        #     else
+        #         curowner.update(:owner_id => myowner[:id])
+        #         response.status = 200
+        #     end
+        # end
     end
 
     def listEnvs
