@@ -22,11 +22,17 @@ li.environment {
 li.application {
 	background:white;
 }
+li.newitem {
+	background:white;
+}
+.new_app_form{
+	width:80%;
+}
 img
 {  border-style: none;
 }
-img.appedit {
-/*	float: right;*/
+img.appedit{
+	margin-right:5px;
 }
 table.keyvalue {
 	width:100%;
@@ -95,7 +101,8 @@ div#side-header {
 div#sidebar {
    background:white;
    height:100%;
-margin-left:0px;
+   width:100%;
+	margin-left:0px;
 }
 div#editor {
 	background:white;

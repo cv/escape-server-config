@@ -16,9 +16,9 @@ var EscSidebar = function() {
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
                 $.each(appData, function(appId, thisApp) {
-                    appList += "<li class='application'>" + thisApp + "<img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/><img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/></li>";
+                    appList += "<li class='application'><img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/><img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/>" + thisApp + "</li>";
                 });
-                appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/>&nbsp;<img src="/images/add.png" alt="Add a new application" /></form></li>';
+                appList += '<li><img src="/images/add.png" alt="Add a new application" /><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><input type="text" id="new_app_name"/></form></li>';
                 appList += "</ul>";
                 var envObj = $('#sidebar .environment:eq(' + envId + ')');
                 envObj.append(appList);
@@ -162,7 +162,9 @@ $(document).ready(function() {
         var thisEnv = $(this).parent().parent().siblings("span").text();
         var thisApp = $(this).parent().text();
     
-        if ((thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
+		var confirmation = confirm('Are you sure you want to delete ' + thisApp + '?');
+
+        if ((confirmation) && (thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
 			// Delete the app
 			$.ajax({
                 type: "DELETE",
@@ -175,9 +177,6 @@ $(document).ready(function() {
                     alert("Error deleting '" + thisApp +"': " + XMLHttpRequest.responseText);
                 },
             })
-        } else {
-           // Throw something meaningful.
-			alert(thisApp + " in " + thisEnv + " has NOT been deleted. Something went wrong.")
         };
     });
 
@@ -198,9 +197,6 @@ $(document).ready(function() {
                     alert("Error deleting '" + thisEnv +"': " + XMLHttpRequest.responseText);
                 },
             })
-        } else {
-           // Throw something meaningful.
-			alert(thisEnv + " has NOT been deleted. Something went wrong.")
         };
     });
 
