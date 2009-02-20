@@ -184,7 +184,8 @@ $(document).ready(function() {
     // Click on an env delete button
     $('.envdelete').live("click", function() {
         var thisEnv = $(this).siblings("span").text();
-        if ((thisEnv != null) && (thisEnv!= "") && (thisEnv != EscSidebar.newEnvLabel)) {
+		var confirmation = confirm('Are you sure you want to delete ' + thisEnv + '?');
+        if ( (confirmation) && (thisEnv != null) && (thisEnv!= "") && (thisEnv != EscSidebar.newEnvLabel)) {
 			// Delete the env
 			$.ajax({
                 type: "DELETE",
