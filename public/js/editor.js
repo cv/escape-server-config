@@ -46,7 +46,7 @@ var EscEditor = function() {
                                 }
                             });
                             $.ajax({
-                                type: "POST",
+                                type: "PUT",
                                 url: "/environments/" + env + "/" + app + "/" + key,
                                 data: value,
                                 complete: function(XMLHttpRequest, textStatus) {
@@ -74,7 +74,7 @@ $(document).ready(function() {
         if (EscEditor.validateName(newName)) {
             $('#new_key_name').val("");
             $.ajax({
-                type: "POST",
+                type: "PUT",
                 url: "/environments/" + envName + "/" + appName + "/" + newName,
                 data: "",
                 complete: function(XMLHttpRequest, textStatus) {
