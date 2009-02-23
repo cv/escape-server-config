@@ -25,8 +25,15 @@ li.application {
 li.newitem {
 	background:white;
 }
-.new_app_form{
+input#new_app_name{
 	width:80%;
+	margin-bottom:4px;
+	value:"Add Application";
+}
+input{
+	background: white;
+	border: 1px solid lightgrey;
+	overflow:hidden;
 }
 img
 {  border-style: none;
@@ -85,12 +92,13 @@ div#left {
    width: 30%;
    height:70%;
    background:white;
+overflow-y:none;
 }
 div#right {
    position:absolute;
    top:109px;
    right:0px;
-   width: 70%;
+   width:70%;
    height:80%;
    background:white;
 }
