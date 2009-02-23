@@ -18,6 +18,22 @@ class EnvironmentsController < Ramaze::Controller
     map('/environments')
 
     def index(env = nil, app = nil, key = nil)
+        # Sanity check what we've got first
+        if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
+            response.status = 403
+            return "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+        end
+
+        if app && (not app =~ /\A[.a-zA-Z0-9_-]+\Z/)
+            response.status = 403
+            return "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+        end
+
+        if key && (not key =~ /\A[.a-zA-Z0-9_-]+\Z/)
+            response.status = 403
+            return "Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+        end
+
         # Getting...
         if request.get?
             # List all environments
@@ -34,23 +50,22 @@ class EnvironmentsController < Ramaze::Controller
                 getValue(env, app, key)
             end
 
-
-        # Setting...
-        elsif request.post? || request.put?
+        # Creating...
+        elsif request.put? || request.post?
             # Undefined
             if env.nil?
                 response.status = 400
-            # You're putting an env
+            # You're creating a new env
             elsif app.nil?
                 createEnv(env)
-            # You're putting an app
+            # You're creating a new app
             elsif key.nil?
                 createApp(env, app)
-            # You're putting a value to a key
+            # Key stuff
             else             
                 setValue(env, app, key)
             end
-        
+
         # Deleting...
         elsif request.delete?
             # Undefined
@@ -72,70 +87,61 @@ class EnvironmentsController < Ramaze::Controller
 
     private
 
+    #
+    # Deletion
+    #
+
     def deleteEnv(env)
-        msg = nil
-        if not env =~ /\A[.a-zA-Z0-9_-]+\Z/
+        if env == "default"
             response.status = 403
-            msg = "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
-        elsif env == "default"
-            response.status = 403
-            msg = "Not allowed to delete default environment!"
+            return "Not allowed to delete default environment!"
         elsif Environment[:name => env] 
             Environment[:name => env].delete
             response.status = 200
-            msg = "Environment deleted."
+            return "Environment '#{env}' deleted."
         else
             response.status = 404
-            msg = "Environment " + env + " does not exist"
+            return "Environment '#{env}' does not exist."
         end
-        return msg
     end
 
     def deleteApp(env, app)
-        if not app =~ /\A[.a-zA-Z0-9_-]+\Z/
-            response.status = 403
-            return "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
-        end
-        
-        myapp = App[:name => app]
         myenv = Environment[:name => env]
-
         if myenv.nil?
             response.status = 404
-            return "Environment #{env} does not exist"
+            return "Environment '#{env}' does not exist."
         end
 
-        owner = request['owner']
-        if owner.nil?
-            myowner = Owner[:name => "nobody"]
-        else
-            myowner = Owner[:name => owner]
-            if myowner.nil?
-                response.status = 404 if myowner.nil?
-                return "Unknown owner..."
-            end
-        end
-
+        myapp = App[:name => app]
         if myapp.nil?
             response.status = 404
-            return "Application #{app} does not exist"
+            return "Application '#{app}' does not exist."
         end
 
         if env == "default"
             myapp.delete
             response.status = 200
+            return "Applicaton '#{app}' deleted."
         else         
             myapp.remove_environment(myenv)
             response.status = 200
+            return "Application '#{app}' deleted from the '#{env}' environment."
         end
-
     end
+
+    def deleteKey(env, app, key)
+    end
+
+    #
+    # Getters
+    #
 
     def listEnvs
         envs = Array.new
         Environment.all.each do |env|
             envs.push(env[:name])
         end
+        response.headers["Content-Type"] = "application/json"
         return envs.sort.to_json
     end
 
@@ -144,29 +150,33 @@ class EnvironmentsController < Ramaze::Controller
         myenv = Environment[:name => env]
         if myenv.nil?
             response.status = 404
+            return "Environment '#{env}' does not exist."
         else
             apps = Array.new
             myenv.apps.each do |app|
                 apps.push(app[:name])
             end
+            response.headers["Content-Type"] = "application/json"
             return apps.sort.to_json
         end
     end
-
     
     def listKeys(env, app)
         # List keys and values for app in environment
         myenv = Environment[:name => env]
+        if myenv.nil? # Env does not exist
+            response.status = 404
+            return "Environment '#{env}' does not exist."
+        end
+
         myapp = App[:name => app]
-        if myenv.nil? || myapp.nil? # Env does not exist
+        if myapp.nil?
             response.status = 404
-        elsif not myapp.environments.include? myenv
+            return "Application '#{app}' does not exist."
+        elsif not myapp.environments.include?(myenv)
             response.status = 404
+            return "Application '#{app}' is not included in Environment '#{env}'."
         else 
-            # TODO: The next few lines are damn scary! Need some nice helper methods somewhere...
-            ownermap = OwnerAppEnv[:app_id => myapp[:id], :environment_id => myenv[:id]]
-            owner = Owner[:id => ownermap[:owner_id]]
-            response.headers["X-Owner"] = owner[:name]
             pairs = Array.new
             myapp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => myenv[:id]]
@@ -188,18 +198,24 @@ class EnvironmentsController < Ramaze::Controller
         myapp = App[:name => app]
         if myapp.nil?
             response.status = 404
-            return "App #{app} does not exist"
+            return "Application '#{app}' does not exist."
         end
+
         myenv = Environment[:name => env]
         if myenv.nil?
             response.status = 404
-            return "Environment #{env} does not exist"
+            return "Environment '#{env}' does not exist."
         end
+
+        if not myapp.environments.include?(myenv)
+            response.status = 404
+            return "Application '#{app}' is not included in Environment '#{env}'."
+        end
+
         mykey = Key[:name => key, :app_id => myapp[:id]]
-        # New one, let's create
         if mykey.nil?
             response.status = 404
-            return "Environment #{env} does not exist"
+            return "There is no key '#{key}' for Application '#{app}' in Environment '#{env}'."
         end
 
         value = Value[:key_id => mykey[:id], :environment_id => myenv[:id]]
@@ -215,86 +231,63 @@ class EnvironmentsController < Ramaze::Controller
         return value[:value]
     end
 
+    #
+    # Creaters
+    #
+
     def createEnv(env)
-        msg = nil
-        if not env =~ /\A[.a-zA-Z0-9_-]+\Z/
-            response.status = 403
-            msg = "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
-        elsif Environment[:name => env]
-            response.status = 403
-            msg = "Environment already exists."
+        if Environment[:name => env]
+            response.status = 200
+            return "Environment '#{env}' already exists."
         else
             Environment.create(:name => env)
             response.status = 201
-            msg = "Environment created."
+            return "Environment created."
         end
-        return msg
     end
 
     def createApp(env, app)
-        if not app =~ /\A[.a-zA-Z0-9_-]+\Z/
-            response.status = 403
-            return "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
-        end
-
-        myapp = App[:name => app]
         myenv = Environment[:name => env]
-
         if myenv.nil?
             response.status = 404
-            return "Environment #{env} does not exist"
+            return "Environment '#{env}' does not exist"
         end
 
-        owner = request['owner']
-        if owner.nil?
-            myowner = Owner[:name => "nobody"]
-        else
-            myowner = Owner[:name => owner]
-            if myowner.nil?
-                response.status = 404 if myowner.nil?
-                return "Unknown owner..."
-            end
-        end
-
+        msg = nil
+        myapp = App[:name => app]
         if myapp.nil?
             defaultenv = Environment[:name => 'default']
             myapp = App.create(:name => app)
             myapp.add_environment(defaultenv)
-            OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => defaultenv[:id], :owner_id => Owner[:name => "nobody"][:id])
 
             response.status = 201
+            msg = "Application '#{app}' created."
+        else
+            response.status = 200
+            msg = "Application '#{app}' already exists."
         end
 
         if env != 'default'
             myapp.add_environment(myenv)
-                
-            curowner = OwnerAppEnv[:app_id => myapp[:id], :environment_id => myenv[:id]]
-            if curowner.nil?
-                OwnerAppEnv.create(:app_id => myapp[:id], :environment_id => myenv[:id], :owner_id => myowner[:id])
-            else
-                curowner.update(:owner_id => myowner[:id])
-                response.status = 200
-            end
         end
+
+        return msg
     end
 
     def setValue(env, app, key)
-        if not key =~ /\A[.a-zA-Z0-9_-]+\Z/
-            response.status = 403
-            return "Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
-        end
-
         value = request.body.read
         myapp = App[:name => app]
         if myapp.nil?
             response.status = 404
-            return "App #{app} does not exist"
+            return "Application '#{app}' does not exist."
         end
+
         myenv = Environment[:name => env]
         if myenv.nil?
             response.status = 404
-            return "Environment #{env} does not exist"
+            return "Environment '#{env}' does not exist."
         end
+
         mykey = Key[:name => key, :app_id => myapp[:id]]
         # New one, let's create
         if mykey.nil?

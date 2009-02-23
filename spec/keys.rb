@@ -31,7 +31,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.content_type.should == "text/plain"
     end
 
-    # TODO: When we set a value, have the option to set its content type. We then get the header set when we ask for it
+    # TODO: When we set a value, have the option to set its content type. We then get the header set when we ask for it?
 
     it 'should set the key in the default environment when we add it to a different environment' do
         got = put('/environments/newenv')
@@ -48,6 +48,23 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 200
     end
 
+    it 'should not return values for applications that are not in specified environment' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = put('/environments/default/appname/key')
+        got.status.should == 201
+        
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = get('/environments/myenv/appname')
+        got.status.should == 404
+
+        got = get('/environments/myenv/appname/key')
+        got.status.should == 404
+    end
+
     it 'should return the default value for an existing environment for which there is no explicit value' do
         got = put('/environments/default/appname')
         got.status.should == 201
@@ -58,6 +75,9 @@ describe EnvironmentsController, 'Key/Value bits' do
         
         got = put('/environments/myenv')
         got.status.should == 201
+
+        got = put('/environments/myenv/appname')
+        got.status.should == 200
 
         got = get('/environments/myenv/appname/key')
         got.status.should == 200
@@ -101,6 +121,9 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/myenv')
         got.status.should == 201
 
+        got = put('/environments/myenv/appname')
+        got.status.should == 200
+
         newvalue = "new.value"
         got = put('/environments/myenv/appname/key', :input => newvalue)
         got.status.should == 201
@@ -133,6 +156,9 @@ describe EnvironmentsController, 'Key/Value bits' do
 
         got = put('/environments/myenv')
         got.status.should == 201
+
+        got = put('/environments/myenv/appname')
+        got.status.should == 200
 
         got = get('/environments/myenv/appname/key')
         got.status.should == 200
@@ -202,4 +228,5 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/default/appname/not%20legal')
         got.status.should == 403
     end
+
 end

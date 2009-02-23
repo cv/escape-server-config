@@ -22,13 +22,14 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 400
     end
 
-    it 'should get /environments and list them' do
+    it 'should list environment names on GET /environments' do
         got = get('/environments')
         got.status.should == 200
         got.body.should == '["default"]'
+        got.content_type.should == "application/json"
     end
 
-    it 'should return 404 for an unknown environment' do
+    it 'should return 404 when trying to GET an unknown environment' do
         got = get('/environments/unknown')
         got.status.should == 404
     end
@@ -40,6 +41,7 @@ describe EnvironmentsController, 'Environment bits' do
         got = get('/environments/myenv')
         got.status.should == 200
         got.body.should == "[]"
+        got.content_type.should == "application/json"
     end
 
     it 'should be able to create new environment using POST' do
@@ -51,12 +53,23 @@ describe EnvironmentsController, 'Environment bits' do
         got.body.should == "[]"
     end
 
-    it 'should not allow duplicate environment names' do
+    it 'should not alter an existing environment if we PUT or POST to it' do
         got = put('/environments/myenv')
         got.status.should == 201
 
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == '["myapp"]'
+        
         got = put('/environments/myenv')
-        got.status.should == 403
+        got.status.should == 200
+
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == '["myapp"]'
     end
 
     it 'should only accept \A[.a-zA-Z0-9_-]+\Z as environment name' do
