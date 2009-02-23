@@ -92,7 +92,6 @@ div#left {
    width: 30%;
    height:70%;
    background:white;
-overflow-y:none;
 }
 div#right {
    position:absolute;
