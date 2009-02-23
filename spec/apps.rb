@@ -97,12 +97,13 @@ describe EnvironmentsController, 'Application bits' do
       
         got = delete('/environments/myenv/myapp')
         got.status.should == 200
-        
+
         # got = get('/environments/myenv/myapp')
         # got.status.should == 404
-        # 
-        # got = get('/environments/default/myapp')
-        # got.status.should == 200   
+
+        got = get('/environments/default/myapp')
+        got.status.should == 200
+        
     end
     
     it 'should cascade delete an application from default' do

@@ -124,11 +124,10 @@ class EnvironmentsController < Ramaze::Controller
         if env == "default"
             myapp.delete
             response.status = 200
-        else
-            # This does not work. Need to talk about mapping tables.          
-            # myAppEnv = AppsEnvironment[:app_id => myapp[:id], :environment_id => myenv[:id]]
-            # myAppEnv.delete
-            # response.status = 200
+        else         
+            # myAppEnv = AppsEnvironments.first[:app_id => myapp[:id], :environment_id => myenv[:id]]
+            myapp.remove_environment(myenv)
+            response.status = 200
         end
 
     end
