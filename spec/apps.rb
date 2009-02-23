@@ -40,6 +40,17 @@ describe EnvironmentsController, 'Application bits' do
         got.status.should == 404
     end
 
+    it 'should return 404 for apps that do exist by are not in specified environment' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = get('/environments/myenv/appname')
+        got.status.should == 404
+    end
+
     it 'should only list apps in the specified environment' do
         got = put('/environments/default/appname')
         got.status.should == 201
@@ -94,16 +105,18 @@ describe EnvironmentsController, 'Application bits' do
       
         got = put('/environments/myenv/myapp')
         got.status.should == 201
+
+        got = get('/environments/myenv/myapp')
+        got.status.should == 200
       
         got = delete('/environments/myenv/myapp')
         got.status.should == 200
 
-        # got = get('/environments/myenv/myapp')
-        # got.status.should == 404
-
         got = get('/environments/default/myapp')
-        got.status.should == 200
-        
+        got.status.should == 200   
+
+        got = get('/environments/myenv/myapp')
+        got.status.should == 404
     end
     
     it 'should cascade delete an application from default' do
@@ -113,8 +126,14 @@ describe EnvironmentsController, 'Application bits' do
         got = put('/environments/myenv/myapp')
         got.status.should == 201
       
+        got = get('/environments/myenv/myapp')
+        got.status.should == 200
+
         got = delete('/environments/default/myapp')
         got.status.should == 200
+
+        got = get('/environments/default/myapp')
+        got.status.should == 404
         
         got = get('/environments/myenv/myapp')
         got.status.should == 404

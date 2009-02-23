@@ -96,7 +96,7 @@ class EnvironmentsController < Ramaze::Controller
             response.status = 403
             return "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
         end
-
+        
         myapp = App[:name => app]
         myenv = Environment[:name => env]
 
@@ -125,7 +125,6 @@ class EnvironmentsController < Ramaze::Controller
             myapp.delete
             response.status = 200
         else         
-            # myAppEnv = AppsEnvironments.first[:app_id => myapp[:id], :environment_id => myenv[:id]]
             myapp.remove_environment(myenv)
             response.status = 200
         end
@@ -160,6 +159,8 @@ class EnvironmentsController < Ramaze::Controller
         myenv = Environment[:name => env]
         myapp = App[:name => app]
         if myenv.nil? || myapp.nil? # Env does not exist
+            response.status = 404
+        elsif not myapp.environments.include? myenv
             response.status = 404
         else 
             # TODO: The next few lines are damn scary! Need some nice helper methods somewhere...
