@@ -11,6 +11,18 @@ var EscSidebar = function() {
         newEnvLabel : newEnvLabel,
         newAppLabel : newAppLabel,
 
+        clearDefault : function(what) {
+            if (what.value == what.defaultValue) {
+                what.value = "";
+            }
+        },
+
+        setDefault : function(what) {
+            if (what.value == "") {
+                what.value = what.defaultValue;
+            }
+        },
+
         loadApplicationsForEnvironment : function(envId, envName) {
             var url = "/environments/" + envName;
             $.getJSON(url, function(appData) {
@@ -18,7 +30,7 @@ var EscSidebar = function() {
                 $.each(appData, function(appId, thisApp) {
                     appList += "<li class='application'><img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/><img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/>" + thisApp + "</li>";
                 });
-                appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new application" />&nbsp;<input type="text" id="new_app_name" value="Application"/></form></li>';
+                appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new application" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_app_name" value="Application"/></form></li>';
                 appList += "</ul>";
                 var envObj = $('#sidebar .environment:eq(' + envId + ')');
                 envObj.append(appList);
@@ -44,66 +56,44 @@ var EscSidebar = function() {
                     envList += ('<span>' + envName + '</span>');
                     envList += ('</li>');
                 });
-                envList += '<li><form id="new_env_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new environment"/> <input type="text" id="new_env_name" name="new_env_name" value="Environment"/></form></li>';
+                envList += '<li><form id="new_env_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new environment"/> <input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_env_name" name="new_env_name" value="Environment"/></form></li>';
                 envList += "</ul>";
                 $('#sidebar').html(envList);
                 $('#sidebar' + " #new_env_form").submit(EscSidebar.createNewEnv);
             });
         },
 
-        validateEnvName : function(name) {
-            // TODO: Put some propper rules in here
-            if ((name == "default") || (name == "")) {
-                return false;
-            } else {
-                return true;
-            }
-        },
-
-        validateAppName : function(name) {
-            // TODO: Put some propper rules in here
-            return true;
-        },
-
         createNewEnv : function() {
             var newName = $('#new_env_name').val();
-            if (EscSidebar.validateEnvName(newName)) {
-                $('#new_env_name').val("");
-                $.ajax({
-                    type: "POST",
-                    url: "/environments/" + newName,
-                    data: {},
-                    success: function(data, textStatus) {
-                        EscSidebar.loadEnvironments();
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert("Error creating new environment '" + newName +"': " + XMLHttpRequest.responseText);
-                    },
-                });
-            } else {
-                alert("Invalid environment name '" + newName + "'. Valid characters are A-Z, a-z, 0-9, - and _");
-            }
+            $('#new_env_name').val("");
+            $.ajax({
+                type: "PUT",
+                url: "/environments/" + newName,
+                data: {},
+                success: function(data, textStatus) {
+                    EscSidebar.loadEnvironments();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error creating new environment '" + newName +"': " + XMLHttpRequest.responseText);
+                },
+            });
         },
 
         createNewApp : function() {
             var envName = $(this).attr("id").replace('_new_app_form', '');
             var newName = $(this).find(":input").val();
-            if (EscSidebar.validateAppName(newName)) {
-                $(this).find(":input").val("");
-                $.ajax({
-                    type: "POST",
-                    url: "/environments/" + envName + "/" + newName,
-                    data: {},
-                    success: function(data, textStatus) {
-                        EscSidebar.loadEnvironments();
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert("Error creating new application '" + newName +"': " + XMLHttpRequest.responseText);
-                    },
-                });
-            } else {
-                alert("Invalid application name '" + newName + "'. Valid characters are A-Z, a-z, 0-9, - and _");
-            }
+            $(this).find(":input").val("");
+            $.ajax({
+                type: "PUT",
+                url: "/environments/" + envName + "/" + newName,
+                data: {},
+                success: function(data, textStatus) {
+                    EscSidebar.loadEnvironments();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error creating new application '" + newName +"': " + XMLHttpRequest.responseText);
+                },
+            });
         },
 
 // End of namespace
