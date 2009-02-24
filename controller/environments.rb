@@ -57,10 +57,10 @@ class EnvironmentsController < Ramaze::Controller
                 response.status = 400
               # You're copying an env
               elsif app.nil?
-                if response.header['Location']
+                if request.env['Location']
                   # We can copy to Location:
-                  # targetEnv=
-                  #  copyEnv(env)
+                  targetEnv=env + ".copy"
+                  copyEnv(env,targetEnv)
                   response.status = 201 
                   else
                   response.status = 406
@@ -333,6 +333,16 @@ class EnvironmentsController < Ramaze::Controller
         end
     end
     
-    def copyEnv(env)
+    def copyEnv(fromEnv,toEnv)
+      # Create new env
+      createEnv(toEnv)
+      # Copy applications into new env
+      allExistingApps = listApps(fromEnv).JSON.parse
+      allExistingApps.each do |existingApp|
+        createApp(toEnv, existingApp)
+      end
+      
+      # Copy application values into new env
+      
     end
 end

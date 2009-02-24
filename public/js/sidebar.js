@@ -27,11 +27,13 @@ var EscSidebar = function() {
                     appList += "<li class='application'><img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/><img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/><span class='appName'>" + thisApp + "</span></li>";
                 });
                 appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new application" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_app_name" value="Add Application"/></form></li>';
+                appList += '<li><form id="' + envName + '_copy_form" class="copy_form" action="javascript:void(0);"><img src="/images/copy.png" alt="Copy this environment" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="copy_env_name" value="Copy Environment"/></form></li>';
                 appList += "</ul>";
                 var envObj = $('#sidebar .environment:eq(' + envId + ')');
                 envObj.append(appList);
                 envObj.children('ul').slideDown('fast');
                 $('#sidebar' + " .new_app_form").submit(EscSidebar.createNewApp);
+				$('#sidebar' + " .copy_form").submit(EscSidebar.copyEnvironment);
             });
         },
 
@@ -88,6 +90,24 @@ var EscSidebar = function() {
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error creating new application '" + newName +"': " + XMLHttpRequest.responseText);
+                },
+            });
+        },
+
+        copyEnvironment : function() {
+            var envName = $(this).attr("id").replace('_copy_form', '');
+            var newEnvName = $(this).find(":input").val();
+            $(this).find(":input").val("");
+            $.ajax({
+                type: "POST",
+                url: "/environments/" + envName,
+                data: {},
+				headers:{},
+                success: function(data, textStatus) {
+                    EscSidebar.loadEnvironments();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error copying " + envName + " to " + newEnvName + ": " + XMLHttpRequest.responseText);
                 },
             });
         },

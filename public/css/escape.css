@@ -27,8 +27,11 @@ li.newitem {
 }
 input#new_app_name{
 	width:80%;
-	margin-bottom:4px;
-	value:"Add Application";
+	margin-bottom:2px;
+}
+input#copy_env_name{
+	width:80%;
+	margin-bottom:2px;
 }
 input{
 	background: white;
