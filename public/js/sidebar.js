@@ -2,14 +2,10 @@
 var EscSidebar = function() {
     var toggleMinus = '/images/minus.jpg';
     var togglePlus = '/images/plus.jpg';
-    var newEnvLabel = '+env:';
-    var newAppLabel = '+app:';
 
     return {
         toggleMinus : toggleMinus,
         togglePlus : togglePlus,
-        newEnvLabel : newEnvLabel,
-        newAppLabel : newAppLabel,
 
         clearDefault : function(what) {
             if (what.value == what.defaultValue) {
@@ -28,7 +24,7 @@ var EscSidebar = function() {
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
                 $.each(appData, function(appId, thisApp) {
-                    appList += "<li class='application'><img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/><img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/>" + thisApp + "</li>";
+                    appList += "<li class='application'><img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/><img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/><span class='appName'>" + thisApp + "</span></li>";
                 });
                 appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new application" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_app_name" value="Add Application"/></form></li>';
                 appList += "</ul>";
@@ -53,7 +49,7 @@ var EscSidebar = function() {
 					envList += ('<li class="environment">');
 					envList += ("<img class='envdelete' src='/images/delete.png' alt='Delete " + envName +" environment'/>");
 					envList += ('<img src="' + toggleState + '" class="expander_img" class="clickable"/>');
-                    envList += ('<span>' + envName + '</span>');
+                    envList += ('<span class="envName">' + envName + '</span>');
                     envList += ('</li>');
                 });
                 envList += '<li><form id="new_env_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new environment"/> <input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_env_name" name="new_env_name" value="Add Environment"/></form></li>';
@@ -96,6 +92,59 @@ var EscSidebar = function() {
             });
         },
 
+        expandAll : function() {
+            $('img', $('#sidebar > ul > li')).attr('src', EscSidebar.toggleMinus);
+            // Loop through all envs, set collapsed = true
+            $.each($('#sidebar > ul > li > span'), function(id, span) {
+                var name = $(span).text();
+                if (! $('#sidebar').data(name + '_expanded')) {
+                    $('#sidebar').data(name + '_expanded', true);
+                    EscSidebar.loadApplicationsForEnvironment(id, name);
+                };
+            });
+            EscSidebar.loadEnvironments();
+        },
+
+        contractAll : function() {
+            $('#sidebar > ul > li > ul').slideUp('fast');
+            $('img', $('#sidebar > ul > li')).attr('src', EscSidebar.togglePlus);
+            // Loop through all envs, set collapsed = true
+            $.each($('#sidebar > ul > li > span'), function(id, span) {
+                var myEnv = $(span).text();
+                $('#sidebar').data(myEnv + '_expanded', false);
+                $(this).siblings('ul').empty();
+            });
+            EscSidebar.loadEnvironments();
+        },
+
+        showEditor : function(env, app) {
+            if ((app != null) && (app != "") && (env != null) && (env != "")) {
+                EscEditor.editPropertiesFor(env, app);
+                $('#new_key').show();
+                $('#editor').show();
+            } else {
+                $('#new_key').hide();
+                $('#editor').hide();
+            };
+        },
+
+        toggleEnv : function(env, img) {
+            if ($(img).attr('src') == EscSidebar.toggleMinus) {
+                $('#sidebar').data(env + '_expanded', false);
+                $(img).attr('src', EscSidebar.togglePlus).siblings('ul').slideUp('fast');
+                $(img).siblings('ul').empty();
+            } else {
+                $('#sidebar').data(env + '_expanded', true);
+                $(img).attr('src', EscSidebar.toggleMinus).siblings('ul').slideDown('fast');
+                $.each($('.environment > span'), function(id, span) {
+                    var name = $(span).text();
+                    if (name == env) {
+                        EscSidebar.loadApplicationsForEnvironment(id, name);
+                    };
+                });
+            };
+        },
+
 // End of namespace
     };
 }();
@@ -105,58 +154,42 @@ $(document).ready(function() {
         EscSidebar.loadEnvironments();
     })
 
-    //Expand All Code
-    $('.expand').live("click", function() {
-        $('img', $('#sidebar > ul > li')).attr('src', EscSidebar.toggleMinus);
-        // Loop through all envs, set collapsed = true
-        $.each($('#sidebar > ul > li > span'), function(id, span) { 
-            var name = $(span).text();
-            if (! $('#sidebar').data(name + '_expanded')) {
-                $('#sidebar').data(name + '_expanded', true);
-                EscSidebar.loadApplicationsForEnvironment(id, name);
-            };
-        });
-		EscSidebar.loadEnvironments();
+    // Expand All 
+    $('.expand').live("click", function() { EscSidebar.expandAll() });
+
+    // Contract All 
+    $('.contract').live("click", function() { EscSidebar.contractAll() });
+
+    // Expand or Contract one particular env
+    $('.expander_img').live("click", function() {
+        var thisEnv = $(this).siblings("span").text();
+        EscSidebar.toggleEnv(thisEnv, this);
     });
 
-    //Contract All Code
-    $('.contract').live("click", function() {
-        $('#sidebar > ul > li > ul').slideUp('fast');
-        $('img', $('#sidebar > ul > li')).attr('src', EscSidebar.togglePlus);
-        // Loop through all envs, set collapsed = true
-        $.each($('#sidebar > ul > li > span'), function(id, span) { 
-            var myEnv = $(span).text();
-            $('#sidebar').data(myEnv + '_expanded', false);
-            $(this).siblings('ul').empty();
-        });
-		EscSidebar.loadEnvironments();
+    $('.envName').live("click", function() {
+        EscSidebar.toggleEnv($(this).text(), $(this).siblings('.expander_img'));
+    });
+
+    $('.appName').live("click", function() {
+        var thisEnv = $(this).parent().parent().siblings("span").text();
+        var thisApp = $(this).text();
+        EscSidebar.showEditor(thisEnv, thisApp);
     });
 
     // Click on an app edit button to get stuff in the content pane
     $('.appedit').live("click", function() {
-
         var thisEnv = $(this).parent().parent().siblings("span").text();
         var thisApp = $(this).parent().text();
-    
-        if ((thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
-            EscEditor.editPropertiesFor(thisEnv, thisApp);
-            $('#new_key').show();
-            $('#editor').show();
-        } else {
-            $('#new_key').hide();
-            $('#editor').hide();
-        };
+        EscSidebar.showEditor(thisEnv, thisApp);
     });
 
     // Click on an app delete button
     $('.appdelete').live("click", function() {
-
         var thisEnv = $(this).parent().parent().siblings("span").text();
         var thisApp = $(this).parent().text();
-    
 		var confirmation = confirm('Are you sure you want to delete ' + thisApp + '?');
 
-        if ((confirmation) && (thisApp != null) && (thisApp != "") && (thisApp != EscSidebar.newAppLabel)) {
+        if ((confirmation) && (thisApp != null) && (thisApp != "")) {
 			// Delete the app
 			$.ajax({
                 type: "DELETE",
@@ -176,7 +209,7 @@ $(document).ready(function() {
     $('.envdelete').live("click", function() {
         var thisEnv = $(this).siblings("span").text();
 		var confirmation = confirm('Are you sure you want to delete ' + thisEnv + '?');
-        if ( (confirmation) && (thisEnv != null) && (thisEnv!= "") && (thisEnv != EscSidebar.newEnvLabel)) {
+        if ( (confirmation) && (thisEnv != null) && (thisEnv!= "")) {
 			// Delete the env
 			$.ajax({
                 type: "DELETE",
@@ -189,27 +222,6 @@ $(document).ready(function() {
                     alert("Error deleting '" + thisEnv +"': " + XMLHttpRequest.responseText);
                 },
             })
-        };
-    });
-
-    //Expand or Contract one particular Nested ul
-    $('.expander_img').live("click", function() {
-        var toggleSrc = $(this).attr('src');
-        var thisEnv = $(this).siblings("span").text();
-
-        if ( toggleSrc == EscSidebar.toggleMinus ) {
-            $('#sidebar').data(thisEnv + '_expanded', false);
-            $(this).attr('src', EscSidebar.togglePlus).siblings('ul').slideUp('fast');
-            $(this).siblings('ul').empty();
-        } else{
-            $('#sidebar').data(thisEnv + '_expanded', true);
-            $(this).attr('src', EscSidebar.toggleMinus).siblings('ul').slideDown('fast');
-            $.each($('.environment > span'), function(id, span) {
-                var name = $(span).text();
-                if (name == thisEnv) {
-                    EscSidebar.loadApplicationsForEnvironment(id, name);
-                };
-            });
         };
     });
 
