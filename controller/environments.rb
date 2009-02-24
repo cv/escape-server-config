@@ -50,8 +50,25 @@ class EnvironmentsController < Ramaze::Controller
                 getValue(env, app, key)
             end
 
+        # Updating/moving/etc.
+        elsif request.post?
+            # Undefined
+            if env.nil?
+                  response.status = 400
+              # You're copying an env
+              elsif app.nil?
+                  response.status = 404
+                  # copyEnv(env)
+              # You're copying an app
+              elsif key.nil?
+                  # copyApp(env, app)
+              # You're copying a key
+              else             
+                  # copyKey(env, app, key)
+              end
+
         # Creating...
-        elsif request.put? || request.post?
+        elsif request.put?
             # Undefined
             if env.nil?
                 response.status = 400
@@ -82,7 +99,6 @@ class EnvironmentsController < Ramaze::Controller
                 deleteKey(env, app, key)
             end
         end
-        
     end
 
     private

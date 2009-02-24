@@ -44,13 +44,12 @@ describe EnvironmentsController, 'Environment bits' do
         got.content_type.should == "application/json"
     end
 
-    it 'should be able to create new environment using POST' do
+    it 'should not be able to create new environment using POST' do
         got = post('/environments/myenv')
-        got.status.should == 201
-
+        got.status.should == 404
+    
         got = get('/environments/myenv')
-        got.status.should == 200
-        got.body.should == "[]"
+        got.status.should == 404
     end
 
     it 'should not alter an existing environment if we PUT or POST to it' do
@@ -102,6 +101,11 @@ describe EnvironmentsController, 'Environment bits' do
     it 'should not delete the default environment' do
         got = delete('/environments/default')
         got.status.should == 403
+    end
+    
+    it 'should copy an environment' do
+        got = put('/environments/still.legal')
+        got.status.should == 201
     end
     
 end
