@@ -54,11 +54,18 @@ class EnvironmentsController < Ramaze::Controller
         elsif request.post?
             # Undefined
             if env.nil?
-                  response.status = 400
+                response.status = 400
               # You're copying an env
               elsif app.nil?
-                  response.status = 404
-                  # copyEnv(env)
+                if response.header['Location']
+                  # We can copy to Location:
+                  # targetEnv=
+                  #  copyEnv(env)
+                  response.status = 201 
+                  else
+                  response.status = 406
+                  return "Missing Location header. Can't copy environment"
+                end
               # You're copying an app
               elsif key.nil?
                   # copyApp(env, app)
@@ -324,5 +331,8 @@ class EnvironmentsController < Ramaze::Controller
                 response.status = 200
             end
         end
+    end
+    
+    def copyEnv(env)
     end
 end

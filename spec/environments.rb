@@ -46,13 +46,13 @@ describe EnvironmentsController, 'Environment bits' do
 
     it 'should not be able to create new environment using POST' do
         got = post('/environments/myenv')
-        got.status.should == 404
+        got.status.should == 406
     
         got = get('/environments/myenv')
         got.status.should == 404
     end
 
-    it 'should not alter an existing environment if we PUT or POST to it' do
+    it 'should not alter an existing environment if we PUT to it' do
         got = put('/environments/myenv')
         got.status.should == 201
 
@@ -103,9 +103,17 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 403
     end
     
-    it 'should copy an environment' do
-        got = put('/environments/still.legal')
-        got.status.should == 201
-    end
+    # it 'should copy an environment' do
+    #     got = put('/environments/copyme')
+    #     got.status.should == 201
+    #     
+    #     copy_target = "mycopy"
+    #     got = post('/environments/copyme', nil, {'Location' => copy_target})
+    #     got.status.should == 201
+    #     
+    #     got = get('/environments/mycopy')
+    #     got.status.should == 200
+    #     
+    # end
     
 end
