@@ -57,10 +57,9 @@ class EnvironmentsController < Ramaze::Controller
                 response.status = 400
               # You're copying an env
               elsif app.nil?
-                if request.env['Location']
+                if request.env['HTTP_CONTENT_LOCATION']
                   # We can copy to Location:
-                  targetEnv=env + ".copy"
-                  copyEnv(env,targetEnv)
+                  copyEnv(env,request.env['HTTP_CONTENT_LOCATION'])
                   response.status = 201 
                   else
                   response.status = 406
@@ -87,7 +86,8 @@ class EnvironmentsController < Ramaze::Controller
                 createApp(env, app)
             # Key stuff
             else             
-                setValue(env, app, key)
+                value = request.body.read
+                setValue(env, app, key, value)
             end
 
         # Deleting...
@@ -184,7 +184,7 @@ class EnvironmentsController < Ramaze::Controller
         end
     end
     
-    def listKeys(env, app)
+    def listKeys(env, app, getDefaults = true)
         # List keys and values for app in environment
         myenv = Environment[:name => env]
         if myenv.nil? # Env does not exist
@@ -203,13 +203,12 @@ class EnvironmentsController < Ramaze::Controller
             pairs = Array.new
             myapp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => myenv[:id]]
-                if value.nil? # Got no value in specified env, what's in default?
+                if value.nil? && getDefaults # Got no value in specified env, what's in default and do we want defaults?
                     value = Value[:key_id => key[:id], :environment_id => Environment[:name => "default"][:id]]
                 end
-                if value[:value] == "" # Got no value in specified env, what's in default?
-                    value = Value[:key_id => key[:id], :environment_id => Environment[:name => "default"][:id]]
+                if not value.nil?
+                    pairs.push("#{key[:name]}=#{value[:value]}\n")
                 end
-                pairs.push("#{key[:name]}=#{value[:value]}\n")
             end
             response.headers["Content-Type"] = "text/plain"
             return pairs.sort
@@ -217,7 +216,7 @@ class EnvironmentsController < Ramaze::Controller
     end
 
 
-    def getValue(env, app, key)
+    def getValue(env, app, key, getDefaults = true)
         myapp = App[:name => app]
         if myapp.nil?
             response.status = 404
@@ -242,7 +241,7 @@ class EnvironmentsController < Ramaze::Controller
         end
 
         value = Value[:key_id => mykey[:id], :environment_id => myenv[:id]]
-        if value.nil? # No value for this env, is there one for default?
+        if value.nil? && getDefaults # No value for this env, is there one for default and do we want defaults?
             value = Value[:key_id => mykey[:id], :environment_id => Environment[:name => "default"][:id]]
             if value.nil? # No default value...
                 response.status = 404
@@ -297,8 +296,7 @@ class EnvironmentsController < Ramaze::Controller
         return msg
     end
 
-    def setValue(env, app, key)
-        value = request.body.read
+    def setValue(env, app, key,value)
         myapp = App[:name => app]
         if myapp.nil?
             response.status = 404
@@ -337,11 +335,15 @@ class EnvironmentsController < Ramaze::Controller
       # Create new env
       createEnv(toEnv)
       # Copy applications into new env
-      allExistingApps = listApps(fromEnv).JSON.parse
+      allExistingApps = JSON.parse(listApps(fromEnv))
       allExistingApps.each do |existingApp|
         createApp(toEnv, existingApp)
+        allExistingValues = listKeys(fromEnv, existingApp, false)
+        allExistingValues.each do |line|
+          (key, value) = line.chomp.split('=', 2)
+          setValue(toEnv, existingApp, key, value)
+        end
       end
-      
       # Copy application values into new env
       
     end

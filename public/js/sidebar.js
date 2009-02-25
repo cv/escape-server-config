@@ -98,10 +98,8 @@ var EscSidebar = function() {
             var envName = $(this).attr("id").replace('_copy_form', '');
             var newEnvName = $(this).find(":input").val();
             $(this).find(":input").val("");
-			// Warning! Magic!
-			$.ajaxSetup({ 'beforeSend': function(header) {header.setRequestHeader("Location", newEnvName)} })
-			// /Magic 
             $.ajax({
+				beforeSend: function(request) {request.setRequestHeader("Content-Location", newEnvName)},
                 type: "POST",
                 url: "/environments/" + envName,
                 data: {},
