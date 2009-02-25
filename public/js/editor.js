@@ -14,7 +14,7 @@ var EscEditor = function() {
                 type: "GET",
                 url: "/environments/" + env + "/" + app,
                 success: function(data, textStatus) {
-                    $('#editor').html("<center><b>" + app + "</b> in <b>" + env + "</b></center><br />");
+                    $('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
                     var table = '<table class="keyvalue" id="key_value_table"><tr class="keyvalueheader"><th>Key</th><th>Value</th></tr>';
 					rowcolour = 1
                     $.each(data.split('\n'), function(i, item) {
@@ -25,10 +25,8 @@ var EscEditor = function() {
 						}
 						
                         table += ('<tr class="tr-' + rowcolour + '">');
-                        $.each(item.split('=', 2), function(j, jtem) {
-                            var tag = (j % 2) ? "td" : "th";
-                            table += "<" + tag + ">" + jtem + "</" + tag + ">";
-                        });
+                        table += "<th>" + item.slice(0, item.indexOf("=")) + "</th>";
+                        table += "<td>" + item.slice(item.indexOf("=") + 1) + "</td>";
                     });
                     table += "</table>";
                     $('#editor').append(table);

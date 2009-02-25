@@ -228,5 +228,4 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/default/appname/not%20legal')
         got.status.should == 403
     end
-
 end
