@@ -105,7 +105,6 @@ var EscSidebar = function() {
                 type: "POST",
                 url: "/environments/" + envName,
                 data: {},
-				header:":Location " + newEnvName,
                 success: function(data, textStatus) {
                     EscSidebar.loadEnvironments();
                 },
