@@ -6,7 +6,7 @@ body {
    overflow-y: scroll;
 }
 a:link, a:active, a:visited {
-   color: #CD0000;
+   color: white;
 }
 p { 
 background:white
@@ -41,7 +41,14 @@ input{
 img
 {  border-style: none;
 }
+img#logo
+{  border-style: none;
+}
 img.appedit{
+	margin-right:5px;
+	margin-left:5px;
+}
+img.envdelete{
 	margin-right:5px;
 }
 table.keyvalue {
@@ -69,40 +76,46 @@ tr.tr-1 {
 	overflow:hidden;
 	width:80%;
 }
-div#outer{
-	height:100%;
-	width:100%;
-	align:center;
-	background:lightgrey;
-}
 div#inner {
-   position:relative;
-   width: 90%;
-   height:650px;
+	margin-left:5%;
+	margin-right:5%;
 	background:white;
-	margin-left:auto;
-	margin-right:auto;
+/*	height:450px;*/
 }
 div#header {
-   top:50%; 
-   height:95px; 
+   height:103px; 
    text-align: center;
    background:white;
 }
+div#logo {
+	color:white;
+	float:left;
+	left:0;
+	top:0;
+	width:7em;
+	z-index:2;
+}
+div#title {
+	background-color:white;
+	border:none;
+	color:black;
+	margin:0 12em 20px;
+	min-width:120px;
+	padding:15px;
+	position:relative;
+	width:auto;
+	z-index:1;
+}
+div.clearme {
+   clear:both;
+}
 div#left {
-   position:absolute;
-   top:109px;
    width: 30%;
-   height:70%;
-   background:white;
+   float:left;
 }
 div#right {
-   position:absolute;
-   top:109px;
-   right:0px;
-   width:70%;
-   height:80%;
-   background:white;
+   width:60%;
+	float:left;
 }
 div#side-header {
    background:white;
@@ -123,12 +136,8 @@ div#new_key {
 	margin-left:30px;
 }
 div#footer {
-	position:relative;
-	background:white;
-	margin-left:auto;
-	margin-right:auto;
-   color:black ;
-   width:90%;
+   color:black;
+   width:100%;
    background:grey;
    align:center;
 }

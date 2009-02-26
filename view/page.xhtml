@@ -18,12 +18,16 @@
 <script type="text/javascript" src="/js/sidebar.js"></script>
 </head>
 <body id="body">
-<div id="outer">
 	<div id="inner">
 		<div id="header">
-			<img class='header' src='/images/logo.jpg' align='left'/>
-			<br/>
-			<h1>ESCAPE</h1>
+			<div id="logo">
+				<img src='/images/logo.jpg' align='left'/>
+			</div>
+			<div id="title">
+				<h1>ESCAPE</h1>
+			</div>
+			<div class="clearme">
+			</div>
 		</div>
 		<div id="left">
 			<div id="side-header">
@@ -31,9 +35,10 @@
 					<a id="refresh_env"><img src="/images/reload.png" alt="reload environment list"/></a>
 					<a href="javascript:void(0);" class="expand"><img src="/images/expand.png" alt="expand environment list"/></a> 
 					<a href="javascript:void(0);" class="contract"><img src="/images/contract.png" alt="contract environment list"/></a>
-				<br clear="all"/>
 			</div>
 			<div id="sidebar">
+			</div>
+			<div class="clearme">
 			</div>
 		</div>
 		<div id="right">
@@ -45,16 +50,15 @@
 	                <input type="hidden" id="key_app_name" name="key_app_name"/> 
 	                <img src="/images/add.png" alt="Add a new key" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_key_name" name="new_key_name" value="Add Key"/> 
 	            </form>
-			</div>
-			
+			</div>			
 		</div>
-		<br />
+		<div class="clearme">
+		</div>
+		<div id="footer">
+		      <center><a href="http://code.google.com/p/escservesconfig/">Escape</a>&nbsp;&copy;2009&nbsp;<a href='http://www.thoughtworks.com/'>ThoughtWorks</a></center>
+		</div>
 		<div id="hidden">
 		</div>
 	</div>
-	<!-- <div id="footer">
-	      <center><a href="http://code.google.com/p/escservesconfig/">Escape</a> &copy;2009 <a href='http://www.thoughtworks.com/'>ThoughtWorks</a> </center>
-	</div> -->
-</div>
 </body>
 </html>
