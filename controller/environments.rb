@@ -50,7 +50,7 @@ class EnvironmentsController < Ramaze::Controller
                 getValue(env, app, key)
             end
 
-        # Updating/moving/etc.
+        # Copying...
         elsif request.post?
             # Undefined
             if env.nil?
@@ -65,12 +65,6 @@ class EnvironmentsController < Ramaze::Controller
                   response.status = 406
                   return "Missing Location header. Can't copy environment"
                 end
-              # You're copying an app
-              elsif key.nil?
-                  # copyApp(env, app)
-              # You're copying a key
-              else             
-                  # copyKey(env, app, key)
               end
 
         # Creating...
@@ -153,6 +147,43 @@ class EnvironmentsController < Ramaze::Controller
     end
 
     def deleteKey(env, app, key)
+        myenv = Environment[:name => env]
+        if myenv.nil?
+            response.status = 404
+            return "Environment '#{env}' does not exist."
+        end
+
+        myapp = App[:name => app]
+        if myapp.nil?
+            response.status = 404
+            return "Application '#{app}' does not exist."
+        end
+        
+        mykey = Key[:name => key, :app_id => myapp[:id]]
+        if mykey.nil?
+            response.status = 404
+            return "Key '#{key}' does not exist."
+        end
+
+        if env == "default"
+            # Can't get count(*) from values where environment_id != myenv.id
+            # allValues = Value[:key_id => mykey[:id]]
+            # filtered = allValues.filter(~{:environment_id => myenv[:id]})
+            # 
+            # if filtered.nil?
+                mykey.delete
+                response.status = 200
+                return "Key '#{key}' deleted."
+            # else
+            #     response.status = 403
+            #     return "Key #{key} can't be deleted. It has values set."
+            # end
+        else         
+            Value[:key_id => mykey[:id], :environment_id => myenv[:id]].delete
+            response.status = 200
+            return "Key '#{key}' deleted from the '#{env}' environment."
+        end
+        
     end
 
     #
@@ -296,7 +327,7 @@ class EnvironmentsController < Ramaze::Controller
         return msg
     end
 
-    def setValue(env, app, key,value)
+    def setValue(env, app, key, value)
         myapp = App[:name => app]
         if myapp.nil?
             response.status = 404
@@ -344,7 +375,5 @@ class EnvironmentsController < Ramaze::Controller
           setValue(toEnv, existingApp, key, value)
         end
       end
-      # Copy application values into new env
-      
     end
 end

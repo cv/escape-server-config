@@ -228,4 +228,53 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/default/appname/not%20legal')
         got.status.should == 403
     end
+    
+    it 'should delete a not-overridden key completely from an application in the default environment' do
+        got = put('/environments/default/deletetest')
+        got.status.should == 201
+        
+        value = "default.value"
+        got = put('/environments/default/deletetest/mykey', :input => value)
+        got.status.should == 201
+
+        got = delete('/environments/default/deletetest/mykey')
+        got.status.should == 200
+        
+        got = get('/environments/default/deletetest/mykey')
+        got.status.should == 404
+        
+    end
+    
+    it 'should delete a key mapping from an application in a non-default environment' do
+        
+        got = put('/environments/deletekey')
+        got.status.should == 201
+        
+        got = put('/environments/deletekey/deletetest')
+        got.status.should == 201
+
+        value = "default.value"
+        got = put('/environments/default/deletetest/mykey', :input => value)
+        got.status.should == 201
+        
+        value = "override.value"
+        got = put('/environments/deletekey/deletetest/mykey', :input => value)
+        got.status.should == 201
+
+        got = delete('/environments/deletekey/deletetest/mykey')
+        got.status.should == 200
+        
+        got = get('/environments/deletekey/deletetest/mykey')
+        got.status.should == 200
+        got.body.should.not == ""
+        got.body.should.include "default.value"
+        got.body.should.not.include "override.value" 
+               
+    end
+    
+    # 
+    # it 'should not delete an overridden key from an application in the default environment' do
+    #     
+    # end
+    
 end
