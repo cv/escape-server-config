@@ -15,7 +15,7 @@ var EscEditor = function() {
                 url: "/environments/" + env + "/" + app,
                 success: function(data, textStatus) {
                     $('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
-                    var table = '<table class="keyvalue" id="key_value_table"><tr class="keyvalueheader"><th>Key</th><th>Value</th></tr>';
+                    var table = '<table class="keyvalue" id="key_value_table"><tr class="keyvalueheader"><th>Key</th><th>Value</th><th>&nbsp;</th></tr>';
 					rowcolour = 1
                     $.each(data.split('\n'), function(i, item) {
 						if (rowcolour == 1) { //Alternating row colours
@@ -26,7 +26,8 @@ var EscEditor = function() {
 						
                         table += ('<tr class="tr-' + rowcolour + '">');
                         table += "<th>" + item.slice(0, item.indexOf("=")) + "</th>";
-                        table += "<td>" + item.slice(item.indexOf("=") + 1) + "</td>";
+                        table += "<td class='keyeditbox'>" + item.slice(item.indexOf("=") + 1) + "</td>";
+						table += "<td class='keydeletebox' id='deletekey-" + item.slice(0, item.indexOf("=")) + "'><img src='/images/delete.png'/></td>"
                     });
                     table += "</table>";
                     $('#editor').append(table);
@@ -80,7 +81,7 @@ $(document).ready(function() {
                 },
             });
         } else {
-            alert("Not going to create new environment called " + newName);
+            alert("Not going to create new key called " + newName);
         }
     });
 });

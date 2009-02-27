@@ -53,7 +53,6 @@ img.envdelete{
 }
 table.keyvalue {
 	width:100%;
-	table-layout:fixed;
 	white-space:normal;
 	overflow:hidden;
 	border-width: 0px;
@@ -75,6 +74,9 @@ tr.tr-1 {
 	background-color: gainsboro;
 	overflow:hidden;
 	width:80%;
+}
+td.keydeletebox{
+	width:16px;
 }
 div#inner {
 	margin-left:5%;
