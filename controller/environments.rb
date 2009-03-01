@@ -320,9 +320,7 @@ class EnvironmentsController < Ramaze::Controller
             msg = "Application '#{app}' already exists."
         end
 
-        if env != 'default'
-            myapp.add_environment(myenv)
-        end
+        myapp.add_environment(myenv) unless myapp.environments.include?(myenv)
 
         return msg
     end

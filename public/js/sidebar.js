@@ -24,10 +24,18 @@ var EscSidebar = function() {
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
                 $.each(appData, function(appId, thisApp) {
-                    appList += "<li class='application'><img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/><img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/><span class='appName'>" + thisApp + "</span></li>";
+                    appList += ("<li id='" + thisApp + "' class='application'>");
+                    appList += ("<img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/>");
+                    appList += ("<img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/>");
+                    appList += ("<span class='appName'>" + thisApp + "</span></li>");
                 });
-                appList += '<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new application" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_app_name" value="Add Application"/></form></li>';
-                appList += '<li><form id="' + envName + '_copy_form" class="copy_form" action="javascript:void(0);"><img src="/images/copy.png" alt="Copy this environment" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="copy_env_name" value="Copy Environment"/></form></li>';
+                appList += ('<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);">');
+                appList += ('<img src="/images/add.png" alt="Add a new application" />&nbsp;');
+                appList += ('<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_app_name" value="Add Application"/>');
+                appList += ('</form></li>');
+                appList += ('<li><form id="' + envName + '_copy_form" class="copy_form" action="javascript:void(0);">');
+                appList += ('<img src="/images/copy.png" alt="Copy this environment" />&nbsp;');
+                appList += ('<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="copy_env_name" value="Copy Environment"/></form></li>');
                 appList += "</ul>";
                 var envObj = $('#sidebar .environment:eq(' + envId + ')');
                 envObj.append(appList);
@@ -48,13 +56,16 @@ var EscSidebar = function() {
                     } else {
                         toggleState = togglePlus;
                     };
-					envList += ('<li class="environment">');
+					envList += ('<li id="' + envName + '" class="environment">');
 					envList += ("<img class='envdelete' src='/images/delete.png' alt='Delete " + envName +" environment'/>");
 					envList += ('<img src="' + toggleState + '" class="expander_img" class="clickable"/>');
                     envList += ('<span class="envName">' + envName + '</span>');
                     envList += ('</li>');
                 });
-                envList += '<li><form id="new_env_form" action="javascript:void(0);"><img src="/images/add.png" alt="Add a new environment"/> <input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_env_name" name="new_env_name" value="Add Environment"/></form></li>';
+                envList += ('<li><form id="new_env_form" action="javascript:void(0);">');
+                envList += ('<img src="/images/add.png" alt="Add a new environment"/>&nbsp;');
+                envList += ('<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_env_name" name="new_env_name" value="Add Environment"/>');
+                envList += ('</form></li>');
                 envList += "</ul>";
                 $('#sidebar').html(envList);
                 $('#sidebar' + " #new_env_form").submit(EscSidebar.createNewEnv);
@@ -152,7 +163,7 @@ var EscSidebar = function() {
             if ($(img).attr('src') == EscSidebar.toggleMinus) {
                 $('#sidebar').data(env + '_expanded', false);
                 $(img).attr('src', EscSidebar.togglePlus).siblings('ul').slideUp('fast');
-                $(img).siblings('ul').empty();
+                $(img).siblings('ul').remove();
             } else {
                 $('#sidebar').data(env + '_expanded', true);
                 $(img).attr('src', EscSidebar.toggleMinus).siblings('ul').slideDown('fast');

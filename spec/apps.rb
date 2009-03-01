@@ -88,6 +88,41 @@ describe EnvironmentsController, 'Application bits' do
         got.status.should == 404
     end
 
+    it 'should only add apps to default environment once' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        got = get('/environments/default')
+        got.status.should == 200
+        got.body.should == '["appname"]'
+        
+        got = put('/environments/default/appname')
+        got.status.should == 200
+
+        got = get('/environments/default')
+        got.status.should == 200
+        got.body.should == '["appname"]'
+    end
+
+    it 'should only add apps to specified environments once' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = put('/environments/myenv/appname')
+        got.status.should == 201
+
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == '["appname"]'
+        
+        got = put('/environments/myenv/appname')
+        got.status.should == 200
+
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == '["appname"]'
+    end
+
     it 'should only accept \A[.a-zA-Z0-9_-]+\Z as environment name' do
         got = put('/environments/default/spaced%20out%20name')
         got.status.should == 403
