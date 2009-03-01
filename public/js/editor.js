@@ -34,16 +34,10 @@ var EscEditor = function() {
                     $('#key_env_name').val(env);
                     $('#key_app_name').val(app);
                     $.uiTableEdit($('#key_value_table'), {
+                        find: ".keyeditbox",
                         editDone: function(newText, oldText, e, td) {
-                            var key;
-                            var value;
-                            $.each(td.siblings().andSelf(), function(i, item) {
-                                if (i % 2) {
-                                    value = $(item).text();
-                                } else {
-                                    key = $(item).text();
-                                }
-                            });
+                            var key = td.siblings('th').text();
+                            var value = td.text();
                             $.ajax({
                                 type: "PUT",
                                 url: "/environments/" + env + "/" + app + "/" + key,
