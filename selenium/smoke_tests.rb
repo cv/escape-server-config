@@ -12,9 +12,8 @@ describe "ESCAPE Management Interface" do
     alias :page :selenium_driver
 
     before(:all) do
-        @selenium_driver = Selenium::Client::Driver.new("localhost", 4444, "*firefox", "http://localhost:7000")
+        @selenium_driver = Selenium::Client::Driver.new("localhost", 4444, "*firefox", "http://localhost:7000", 30)
         selenium_driver.start_new_browser_session
-        
     end
 
     after(:all) do
@@ -30,24 +29,26 @@ describe "ESCAPE Management Interface" do
 
     it "should be able to add a new environment" do
         page.open("/")
+        page.wait_for_element('//input[@id="new_env_name"]')
         # Type "zoo" in the then object called 'new_env_name'
-        page.type("new_env_name", "zoo")
+        page.type('//input[@id="new_env_name"]', "zoo")
         # Simulate pressing enter in the text box
-        page.key_press("new_env_name", '13')
+        page.key_press('//input[@id="new_env_name"]', '13')
     end
 
     it "should be able to add a new app to the zoo environment" do
         page.open("/")
         # Click on the "zoo" environment span
-        page.click("//span[@class='envName' and text()='zoo']")
+        page.wait_for_element('//span[@class="envName" and text()="zoo"]')
+        page.click('//span[@class="envName" and text()="zoo"]')
         # Wait for apps to be loaded for this env
-        page.wait_for(:element => "//form[@class='new_app_form']//input[@id='new_app_name']")
+        page.wait_for_element('//form[@class="new_app_form"]//input[@id="new_app_name"]')
         # Type in the app name "cage" and add it to the zoo env
-        page.click("//form[@class='new_app_form']//input[@id='new_app_name']")
-        page.type("//form[@class='new_app_form']//input[@id='new_app_name']", "cage")
-        page.key_press("//form[@class='new_app_form']//input[@id='new_app_name']", '13')
+        page.click('//form[@class="new_app_form"]//input[@id="new_app_name"]')
+        page.type('//form[@class="new_app_form"]//input[@id="new_app_name"]', "cage")
+        page.key_press('//form[@class="new_app_form"]//input[@id="new_app_name"]', '13')
         # Check that the app cage now appears under zoo
-        page.wait_for(:element => "//li[@class='environment' and @id='zoo']//ul[@class='application_list']//li[@class='application' and @id='cage']")
+        page.wait_for_element('//li[@class="environment" and @id="zoo"]//ul[@class="application_list"]//li[@class="application" and @id="cage"]')
         # Check that the app cage now appears under default
     end
 end
