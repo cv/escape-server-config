@@ -1,5 +1,9 @@
 def createCryptoKeys(env, pair)
     # Create a keypair
+    if env == "default"
+        response.status = 403
+        return "Default environment doesn't have encryption"
+    end
     myenv = Environment[:name => env]
     if myenv.nil?
         response.status = 404
@@ -7,7 +11,7 @@ def createCryptoKeys(env, pair)
     elsif pair == "pair"
         key = OpenSSL::PKey::RSA.generate(1024)
         public_key = key.public_key.to_pem
-        private_key = key.to_pem
+        private_key = key.to_pem 
         myenv.update(:public_key => public_key, :private_key => private_key)
         response.status = 201
         response.headers["Content-Type"] = "text/plain" 

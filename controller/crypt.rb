@@ -60,7 +60,7 @@ class CryptController < Ramaze::Controller
         elsif request.delete?
             # Undefined
             if env.nil?
-                response.status = 400
+                response.status = 404
             # You're deleting a keypair
             elsif puborpriv.nil?
                 deleteCryptoKeys(env,"pair")
@@ -81,15 +81,13 @@ class CryptController < Ramaze::Controller
             return "Environment '#{env}' does not exist."
         else
             response.status = 200
+            response.headers["Content-Type"] = "text/plain"   
             if pair == "pair"
-                response.headers["Content-Type"] = "text/plain"   
-                return myenv.public_key + "\n" +  myenv.private_key
+                return "#{myenv.public_key}" + "\n" +  "#{myenv.private_key}"
             elsif pair == "private"
-                response.headers["Content-Type"] = "text/plain" 
-                return myenv.private_key
+                return "#{myenv.private_key}"
             elsif pair == "public"
-                response.headers["Content-Type"] = "text/plain" 
-                return myenv.public_key
+                return "#{myenv.public_key}"
             else
                 response.status = 403
                 return "Crypto keys can only be public or private or in a pair"
@@ -97,8 +95,27 @@ class CryptController < Ramaze::Controller
         end
     end
     
-    def deleteCryptoKeys(env)
-       
+    def deleteCryptoKeys(env, pair)
+        myenv = Environment[:name => env]
+        if myenv.nil?
+            response.status = 404
+            return "Environment '#{env}' does not exist."
+        else
+            response.status = 200
+            if pair == "pair"
+                myenv.update(:public_key => '', :private_key => '')
+                return               
+            elsif pair == "private"
+                myenv.update(:private_key => nil)
+                return
+            elsif pair == "public"
+                myenv.update(:public_key => nil)
+                return
+            else
+                response.status = 403
+                return "Crypto keys can only be public or private or in a pair"
+            end
+        end
     end
     
 end

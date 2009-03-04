@@ -27,6 +27,11 @@ describe CryptController, 'Encryption bits' do
            got = get('/crypt')
            got.status.should == 400
        end
+       
+       it 'should do nothing on DELETE of a missing env' do
+           got = delete('/crypt/flibble')
+           got.status.should == 404
+       end
 
        it 'should return 404 when trying to GET an unknown environment' do
            got = get('/crypt/missing')
@@ -75,25 +80,27 @@ describe CryptController, 'Encryption bits' do
            got.body.should.include "-----END RSA PRIVATE KEY-----" 
        end     
 
-       # it 'should delete an existing keypair' do
-       #     got = put('/environments/delete_me')
-       #     got.status.should == 201
-       # 
-       #     got = delete('/crypt/delete_me')
-       #     got.status.should == 200
-       # 
-       #     got = get('/crypt/delete_me')
-       #     got.status.should == 404
-       # end
-       # 
-       # it 'should not delete missing keys' do
-       #     got = delete('/crypt/i_dont_exist')
-       #     got.status.should == 404
-       # end
-       # 
-       # it 'should not encrypt the default environment' do
-       #     got = get('/crypt/default')
-       #     got.status.should == 404
-       # end
+       it 'should delete an existing keypair' do
+           got = put('/environments/delete_me')
+           got.status.should == 201
+       
+           got = delete('/crypt/delete_me')
+           got.status.should == 200
+       
+           got = get('/crypt/delete_me')
+           got.status.should == 200
+           got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
+           got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----" 
+       end
+        
+       it 'should not encrypt the default environment' do
+           got = put('/crypt/default')
+           got.status.should == 403
+           
+           got = get('/crypt/default')
+           got.status.should == 200
+           got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
+           got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----"
+       end
     
 end
