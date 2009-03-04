@@ -18,8 +18,13 @@ Required ruby gems:
     sqlite
     json
     mongrel
-    
+	openssl
+	
+Optional ruby gems:
 
+	Selenium
+	selenium-client
+    
 If you have rackup in your path, you can start the server with './start.ru'. If not, 'ruby start.rb' will work.
 
 Once the server is up, connect on port 7000 with your favourite browser

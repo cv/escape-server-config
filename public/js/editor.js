@@ -12,8 +12,7 @@ var EscEditor = function() {
 		},
         
         editPropertiesFor : function(env, app) {
-            $('#editor').empty();
-            // $('#editor').append("Editing /environments/" + env + "/" + app + "<br/><br/>");    
+            $('#editor').empty(); 
 
             $.ajax({
                 type: "GET",

@@ -18,6 +18,8 @@ class Environment < Sequel::Model(:environments)
     set_schema do
         primary_key :id, :null => false
         String :name
+        String :public_key
+        String :private_key
     end
 
     validates_uniqueness_of :name

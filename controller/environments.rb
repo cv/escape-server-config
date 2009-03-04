@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 require 'json'
+require 'openssl'
 
 class EnvironmentsController < Ramaze::Controller
     map('/environments')
@@ -293,7 +294,8 @@ class EnvironmentsController < Ramaze::Controller
             response.status = 200
             return "Environment '#{env}' already exists."
         else
-            Environment.create(:name => env)
+            (public_key, private_key) = generate_keypair()
+            Environment.create(:name => env, :public_key => public_key, :private_key => private_key)      
             response.status = 201
             return "Environment created."
         end
@@ -374,4 +376,12 @@ class EnvironmentsController < Ramaze::Controller
         end
       end
     end
+    
+    def generate_keypair()
+        key = OpenSSL::PKey::RSA.generate(1024)
+        public_key = key.public_key.to_pem
+        private_key = key.to_pem
+        return public_key, private_key
+    end
+    
 end
