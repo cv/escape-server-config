@@ -163,9 +163,11 @@ var EscSidebar = function() {
         showEnvEditor : function(env) {
             if ((env != null) && (env != "")) {
                 EscEditor.editEnvironment(env);
+				$('#new_key').hide();
                 $('#editor').show();
             } else {
                 $('#editor').hide();
+				$('#new_key').hide();
             };
         },
 
@@ -226,7 +228,7 @@ $(document).ready(function() {
 
     // Click on an env edit button to get stuff in the content pane
     $('.envedit').live("click", function() {
-        var thisEnv = $(this).parent().text();
+        var thisEnv = $(this).siblings("span").text();
         EscSidebar.showEnvEditor(thisEnv);
     });
 
