@@ -100,6 +100,9 @@ class CryptController < Ramaze::Controller
         if myenv.nil?
             response.status = 404
             return "Environment '#{env}' does not exist."
+        elsif env == "default"
+            response.status = 401
+            return "Can't delete keys from default."
         else
             response.status = 200
             if pair == "pair"

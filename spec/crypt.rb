@@ -92,10 +92,15 @@ describe CryptController, 'Encryption bits' do
            got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
            got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----" 
        end
+       
+       it 'should not delete default keya' do    
+           got = delete('/crypt/default')
+           got.status.should == 401
+       end
         
        it 'should not encrypt the default environment' do
            got = put('/crypt/default')
-           got.status.should == 403
+           got.status.should == 401
            
            got = get('/crypt/default')
            got.status.should == 200

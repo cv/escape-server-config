@@ -9,6 +9,26 @@ var EscEditor = function() {
 		editEnvironment : function(env) {
 			$('#editor').empty();
 		  	$('#editor').html("<center><h3><b><font size='+1>" + env + "</font></b></center><br />");
+			$('#editor').append("<div id='crypto'></div>");
+			$.ajax({
+                type: "GET",
+                url: "/crypt/" + env + "/public",
+				success: function(data, textStatus){
+					var pubkey = data.replace("-----BEGIN RSA PUBLIC KEY-----","");
+					pubkey = pubkey.replace("-----END RSA PUBLIC KEY-----","");						 
+					$('#crypto').append("<b>Public key</b>:" + pubkey + "<br />");
+				},
+			});
+			$.ajax({
+	                type: "GET",
+	                url: "/crypt/" + env + "/private",
+					success: function(data, textStatus){
+						var privkey = data.replace("-----BEGIN RSA PRIVATE KEY-----","");
+						privkey = privkey.replace("-----END RSA PRIVATE KEY-----","");						 
+						$('#crypto').append("<b>Private key</b>:" + privkey + "<br />");
+				},
+			});
+			
 		},
         
         editPropertiesFor : function(env, app) {

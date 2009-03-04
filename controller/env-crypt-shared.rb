@@ -1,7 +1,7 @@
 def createCryptoKeys(env, pair)
     # Create a keypair
     if env == "default"
-        response.status = 403
+        response.status = 401
         return "Default environment doesn't have encryption"
     end
     myenv = Environment[:name => env]
