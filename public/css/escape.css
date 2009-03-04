@@ -45,11 +45,14 @@ img#logo
 {  border-style: none;
 }
 img.appedit{
-	margin-right:5px;
-	margin-left:5px;
+	margin-right:2px;
+	margin-left:2px;
 }
 img.envdelete{
-	margin-right:5px;
+	margin-right:2px;
+}
+img.envedit{
+	margin-right:2px;
 }
 table.keyvalue {
 	width:100%;

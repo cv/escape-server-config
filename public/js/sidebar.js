@@ -58,6 +58,7 @@ var EscSidebar = function() {
                     };
 					envList += ('<li id="' + envName + '" class="environment">');
 					envList += ("<img class='envdelete' src='/images/delete.png' alt='Delete " + envName +" environment'/>");
+					envList += ("<img class='envedit' src='/images/edit.png' alt='Edit " + envName +" environment'/>");
 					envList += ('<img src="' + toggleState + '" class="expander_img" class="clickable"/>');
                     envList += ('<span class="envName">' + envName + '</span>');
                     envList += ('</li>');
@@ -159,6 +160,15 @@ var EscSidebar = function() {
             };
         },
 
+        showEnvEditor : function(env) {
+            if ((env != null) && (env != "")) {
+                EscEditor.editEnvironment(env);
+                $('#editor').show();
+            } else {
+                $('#editor').hide();
+            };
+        },
+
         toggleEnv : function(env, img) {
             if ($(img).attr('src') == EscSidebar.toggleMinus) {
                 $('#sidebar').data(env + '_expanded', false);
@@ -212,6 +222,12 @@ $(document).ready(function() {
         var thisEnv = $(this).parent().parent().siblings("span").text();
         var thisApp = $(this).parent().text();
         EscSidebar.showEditor(thisEnv, thisApp);
+    });
+
+    // Click on an env edit button to get stuff in the content pane
+    $('.envedit').live("click", function() {
+        var thisEnv = $(this).parent().text();
+        EscSidebar.showEnvEditor(thisEnv);
     });
 
     // Click on an app delete button

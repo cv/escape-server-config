@@ -5,10 +5,15 @@ var EscEditor = function() {
         validateName : function(name) {
             return true;
         },
+
+		editEnvironment : function(env) {
+			$('#editor').empty();
+		  	$('#editor').html("<center><h3><b><font size='+1>" + env + "</font></b></center><br />");
+		},
         
         editPropertiesFor : function(env, app) {
             $('#editor').empty();
-            $('#editor').append("Editing /environments/" + env + "/" + app + "<br/><br/>");    
+            // $('#editor').append("Editing /environments/" + env + "/" + app + "<br/><br/>");    
 
             $.ajax({
                 type: "GET",
