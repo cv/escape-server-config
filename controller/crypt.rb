@@ -36,10 +36,10 @@ class CryptController < Ramaze::Controller
                 response.status = 400
             # Show both keys in specified environment
             elsif puborpriv.nil?
-                listCryptoKeys(env, "pair")
+                showCryptoKeys(env, "pair")
             # Show public or private key for environment
             else 
-                listCryptoKeys(env, puborpriv)
+                showCryptoKeys(env, puborpriv)
             end
 
         # Creating...
@@ -73,7 +73,25 @@ class CryptController < Ramaze::Controller
 
     private
     
-    def listCryptoKeys()
+    def showCryptoKeys(env, pair)
+        # Show both keys in an environment
+        myenv = Environment[:name => env]
+        if myenv.nil?
+            response.status = 404
+            return "Environment '#{env}' does not exist."
+        else
+            response.status = 200
+            if pair == "pair"   
+                return myenv.public_key, myenv.private_key
+            elsif pair == "private"
+                return myenv.private_key
+            elsif pair == "public"
+                return myenv.public_key
+            else
+                response.status = 500
+                return "Crypto keys can only be public or private or in a pair"
+            end
+        end
     end
     
     def createCryptoKeys()
