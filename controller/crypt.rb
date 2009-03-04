@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 require 'openssl'
+require 'controller/env-crypt-shared'
 
 class CryptController < Ramaze::Controller
     map('/crypt')
@@ -50,10 +51,9 @@ class CryptController < Ramaze::Controller
             # You're creating a new keypair
             elsif puborpriv.nil?
                 createCryptoKeys(env,"pair")
-            # You're pushing in a crypto key
+            # You're doing something silly
             else             
-                value = request.body.read
-                createCryptoKeys(env, puborpriv, value)
+                response.status = 403
             end
 
         # Deleting...
@@ -74,38 +74,31 @@ class CryptController < Ramaze::Controller
     private
     
     def showCryptoKeys(env, pair)
-        # Show both keys in an environment
+        # Show keys in an environment
         myenv = Environment[:name => env]
         if myenv.nil?
             response.status = 404
             return "Environment '#{env}' does not exist."
         else
             response.status = 200
-            if pair == "pair"   
-                return myenv.public_key, myenv.private_key
+            if pair == "pair"
+                response.headers["Content-Type"] = "text/plain"   
+                return myenv.public_key + "\n" +  myenv.private_key
             elsif pair == "private"
+                response.headers["Content-Type"] = "text/plain" 
                 return myenv.private_key
             elsif pair == "public"
+                response.headers["Content-Type"] = "text/plain" 
                 return myenv.public_key
             else
-                response.status = 500
+                response.status = 403
                 return "Crypto keys can only be public or private or in a pair"
             end
         end
     end
     
-    def createCryptoKeys()
-    end
-    
-    def deleteCryptoKeys()
-    end
-
-    # Creation
-    def generate_keypair()
-        key = OpenSSL::PKey::RSA.generate(1024)
-        public_key = key.public_key.to_pem
-        private_key = key.to_pem
-        return public_key, private_key
+    def deleteCryptoKeys(env)
+       
     end
     
 end

@@ -39,6 +39,7 @@ describe CryptController, 'Encryption bits' do
            
            got = get('/crypt/anenv')
            got.status.should == 200
+           got.content_type.should == "text/plain"
            got.body.should.not == "[]"
            got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
            got.body.should.include "-----END RSA PUBLIC KEY-----" 
@@ -52,6 +53,7 @@ describe CryptController, 'Encryption bits' do
            
            got = get('/crypt/anenv/public')
            got.status.should == 200
+           got.content_type.should == "text/plain"
            got.body.should.not == "[]"
            got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
            got.body.should.include "-----END RSA PUBLIC KEY-----" 
@@ -65,6 +67,7 @@ describe CryptController, 'Encryption bits' do
            
            got = get('/crypt/anenv/private')
            got.status.should == 200
+           got.content_type.should == "text/plain"
            got.body.should.not == "[]"
            got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
            got.body.should.not.include "-----END RSA PUBLIC KEY-----" 

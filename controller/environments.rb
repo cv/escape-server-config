@@ -14,6 +14,7 @@
 
 require 'json'
 require 'openssl'
+require 'controller/env-crypt-shared'
 
 class EnvironmentsController < Ramaze::Controller
     map('/environments')
@@ -294,8 +295,8 @@ class EnvironmentsController < Ramaze::Controller
             response.status = 200
             return "Environment '#{env}' already exists."
         else
-            (public_key, private_key) = generate_keypair()
-            Environment.create(:name => env, :public_key => public_key, :private_key => private_key)      
+            Environment.create(:name => env)
+            createCryptoKeys(env,"pair")      
             response.status = 201
             return "Environment created."
         end
@@ -375,13 +376,6 @@ class EnvironmentsController < Ramaze::Controller
           setValue(toEnv, existingApp, key, value)
         end
       end
-    end
-    
-    def generate_keypair()
-        key = OpenSSL::PKey::RSA.generate(1024)
-        public_key = key.public_key.to_pem
-        private_key = key.to_pem
-        return public_key, private_key
     end
     
 end
