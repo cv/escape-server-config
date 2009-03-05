@@ -112,8 +112,7 @@ describe EnvironmentsController, 'Environment bits' do
     #     got.status.should == 201
     #     
     #     got = get('/environments/mycopy')
-    #     got.status.should == 200
-    #     
+    #     got.status.should == 200 
     # end
     
 end

@@ -14,7 +14,7 @@
 
 require 'openssl'
 
-class CryptController < Ramaze::Controller
+class CryptController < Controller
     map('/crypt')
 
     def index(env = nil, puborpriv = nil)
@@ -49,11 +49,27 @@ class CryptController < Ramaze::Controller
                 response.status = 400
             # You're creating a new keypair
             elsif puborpriv.nil?
-                createCryptoKeys(env,"pair")
+               # createCryptoKeys(env,"pair")
+               response.status = 403
+               return "Can't create keypars through the API. This is done when an environment is created."
             # You're doing something silly
             else             
                 response.status = 403
             end
+            
+        # Updating...
+        elsif request.post?
+            # Undefined
+            if env.nil?
+                response.status = 400
+            # You're updating a keypair
+            elsif puborpriv.nil?
+                keys = request.body.read
+                updateCryptoKeys(env, "pair", keys)
+            # You're trying to update a single key. Naughty!
+            else 
+                response.status = 403
+            end       
 
         # Deleting...
         elsif request.delete?
@@ -100,8 +116,8 @@ class CryptController < Ramaze::Controller
             response.status = 404
             return "Environment '#{env}' does not exist."
         elsif env == "default"
-            response.status = 401
-            return "Can't delete keys from default."
+            response.status = 403
+            return "Can't delete keys from default environment."
         else
             response.status = 200
             if pair == "pair"
@@ -117,6 +133,40 @@ class CryptController < Ramaze::Controller
                 response.status = 403
                 return "Crypto keys can only be public or private or in a pair"
             end
+        end
+    end
+    
+    def updateCryptoKeys(env, pair, keys)
+        myenv = Environment[:name => env]
+        if myenv.nil?
+            response.status = 404
+            return "Environment '#{env}' does not exist."
+        elsif env == "default"
+            response.status = 403
+            return "Can't put keys into default environment."
+        elsif pair != "pair"
+            response.status = 403
+            return "Only update keys in a pair"
+        else
+            if keys && keys != ''
+                # Updating with provided values
+                /(-----BEGIN RSA PUBLIC KEY-----.*-----END RSA PUBLIC KEY-----)/m.match(keys)
+                public_key = $1
+                /(-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----)/m.match(keys)
+                private_key = $1
+                if public_key && private_key
+                    myenv.update(:public_key => public_key, :private_key => private_key)
+                    response.status = 201
+                    return 
+                else
+                    response.status = 501
+                end
+            else
+                # Creating new keys
+                createCryptoKeys(env, pair)
+                response.status = 201
+                return               
+            end                    
         end
     end
     

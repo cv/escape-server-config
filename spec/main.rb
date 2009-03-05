@@ -14,12 +14,13 @@ describe MainController do
     it 'should show start page' do
         got = get('/')
         got.status.should == 200
-        got.at('//title').text.strip.should == MainController.new.index
+        got.body.should != ''
     end
 
     it 'should have /environments wired in' do
         got = get('/environments')
         got.status.should == 200
     end
+    
 end
 
