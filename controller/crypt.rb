@@ -13,7 +13,6 @@
 #   limitations under the License.
 
 require 'openssl'
-require 'controller/env-crypt-shared'
 
 class CryptController < Ramaze::Controller
     map('/crypt')

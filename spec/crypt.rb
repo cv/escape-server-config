@@ -98,10 +98,7 @@ describe CryptController, 'Encryption bits' do
            got.status.should == 401
        end
         
-       it 'should not encrypt the default environment' do
-           got = put('/crypt/default')
-           got.status.should == 401
-           
+       it 'should not encrypt the default environment' do           
            got = get('/crypt/default')
            got.status.should == 200
            got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
