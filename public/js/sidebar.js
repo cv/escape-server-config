@@ -144,7 +144,7 @@ var EscSidebar = function() {
             $.each($('#sidebar > ul > li > span'), function(id, span) {
                 var myEnv = $(span).text();
                 $('#sidebar').data(myEnv + '_expanded', false);
-                $(this).siblings('ul').empty();
+                $(this).siblings('ul').remove();
             });
             EscSidebar.loadEnvironments();
         },
