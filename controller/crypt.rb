@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 require 'openssl'
+require 'Base64'
 
 class CryptController < Controller
     map('/crypt')
@@ -151,13 +152,25 @@ class CryptController < Controller
             if keys && keys != ''
                 # Updating with provided values
                 /(-----BEGIN RSA PUBLIC KEY-----.*-----END RSA PUBLIC KEY-----)/m.match(keys)
-                public_key = $1
+                public_string = $1
                 /(-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----)/m.match(keys)
-                private_key = $1
-                if public_key && private_key
-                    myenv.update(:public_key => public_key, :private_key => private_key)
-                    response.status = 201
-                    return 
+                private_string = $1
+                if public_string && private_string
+                    message = "Test encryption"
+                    puts "public: " + public_string
+                    puts "private: " + private_string
+                    public_key = OpenSSL::PKey::RSA.new(public_string)
+                    private_key = OpenSSL::PKey::RSA.new(private_string)
+                    encrypted_message = Base64.encode64(public_key.public_encrypt(message))
+                    decrypted_message = private_key.private_decrypt(Base64.decode64(encrypted_message))
+                    if message == decrypted_message
+                        myenv.update(:public_key => public_key.to_pem, :private_key => private_key.to_pem)
+                        response.status = 201
+                        return 
+                    else
+                        response.status = 403
+                        return "Keys are not a pair"
+                    end
                 else
                     response.status = 501
                 end
