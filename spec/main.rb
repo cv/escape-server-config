@@ -14,7 +14,8 @@ describe MainController do
     it 'should show start page' do
         got = get('/')
         got.status.should == 200
-        got.body.should != ''
+        got.body.should.not == ''
+        got.body.should.include 'ESCAPE'
     end
 
     it 'should have /environments wired in' do

@@ -173,5 +173,28 @@ kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
            got.body.should.include "kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X"
            got.body.should.include "-----END RSA PRIVATE KEY-----"
        end
-    
+
+       it 'should reject broken keypair' do
+           got = put('/environments/updatemykeys')
+           got.status.should == 201
+
+           mykeypair = "
+-----BEGIN RSA PUBLIC KEY-----
+MEgCQQClNadbDEn4rTUOecvLRwpT4HzYbvCJ3Cvt5zEj0WbAzBRdQ9uHyOSMENSw
++TScQLPOid9vFjgB/K/4FiE4OJEHAgMBAAE=
+-----END RSA PUBLIC KEY-----
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY
+20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe
+4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU
+6QIhANJlI/W8w0CpwO0r0rYm7PUvB2EirNluzSu1peANJme1AiEA0VyDPnoCWQ5T
+6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI
+N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
+kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
+-----END RSA PRIVATE KEY-----"
+
+            got = post('/crypt/updatemykeys/', :input => mykeypair)
+            got.status.should == 500
+        end
 end

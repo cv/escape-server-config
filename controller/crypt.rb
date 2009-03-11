@@ -157,8 +157,6 @@ class CryptController < Controller
                 private_string = $1
                 if public_string && private_string
                     message = "Test encryption"
-                    puts "public: " + public_string
-                    puts "private: " + private_string
                     public_key = OpenSSL::PKey::RSA.new(public_string)
                     private_key = OpenSSL::PKey::RSA.new(private_string)
                     encrypted_message = Base64.encode64(public_key.public_encrypt(message))
