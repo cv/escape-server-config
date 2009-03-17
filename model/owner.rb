@@ -13,6 +13,8 @@
 #   limitations under the License.
 
 class Owner < Sequel::Model(:owners)
+    one_to_many :environments
+
     set_schema do
         primary_key :id, :null => false
         String :name
@@ -27,6 +29,7 @@ end
 EscData.init_model(Owner)
 
 if Owner[:name => 'nobody'].nil?
-    Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing')
+    nobody = Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing')
+    nobody.add_environment(Environment[:name => 'default'])
 end
 

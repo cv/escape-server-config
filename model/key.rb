@@ -13,13 +13,14 @@
 #   limitations under the License.
 
 class Key < Sequel::Model(:keys)
+    many_to_one :apps
+
     set_schema do
         primary_key :id, :null => false
         String :name
 
         foreign_key :app_id, :table => :apps, :type=>Integer
     end
-
 end
 
 EscData.init_model(Key)

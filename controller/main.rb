@@ -19,7 +19,7 @@
 #  map '/otherurl'
 # this will force the controller to be mounted on: /otherurl
 
-class MainController < Controller
+class MainController < EscController
     layout '/page'
     helper :xhtml
     engine :Ezamar

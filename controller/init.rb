@@ -13,37 +13,55 @@
 #   limitations under the License.
 
 require 'openssl'
+require 'base64'
 
-class Controller < Ramaze::Controller
+class EscController < Ramaze::Controller
+    private
 
-  def createCryptoKeys(env, pair)
-      # Create a keypair
-      if env == "default"
-          response.status = 401
-          return "Default environment doesn't have encryption"
-      end
-      myenv = Environment[:name => env]
-      if myenv.nil?
-          response.status = 404
-          return "Environment '#{env}' does not exist."
-      elsif pair == "pair"
-          key = OpenSSL::PKey::RSA.generate(512)
-          public_key = key.public_key.to_pem
-          private_key = key.to_pem 
-          myenv.update(:public_key => public_key, :private_key => private_key)
-          response.status = 201
-          response.headers["Content-Type"] = "text/plain" 
-          return public_key + "\n" + private_key
-      else
-          response.status = 403
-          return "Can only create keys in pairs"
-      end
-  end
+    def createCryptoKeys(env, pair)
+        # Create a keypair
+        if env == "default"
+            response.status = 401
+            return "Default environment doesn't have encryption"
+        end
+        myenv = Environment[:name => env]
+        if myenv.nil?
+            response.status = 404
+            return "Environment '#{env}' does not exist."
+        elsif pair == "pair"
+            key = OpenSSL::PKey::RSA.generate(512)
+            public_key = key.public_key.to_pem
+            private_key = key.to_pem 
+            myenv.update(:public_key => public_key, :private_key => private_key)
+            response.status = 201
+            response.headers["Content-Type"] = "text/plain" 
+            return public_key + "\n" + private_key
+        else
+            response.status = 403
+            return "Can only create keys in pairs"
+        end
+    end
   
+
+    def check_auth
+        response['WWW-Authenticate'] = 'Basic realm="ESCAPE Server"'
+
+        if auth = request.env['HTTP_AUTHORIZATION']
+            # TODO: Replace this with real use checking logic
+            (user, pass) = Base64.decode64(auth).split(':')
+            if user == "admin"
+                return true
+            end
+        end
+
+        respond 'Unauthorized', 401
+    end
 end
 
 # Here go your requires for subclasses of Controller:
 require 'controller/main'
 require 'controller/environments'
 require 'controller/crypt'
+require 'controller/owner'
+require 'controller/auth'
 

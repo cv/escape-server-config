@@ -105,18 +105,36 @@ describe CryptController, 'Encryption bits' do
            got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----"
        end
        
-       it 'should generate new keypair for an existing environment' do
-           got = put('/environments/updatemykeys')
-           got.status.should == 201
+    it 'should generate new keypair for an existing environment' do
+        got = put('/environments/updatemykeys')
+        got.status.should == 201
+
+        old_priv = get('/crypt/updatemykeys/private')
+        old_priv.status.should == 200
+
+        old_pub = get('/crypt/updatemykeys/public')
+        old_pub.status.should == 200
+
+        old_pub.body.should.not.equal? old_priv.body
            
-           got = post('/crypt/updatemykeys/', '')
-           got.status.should == 201
+        got = post('/crypt/updatemykeys/', '')
+        got.status.should == 201
            
-           got = get('/crypt/updatemykeys/')
-           got.status.should == 200
-           got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
-           got.body.should.include "-----BEGIN RSA PRIVATE KEY-----"          
-       end
+        got = get('/crypt/updatemykeys/')
+        got.status.should == 200
+        got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
+        got.body.should.include "-----BEGIN RSA PRIVATE KEY-----"          
+
+        new_priv = get('/crypt/updatemykeys/private')
+        new_priv.status.should.equal? 200
+        new_priv.body.should.not.equal? old_priv.body
+
+        new_pub = get('/crypt/updatemykeys/public')
+        new_pub.status.should == 200
+        new_pub.body.should.not.equal? old_pub.body
+
+        new_pub.body.should.not.equal? new_priv.body
+    end
        
        it 'should upload new keypair for an existing environment' do
            got = put('/environments/updatemykeys')

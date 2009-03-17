@@ -13,7 +13,6 @@
 #   limitations under the License.
 
 class Value < Sequel::Model(:values)
-
     set_schema do
         primary_key :id, :null => false
         String :value

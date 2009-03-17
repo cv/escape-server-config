@@ -15,7 +15,7 @@
 require 'json'
 require 'openssl'
 
-class EnvironmentsController < Controller
+class EnvironmentsController < EscController
     map('/environments')
 
     def index(env = nil, app = nil, key = nil)
@@ -56,17 +56,17 @@ class EnvironmentsController < Controller
             # Undefined
             if env.nil?
                 response.status = 400
-              # You're copying an env
-              elsif app.nil?
+            # You're copying an env
+            elsif app.nil?
                 if request.env['HTTP_CONTENT_LOCATION']
-                  # We can copy to Location:
-                  copyEnv(env,request.env['HTTP_CONTENT_LOCATION'])
-                  response.status = 201 
-                  else
-                  response.status = 406
-                  return "Missing Location header. Can't copy environment"
+                    # We can copy to Location:
+                    copyEnv(env,request.env['HTTP_CONTENT_LOCATION'])
+                    response.status = 201 
+                else
+                    response.status = 406
+                    return "Missing Location header. Can't copy environment"
                 end
-              end
+            end
 
         # Creating...
         elsif request.put?
@@ -363,18 +363,18 @@ class EnvironmentsController < Controller
     end
     
     def copyEnv(fromEnv,toEnv)
-      # Create new env
-      createEnv(toEnv)
-      # Copy applications into new env
-      allExistingApps = JSON.parse(listApps(fromEnv))
-      allExistingApps.each do |existingApp|
-        createApp(toEnv, existingApp)
-        allExistingValues = listKeys(fromEnv, existingApp, false)
-        allExistingValues.each do |line|
-          (key, value) = line.chomp.split('=', 2)
-          setValue(toEnv, existingApp, key, value)
+        # Create new env
+        createEnv(toEnv)
+        # Copy applications into new env
+        allExistingApps = JSON.parse(listApps(fromEnv))
+        allExistingApps.each do |existingApp|
+            createApp(toEnv, existingApp)
+            allExistingValues = listKeys(fromEnv, existingApp, false)
+            allExistingValues.each do |line|
+                (key, value) = line.chomp.split('=', 2)
+                setValue(toEnv, existingApp, key, value)
+            end
         end
-      end
     end
 
 end    

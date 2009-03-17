@@ -15,7 +15,7 @@
 require 'openssl'
 require 'Base64'
 
-class CryptController < Controller
+class CryptController < EscController
     map('/crypt')
 
     def index(env = nil, puborpriv = nil)
