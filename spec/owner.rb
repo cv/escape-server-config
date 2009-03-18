@@ -8,7 +8,7 @@ require 'base64'
 require __DIR__('helper/db_helper')
 require __DIR__('../start')
 
-describe AuthController do
+describe OwnerController do
     behaves_like 'http', 'db_helper'
 
     ramaze  :view_root => __DIR__('../view'),

@@ -12,6 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# This controller handles the specific owner of each given environment
 class OwnerController < EscController
     map('/owner')
 

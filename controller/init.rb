@@ -63,5 +63,6 @@ require 'controller/main'
 require 'controller/environments'
 require 'controller/crypt'
 require 'controller/owner'
+require 'controller/user'
 require 'controller/auth'
 
