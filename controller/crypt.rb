@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 require 'openssl'
-require 'Base64'
+require 'base64'
 
 class CryptController < EscController
     map('/crypt')
