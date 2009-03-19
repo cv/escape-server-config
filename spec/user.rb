@@ -19,6 +19,10 @@ describe UserController do
         reset_db
     end
 
+    def encode_credentials(username, password)
+        "Basic " + Base64.encode64("#{username}:#{password}")
+    end
+
     it 'should return a 400 on GET /user' do
         got = get('/user')
         got.status.should == 400
@@ -61,12 +65,36 @@ describe UserController do
         got.body.should.include? "email"
     end
 
-    it 'should not allow duplicate users to be created' do
+    it 'should treat duplicate users as data updates' do
         got = post('/user/somebody', {:email => "email", :password => "password"})
         got.status.should == 201
 
         got = post('/user/somebody', {:email => "email", :password => "password"})
-        got.status.should == 403
+        got.status.should == 401
+    end
+
+    it 'should not be able to change user details unless authenticated as that user' do
+        got = post('/user/somebody', {:email => "email", :password => "password"})
+        got.status.should == 201
+
+        got = post('/user/me', {:email => "me", :password => "me"})
+        got.status.should == 201
+
+        got = post('/user/somebody', {:password => "newpassword"})
+        got.status.should == 401
+
+        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me")})
+        got.status.should == 401
+
+        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => Base64.encode64("somebody:password")})
+        got.status.should == 200
+
+        Owner[:name => "somebody"].password.should == MD5.hexdigest("newpassword")
+
+        got = raw_mock_request(:post, '/user/somebody?email=newemail', {'HTTP_AUTHORIZATION' => Base64.encode64("somebody:newpassword")})
+        got.status.should == 200
+
+        Owner[:name => "somebody"].email.should == "newemail"
     end
 
 end

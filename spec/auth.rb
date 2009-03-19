@@ -4,6 +4,7 @@ require 'rubygems'
 require 'ramaze'
 require 'ramaze/spec/helper'
 require 'base64'
+require 'md5'
 
 require __DIR__('helper/db_helper')
 require __DIR__('../start')
@@ -34,6 +35,7 @@ describe AuthController do
     end
 
     it 'should get info from /auth/secret if it supplies the right credentials' do
+        Owner.create(:name => "admin", :email => "email", :password => MD5.hexdigest("admin"))
         #got = get('/auth/secret', :auth => Base64.encode64("admin:admin"))
         # TODO: Send a patch to Ramaze to make the above work instead of ugly below...
         got = raw_mock_request(:get, '/auth/secret', 'HTTP_AUTHORIZATION' => Base64.encode64("admin:admin"))

@@ -37,7 +37,7 @@ class UserController < EscController
 
         # Posting...
         elsif request.post?
-            createUser(name)
+            createUpdateUser(name)
 
         # Not defined
         else
@@ -62,25 +62,40 @@ class UserController < EscController
         end
     end
 
-    def createUser(name)
+    def createUpdateUser(name)
+        user = Owner[:name => name]
+
         email = request["email"] rescue nil
-        if email.nil?
-            response.status = 403
-            return "email missing"
-        end
-
         password = MD5.hexdigest(request["password"]) rescue nil
-        if password.nil?
-            response.status = 403
-            return "password missing"
-        end
 
-        begin
-            user = Owner.create(:name => name, :email => email, :password => password)
-            response.status = 201
-        rescue 
-            response.status = 403
-            return "Error creating user. Does it already exist?"
+        # No such user, we're creating...
+        if user.nil?
+            if email.nil?
+                response.status = 403
+                return "email missing"
+            end
+
+            if password.nil?
+                response.status = 403
+                return "password missing"
+            end
+
+            begin
+                Owner.create(:name => name, :email => email, :password => password)
+                response.status = 201
+            rescue 
+                response.status = 403
+                return "Error creating user. Does it already exist?"
+            end
+        # User exists, we're updating
+        else
+            check_auth(name)
+            if not email.nil?
+                user.update(:email => email)
+            end
+            if not password.nil?
+                user.update(:password => password) 
+            end
         end
     end
 

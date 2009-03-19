@@ -14,6 +14,7 @@
 
 require 'openssl'
 require 'base64'
+require 'md5'
 
 class EscController < Ramaze::Controller
     private
@@ -43,13 +44,14 @@ class EscController < Ramaze::Controller
     end
   
 
-    def check_auth
-        response['WWW-Authenticate'] = 'Basic realm="ESCAPE Server"'
+    def check_auth(id = nil, env = "")
+        response['WWW-Authenticate'] = "Basic realm=\"ESCAPE Server - #{env}\""
 
         if auth = request.env['HTTP_AUTHORIZATION']
-            # TODO: Replace this with real use checking logic
             (user, pass) = Base64.decode64(auth).split(':')
-            if user == "admin"
+            id = user if id.nil?
+            owner = Owner[:name => user]
+            if owner && (owner.password == MD5.hexdigest(pass)) && (id == user)
                 return true
             end
         end
