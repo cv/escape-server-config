@@ -14,7 +14,6 @@ module DBHelper
         Value.create_table!
         AppsEnvironments.create_table!
         AppsKeys.create_table!
-        OwnerAppEnv.create_table!
 
         if Environment[:name => 'default'].nil?
             Environment.create(:name => 'default')

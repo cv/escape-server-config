@@ -52,7 +52,7 @@ class EscController < Ramaze::Controller
             id = user if id.nil?
             owner = Owner[:name => user]
             if owner && (owner.password == MD5.hexdigest(pass)) && (id == user)
-                return true
+                return user
             end
         end
 

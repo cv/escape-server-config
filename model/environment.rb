@@ -14,7 +14,7 @@
 
 class Environment < Sequel::Model(:environments)
     many_to_many :apps
-    many_to_one :owners
+    many_to_one :owner, :class => :Owner
 
     set_schema do
         primary_key :id, :null => false
@@ -26,6 +26,10 @@ class Environment < Sequel::Model(:environments)
     end
 
     validates_uniqueness_of :name
+
+    before_create do |env|
+        env.owner_id = 1
+    end
 end
 
 EscData.init_model(Environment)

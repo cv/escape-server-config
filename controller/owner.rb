@@ -19,18 +19,21 @@ class OwnerController < EscController
     def index(env = nil)
         # Sanity check what we've got first
         if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            response.status = 403
-            return "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+            respond "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
+        end
+
+        # Undefined
+        if env.nil?
+            respond "Undefined", 400
         end
 
         # Getting...
         if request.get?
-            # Undefined
-            if env.nil?
-                response.status = 400
-            else
-                getOwner(env)
-            end
+            getOwner(env)
+        elsif request.post?
+            setOwner(env)
+        else
+            respond "Undefined", 400
         end
     end
 
@@ -40,13 +43,34 @@ class OwnerController < EscController
         myEnv = Environment[:name => env]
         
         if myEnv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist"
+            respond "Environment '#{env}' does not exist", 404
         end
 
-        response.headers["Content-Type"] = "text/plain"   
         owner = Owner[:id => myEnv.owner_id]
+
+        response.headers["Content-Type"] = "text/plain"   
         return owner.name
+    end
+
+    def setOwner(env)
+        myEnv = Environment[:name => env]
+        
+        if myEnv.nil?
+            respond "Environment '#{env}' does not exist", 404
+        end
+
+        if myEnv.owner_id == 1
+            auth = check_auth(nil, env)
+        else
+            auth = check_auth(myEnv.owner.name, env)
+        end
+
+        owner = Owner[:name => auth]
+
+        respond("Owner #{auth} not found", 404) if owner.nil?
+
+        myEnv.owner = owner
+        myEnv.save
     end
     
 end

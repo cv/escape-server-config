@@ -15,7 +15,7 @@
 # Here goes your database connection and options:
 
 require 'rubygems'
-gem 'sequel', '>=2.10.0'
+gem 'sequel', '>=2.11.0'
 require 'sequel'
 require 'logger'
 
@@ -50,8 +50,8 @@ end
 # require 'model/user'
 
 require 'model/app'
-require 'model/environment'
 require 'model/owner'
+require 'model/environment'
 require 'model/key'
 require 'model/value'
 require 'model/maps'

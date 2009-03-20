@@ -31,6 +31,9 @@ describe UserController do
     it 'should return 404 for a user that does not exist' do
         got = get('/user/nothere')
         got.status.should == 404
+
+        got = delete('/user/nothere')
+        got.status.should == 404
     end
 
     it 'should get the details of an specified user on GET /user/name' do
@@ -97,4 +100,23 @@ describe UserController do
         Owner[:name => "somebody"].email.should == "newemail"
     end
 
+    it 'should be able to delete a user when authenticated as that user' do
+        got = post('/user/somebody', {:email => "email", :password => "password"})
+        got.status.should == 201
+
+        got = post('/user/me', {:email => "me", :password => "me"})
+        got.status.should == 201
+
+        got = delete('/user/somebody')
+        got.status.should == 401
+
+        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me")})
+        got.status.should == 401
+
+        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => Base64.encode64("somebody:password")})
+        got.status.should == 200
+
+        got = get('/user/somebody')
+        got.status.should == 404
+    end
 end

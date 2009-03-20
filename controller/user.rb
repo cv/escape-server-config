@@ -21,14 +21,12 @@ class UserController < EscController
     def index(name = nil)
         # Sanity check what we've got first
         if name && (not name =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            response.status = 403
-            return "Invalid user name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+            respond "Invalid user name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
         end
 
         # Undefined
         if name.nil?
-            response.status = 400
-            return
+            respond "Undefined", 400
         end
 
         # Getting...
@@ -38,6 +36,9 @@ class UserController < EscController
         # Posting...
         elsif request.post?
             createUpdateUser(name)
+
+        elsif request.delete?
+            deleteUser(name)
 
         # Not defined
         else
@@ -96,6 +97,22 @@ class UserController < EscController
             if not password.nil?
                 user.update(:password => password) 
             end
+        end
+    end
+
+    def deleteUser(name)
+        user = Owner[:name => name]
+        
+        if user.nil?
+            respond "User #{name} not found", 404
+        else
+            check_auth(name)
+            user.environments.each do |env|
+                env.owner_id = 1
+            end
+            user.remove_all_environments
+            user.delete
+            respond "User #{name} deleted", 200
         end
     end
 
