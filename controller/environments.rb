@@ -113,8 +113,12 @@ class EnvironmentsController < EscController
         if env == "default"
             response.status = 403
             return "Not allowed to delete default environment!"
-        elsif Environment[:name => env] 
-            Environment[:name => env].delete
+        end
+
+        myEnv = Environment[:name => env]
+        if myEnv
+            check_auth(myEnv.owner.name, env)
+            myEnv.delete
             response.status = 200
             return "Environment '#{env}' deleted."
         else
@@ -141,6 +145,7 @@ class EnvironmentsController < EscController
             response.status = 200
             return "Applicaton '#{app}' deleted."
         else         
+            check_auth(myenv.owner.name, env)
             myapp.remove_environment(myenv)
             response.status = 200
             return "Application '#{app}' deleted from the '#{env}' environment."
@@ -180,6 +185,7 @@ class EnvironmentsController < EscController
             #     return "Key #{key} can't be deleted. It has values set."
             # end
         else         
+            check_auth(myenv.owner.name, env)
             Value[:key_id => mykey[:id], :environment_id => myenv[:id]].delete
             response.status = 200
             return "Key '#{key}' deleted from the '#{env}' environment."
@@ -308,6 +314,8 @@ class EnvironmentsController < EscController
             return "Environment '#{env}' does not exist"
         end
 
+        check_auth(myenv.owner.name, env)
+
         msg = nil
         myapp = App[:name => app]
         if myapp.nil?
@@ -339,6 +347,8 @@ class EnvironmentsController < EscController
             response.status = 404
             return "Environment '#{env}' does not exist."
         end
+
+        check_auth(myenv.owner.name, env)
 
         mykey = Key[:name => key, :app_id => myapp[:id]]
         # New one, let's create

@@ -3,6 +3,8 @@
 require 'rubygems'
 require 'ramaze'
 require 'ramaze/spec/helper'
+require 'base64'
+require 'md5'
 
 require __DIR__('helper/db_helper')
 require __DIR__('../start')
@@ -14,6 +16,10 @@ describe EnvironmentsController, 'Environment bits' do
 
     before do
         reset_db
+    end
+
+    def encode_credentials(username, password)
+        "Basic " + Base64.encode64("#{username}:#{password}")
     end
 
     # Environment tests
@@ -103,16 +109,15 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 403
     end
     
-    # it 'should copy an environment' do
-    #     got = put('/environments/copyme')
-    #     got.status.should == 201
-    #     
-    #     copy_target = "mycopy"
-    #     got = post('/environments/copyme', nil, {'Location' => copy_target})
-    #     got.status.should == 201
-    #     
-    #     got = get('/environments/mycopy')
-    #     got.status.should == 200 
-    # end
-    
+    it 'should copy an environment' do
+        got = put('/environments/copyme')
+        got.status.should == 201
+         
+        copy_target = "mycopy"
+        got = raw_mock_request(:post, '/environments/copyme', 'HTTP_CONTENT_LOCATION' => copy_target)
+        got.status.should == 201
+        
+        got = get('/environments/mycopy')
+        got.status.should == 200 
+    end
 end

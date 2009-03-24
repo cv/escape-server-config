@@ -45,6 +45,10 @@ class EscController < Ramaze::Controller
   
 
     def check_auth(id = nil, env = "")
+        if id == "nobody"
+            return id
+        end
+
         response['WWW-Authenticate'] = "Basic realm=\"ESCAPE Server - #{env}\""
 
         if auth = request.env['HTTP_AUTHORIZATION']

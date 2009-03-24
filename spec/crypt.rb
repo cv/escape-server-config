@@ -16,8 +16,11 @@ describe CryptController, 'Encryption bits' do
         reset_db
     end
     
+    def encode_credentials(username, password)
+        "Basic " + Base64.encode64("#{username}:#{password}")
+    end
+
     # Encryption tests
-    
        it 'should not accept put on /crypt' do
            got = put('/crypt')
            got.status.should == 400

@@ -246,7 +246,6 @@ describe EnvironmentsController, 'Key/Value bits' do
     end
     
     it 'should delete a key mapping from an application in a non-default environment' do
-        
         got = put('/environments/deletekey')
         got.status.should == 201
         
@@ -298,6 +297,4 @@ describe EnvironmentsController, 'Key/Value bits' do
     #      got.body.should.not.include "default.value"
     #      
     # end
-    
-    
 end

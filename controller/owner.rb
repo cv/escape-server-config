@@ -32,6 +32,8 @@ class OwnerController < EscController
             getOwner(env)
         elsif request.post?
             setOwner(env)
+        elsif request.delete?
+            clearOwner(env)
         else
             respond "Undefined", 400
         end
@@ -70,6 +72,23 @@ class OwnerController < EscController
         respond("Owner #{auth} not found", 404) if owner.nil?
 
         myEnv.owner = owner
+        myEnv.save
+    end
+
+    def clearOwner(env)
+        myEnv = Environment[:name => env]
+
+        if myEnv.nil?
+            respond "Environment '#{env}' does not exist", 404
+        end
+
+        if myEnv.owner_id == 1
+            respond("Environment #{env} is not owned by anyone", 200)
+        else
+            auth = check_auth(myEnv.owner.name, env)
+        end
+
+        myEnv.owner = Owner[:name => "nobody"]
         myEnv.save
     end
     

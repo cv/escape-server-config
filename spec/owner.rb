@@ -43,9 +43,14 @@ describe OwnerController do
         got.status.should == 404
     end
 
-    it 'should set the owner of an environment to specified user on POST /owner/environment' do
+    it 'should set the owner of an environment to specified user on POST /owner/environment, and give it up on delete' do
         me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
         env = Environment.create(:name => "myenv")
+
+        got = get('/owner/myenv')
+        got.status.should == 200
+        got.body.should == "nobody"
+        got.content_type.should == "text/plain"
 
         got = post('/owner/myenv')
         got.status.should == 401
@@ -56,6 +61,17 @@ describe OwnerController do
         got = get('/owner/myenv')
         got.status.should == 200
         got.body.should == "me"
+        got.content_type.should == "text/plain"
+
+        got = delete('/owner/myenv')
+        got.status.should == 401
+
+        got = raw_mock_request(:delete, '/owner/myenv', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got.status.should == 200
+
+        got = get('/owner/myenv')
+        got.status.should == 200
+        got.body.should == "nobody"
         got.content_type.should == "text/plain"
     end
 end

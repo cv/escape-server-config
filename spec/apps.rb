@@ -173,5 +173,4 @@ describe EnvironmentsController, 'Application bits' do
         got = get('/environments/myenv/myapp')
         got.status.should == 404
     end
-    
 end
