@@ -55,6 +55,10 @@ class OwnerController < EscController
     end
 
     def setOwner(env)
+        if env == "default"
+            respond "No one can own the 'default' environment", 403
+        end
+
         myEnv = Environment[:name => env]
         
         if myEnv.nil?

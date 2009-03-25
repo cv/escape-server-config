@@ -47,11 +47,6 @@ describe OwnerController do
         me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
         env = Environment.create(:name => "myenv")
 
-        got = get('/owner/myenv')
-        got.status.should == 200
-        got.body.should == "nobody"
-        got.content_type.should == "text/plain"
-
         got = post('/owner/myenv')
         got.status.should == 401
 
@@ -68,6 +63,22 @@ describe OwnerController do
 
         got = raw_mock_request(:delete, '/owner/myenv', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
         got.status.should == 200
+
+        got = get('/owner/myenv')
+        got.status.should == 200
+        got.body.should == "nobody"
+        got.content_type.should == "text/plain"
+    end
+
+    it 'should not be able to change the owner of the default environment' do
+        me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
+
+        got = raw_mock_request(:post, '/owner/default', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got.status.should == 403
+    end
+
+    it 'should make new environments be owned by nobody' do
+        env = Environment.create(:name => "myenv")
 
         got = get('/owner/myenv')
         got.status.should == 200
