@@ -98,11 +98,15 @@ class CryptController < EscController
         else
             response.status = 200
             response.headers["Content-Type"] = "text/plain"   
-            if pair == "pair"
+            if (pair == "pair") and (myenv.owner.name == "nobody")
+                return "#{myenv.public_key}" + "\n" +  "#{myenv.private_key}"
+            elsif (pair == "pair") and request.env['HTTP_AUTHORIZATION']
+                check_auth(myenv.owner.name, env)
                 return "#{myenv.public_key}" + "\n" +  "#{myenv.private_key}"
             elsif pair == "private"
+                check_auth(myenv.owner.name, env)
                 return "#{myenv.private_key}"
-            elsif pair == "public"
+            elsif (pair == "public") or (pair == "pair")
                 return "#{myenv.public_key}"
             else
                 response.status = 403
@@ -120,6 +124,7 @@ class CryptController < EscController
             response.status = 403
             return "Can't delete keys from default environment."
         else
+            check_auth(myenv.owner.name, env)
             response.status = 200
             if pair == "pair"
                 myenv.update(:public_key => '', :private_key => '')
@@ -149,6 +154,7 @@ class CryptController < EscController
             response.status = 403
             return "Only update keys in a pair"
         else
+            check_auth(myenv.owner.name, env)
             if keys && keys != ''
                 # Updating with provided values
                 /(-----BEGIN RSA PUBLIC KEY-----.*-----END RSA PUBLIC KEY-----)/m.match(keys)

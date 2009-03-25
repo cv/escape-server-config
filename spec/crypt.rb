@@ -120,10 +120,10 @@ describe CryptController, 'Encryption bits' do
 
         old_pub.body.should.not.equal? old_priv.body
            
-        got = post('/crypt/updatemykeys/', '')
+        got = post('/crypt/updatemykeys', '')
         got.status.should == 201
            
-        got = get('/crypt/updatemykeys/')
+        got = get('/crypt/updatemykeys')
         got.status.should == 200
         got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
         got.body.should.include "-----BEGIN RSA PRIVATE KEY-----"          
@@ -159,7 +159,7 @@ N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
 kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
 -----END RSA PRIVATE KEY-----"
 
-           got = post('/crypt/updatemykeys/', :input => mykeypair)
+           got = post('/crypt/updatemykeys', :input => mykeypair)
            got.status.should == 201
            
            got = get('/crypt/updatemykeys/public')
