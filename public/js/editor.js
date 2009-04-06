@@ -40,7 +40,7 @@ var EscEditor = function() {
                 success: function(data, textStatus) {
                     $('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
                     var table = '<table class="keyvalue" id="key_value_table">';
-                    table += ('<tr class="keyvalueheader"><th>Key</th><th>Value</th><th>&nbsp;</th></tr>');
+                    table += ('<tr class="keyvalueheader"><th>Key</th><th>Value</th><th>&nbsp;</th><th>&nbsp;</th></tr>');
 					rowcolour = 1
                     $.each(data.split('\n'), function(i, item) {
 						if (rowcolour == 1) { //Alternating row colours
@@ -57,6 +57,8 @@ var EscEditor = function() {
                         table += ("<td id='" + key + "' class='keyeditbox'>" + value + "</td>");
 						table += ("<td class='keydeletebox' id='deletekey-" + key + "'>");
                         table += ("<img src='/images/delete.png'/></td>");
+						table += ("<td class='valueencryptbox' id='encryptvalue-" + key + "'>");
+                        table += ("<img src='/images/encrypt.png'/></td>");
                     });
                     table += "</table>";
                     $('#editor').append(table);

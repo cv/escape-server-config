@@ -81,6 +81,9 @@ tr.tr-1 {
 td.keydeletebox{
 	width:16px;
 }
+td.valueencryptbox{
+	width:16px;
+}
 div#inner {
 	margin-left:5%;
 	margin-right:5%;
