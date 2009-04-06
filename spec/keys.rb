@@ -297,4 +297,27 @@ describe EnvironmentsController, 'Key/Value bits' do
     #      got.body.should.not.include "default.value"
     #      
     # end
+    
+    it 'should encrypt a key value' do
+        got = put('/environments/encryptvalue')
+        got.status.should == 201
+
+        got = put('/environments/encryptvalue/anapp')
+        got.status.should == 201
+
+        value = "my.value"
+        got = put('/environments/encryptvalue/anapp/mykey', :input => value)
+        got.status.should == 201
+        
+        got = get('/environments/encryptvalue/anapp/mykey')
+        got.status.should == 200 
+        got.body.should.include value
+        
+        got = put('/environments/encryptvalue/anapp/mykey', :input => value, :expect => 'encrypt')
+        got.status.should == 200
+        
+        got = get('/environments/encryptvalue/anapp/mykey')
+        got.status.should == 200 
+        got.body.should.not.include value
+    end
 end

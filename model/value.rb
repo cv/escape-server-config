@@ -16,6 +16,7 @@ class Value < Sequel::Model(:values)
     set_schema do
         primary_key :id, :null => false
         String :value
+        Boolean :is_encrypted
         
         foreign_key :key_id, :table => :keys, :type=>Integer
         foreign_key :environment_id, :table => :environments, :type=>Integer

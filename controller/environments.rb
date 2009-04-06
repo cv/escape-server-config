@@ -80,9 +80,14 @@ class EnvironmentsController < EscController
             elsif key.nil?
                 createApp(env, app)
             # Key stuff
-            else             
+            else
+                if request.env['QUERY_STRING'] =~ /encrypt/
+                    encryption = "encrypt"
+                else
+                    encryption = 'none'
+                end
                 value = request.body.read
-                setValue(env, app, key, value)
+                setValue(env, app, key, value, encryption)
             end
 
         # Deleting...
@@ -335,7 +340,7 @@ class EnvironmentsController < EscController
         return msg
     end
 
-    def setValue(env, app, key, value)
+    def setValue(env, app, key, value, encryption = "none")
         myapp = App[:name => app]
         if myapp.nil?
             response.status = 404
@@ -348,6 +353,18 @@ class EnvironmentsController < EscController
             return "Environment '#{env}' does not exist."
         end
 
+        encrypted = false
+        if encryption == "encrypt"
+            # Do some encryption
+            public_key = OpenSSL::PKey::RSA.new(myenv.public_key)
+            encrypted_value = Base64.encode64(public_key.public_encrypt(value))
+            value = encrypted_value
+        end
+        
+        if encryption != "none"
+            encrypted = true
+        end
+
         check_auth(myenv.owner.name, env)
 
         mykey = Key[:name => key, :app_id => myapp[:id]]
@@ -356,14 +373,14 @@ class EnvironmentsController < EscController
             mykey = Key.create(:name => key, :app_id => myapp[:id])
             myapp.add_key(mykey)
             defaultenv = Environment[:name => 'default']
-            Value.create(:key_id => mykey[:id], :environment_id => defaultenv[:id], :value => value)
-            Value.create(:key_id => mykey[:id], :environment_id => myenv[:id], :value => value)
+            Value.create(:key_id => mykey[:id], :environment_id => defaultenv[:id], :value => value, :is_encrypted => encrypted)
+            Value.create(:key_id => mykey[:id], :environment_id => myenv[:id], :value => value, :is_encrypted => encrypted)
             response.status = 201
         # We're updating the config
         else             
             myvalue = Value[:key_id => mykey[:id], :environment_id => myenv[:id]]
             if myvalue.nil? # New value...
-                Value.create(:key_id => mykey[:id], :environment_id => myenv[:id], :value => value)
+                Value.create(:key_id => mykey[:id], :environment_id => myenv[:id], :value => value, :is_encrypted => encrypted)
                 response.status = 201
             else # Updating the value
                 myvalue.update(:value => value)

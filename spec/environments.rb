@@ -108,7 +108,7 @@ describe EnvironmentsController, 'Environment bits' do
         got = delete('/environments/default')
         got.status.should == 403
     end
-    
+
     it 'should copy an environment' do
         got = put('/environments/copyme')
         got.status.should == 201
