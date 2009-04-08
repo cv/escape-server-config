@@ -55,15 +55,36 @@ var EscEditor = function() {
                         table += ('<tr class="tr-' + rowcolour + '">');
                         table += ("<th>" + key + "</th>");
                         table += ("<td id='" + key + "' class='keyeditbox'>" + value + "</td>");
-						table += ("<td class='keydeletebox' id='deletekey-" + key + "'>");
-                        table += ("<img src='/images/delete.png'/></td>");
-						table += ("<td class='valueencryptbox' id='encryptvalue-" + key + "'>");
-                        table += ("<img src='/images/encrypt.png'/></td>");
+						table += ("<td class='edittablebutton'>");
+                        table += ("<img class='keydelete' src='/images/delete.png'/></td>");
+						table += ("<td class='edittablebutton'>");
+                        table += ("<img class='keyencrypt' src='/images/encrypt.png'/></td>");
                     });
                     table += "</table>";
                     $('#editor').append(table);
                     $('#key_env_name').val(env);
                     $('#key_app_name').val(app);
+				    // Click on a key delete button
+				    $('.keydelete').click(function() {
+						var thisKey = $(this).parent().siblings("th").text();
+						var confirmation = confirm('Are you sure you want to delete ' + thisKey + '?');
+
+				        if ((confirmation) && (thisKey != null) && (thisKey != "")){
+							// Delete the app
+							$.ajax({
+				                type: "DELETE",
+				                url: "/environments/" + env + "/" + app + "/" + thisKey,
+				                data: {},
+				                success: function(data, textStatus) {
+									$('#editor').empty(); 
+				                    EscSidebar.showEditor(env, app);
+				                },
+				                error: function(XMLHttpRequest, textStatus, errorThrown) {
+				                    alert("Error deleting '" + app +"': " + XMLHttpRequest.responseText);
+				                },
+				            })
+				        };
+				    });
                     $.uiTableEdit($('#key_value_table'), {
                         find: ".keyeditbox",
                         editDone: function(newText, oldText, e, td) {

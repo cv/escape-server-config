@@ -78,10 +78,7 @@ tr.tr-1 {
 	overflow:hidden;
 	width:80%;
 }
-td.keydeletebox{
-	width:16px;
-}
-td.valueencryptbox{
+td.edittablebutton{
 	width:16px;
 }
 div#inner {
