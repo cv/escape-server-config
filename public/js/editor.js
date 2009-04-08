@@ -70,7 +70,7 @@ var EscEditor = function() {
 						var confirmation = confirm('Are you sure you want to delete ' + thisKey + '?');
 
 				        if ((confirmation) && (thisKey != null) && (thisKey != "")){
-							// Delete the app
+							// Delete the key
 							$.ajax({
 				                type: "DELETE",
 				                url: "/environments/" + env + "/" + app + "/" + thisKey,
@@ -80,11 +80,34 @@ var EscEditor = function() {
 				                    EscSidebar.showEditor(env, app);
 				                },
 				                error: function(XMLHttpRequest, textStatus, errorThrown) {
-				                    alert("Error deleting '" + app +"': " + XMLHttpRequest.responseText);
+				                    alert("Error deleting '" + thisKey +"': " + XMLHttpRequest.responseText);
 				                },
 				            })
 				        };
 				    });
+					// Click on a key encrypt button
+					$('.keyencrypt').click(function() {
+						var thisKey = $(this).parent().siblings("th").text();
+						var thisValue = $(this).parent().siblings("td#keyeditbox").text();
+						
+				        if ((thisKey != null) && (thisKey != "")) {
+							// Encrypt the key
+							$.ajax({
+				                type: "PUT",
+				                url: "/environments/" + env + "/" + app + "/" + thisKey,
+				                data: thisValue,
+				                success: function(data, textStatus) {
+									$('#editor').empty(); 
+				                    EscSidebar.showEditor(env, app);
+				                },
+				                error: function(XMLHttpRequest, textStatus, errorThrown) {
+				                    alert("Error encrypting '" + thisKey +"': " + XMLHttpRequest.responseText);
+				                },
+				            })
+				        };
+				    });
+					
+					
                     $.uiTableEdit($('#key_value_table'), {
                         find: ".keyeditbox",
                         editDone: function(newText, oldText, e, td) {
