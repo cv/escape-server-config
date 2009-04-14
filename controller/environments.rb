@@ -236,13 +236,11 @@ class EnvironmentsController < EscController
         end
 
         myapp = App[:name => app]
+
         if myapp.nil?
             response.status = 404
             return "Application '#{app}' does not exist."
-        elsif not myapp.environments.include?(myenv)
-            response.status = 404
-            return "Application '#{app}' is not included in Environment '#{env}'."
-        else 
+        elsif myenv.apps.include? myapp
             pairs = Array.new
             myapp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => myenv[:id]]
@@ -255,6 +253,9 @@ class EnvironmentsController < EscController
             end
             response.headers["Content-Type"] = "text/plain"
             return pairs.sort
+        else
+            response.status = 404
+            return "Application '#{app}' is not included in Environment '#{env}'."
         end
     end
 
@@ -272,7 +273,7 @@ class EnvironmentsController < EscController
             return "Environment '#{env}' does not exist."
         end
 
-        if not myapp.environments.include?(myenv)
+        if not myenv.apps.include?(myapp)
             response.status = 404
             return "Application '#{app}' is not included in Environment '#{env}'."
         end
@@ -324,9 +325,7 @@ class EnvironmentsController < EscController
         msg = nil
         myapp = App[:name => app]
         if myapp.nil?
-            defaultenv = Environment[:name => 'default']
             myapp = App.create(:name => app)
-            myapp.add_environment(defaultenv)
 
             response.status = 201
             msg = "Application '#{app}' created."
@@ -335,7 +334,7 @@ class EnvironmentsController < EscController
             msg = "Application '#{app}' already exists."
         end
 
-        myapp.add_environment(myenv) unless myapp.environments.include?(myenv)
+        myenv.add_app(myapp) unless myenv.apps.include?(myapp)
 
         return msg
     end

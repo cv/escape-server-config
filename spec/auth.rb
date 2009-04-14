@@ -64,7 +64,7 @@ describe AuthController do
         got = get('/environments/mine/myapp')
         got.status.should == 200
 
-        got = put('/environments/mine/myapp/mykey')
+        got = put('/environments/mine/myapp/mykey', :input => "sheep")
         got.status.should == 401
 
         got = raw_mock_request(:put, '/environments/mine/myapp/mykey', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me"), :input => "myvalue"})
@@ -80,7 +80,7 @@ describe AuthController do
         got = raw_mock_request(:delete, '/environments/mine/myapp/mykey', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
         got.status.should == 200
 
-        # This is a little screwy...
+        # TODO: This is a little screwy...
 #        got = get('/environments/mine/myapp/mykey')
 #        got.status.should == 200
 #        got.body.should.not == "myvalue"

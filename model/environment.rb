@@ -13,8 +13,9 @@
 #   limitations under the License.
 
 class Environment < Sequel::Model(:environments)
-    many_to_many :apps
+    many_to_many :apps, :class => :App
     many_to_one :owner, :class => :Owner
+    one_to_many :values, :class => :Value
 
     set_schema do
         primary_key :id, :null => false
@@ -22,7 +23,7 @@ class Environment < Sequel::Model(:environments)
         String :public_key
         String :private_key
 
-        foreign_key :owner_id, :table => :owners, :type=>Integer
+        foreign_key :owner_id, :table => :owners, :type => Integer
     end
 
     validates_uniqueness_of :name

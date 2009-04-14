@@ -89,6 +89,10 @@ describe EnvironmentsController, 'Application bits' do
     end
 
     it 'should only add apps to default environment once' do
+        got = get('/environments/default')
+        got.status.should == 200
+        got.body.should == '[]'
+
         got = put('/environments/default/appname')
         got.status.should == 201
 
@@ -137,18 +141,26 @@ describe EnvironmentsController, 'Application bits' do
     it 'should delete an existing application from an environment' do
         got = put('/environments/myenv')
         got.status.should == 201
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == '[]'
       
         got = put('/environments/myenv/myapp')
         got.status.should == 201
+        got = get('/environments/myenv')
+        got.status.should == 200
+        got.body.should == '["myapp"]'
 
         got = get('/environments/myenv/myapp')
         got.status.should == 200
+        got.body.should == ""
       
         got = delete('/environments/myenv/myapp')
         got.status.should == 200
 
         got = get('/environments/default/myapp')
         got.status.should == 200   
+        got.body.should == ""
 
         got = get('/environments/myenv/myapp')
         got.status.should == 404

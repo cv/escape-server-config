@@ -15,7 +15,7 @@
 # Here goes your database connection and options:
 
 require 'rubygems'
-gem 'sequel', '>=2.11.0'
+gem 'sequel', '=2.11.0'
 require 'sequel'
 require 'logger'
 
@@ -35,6 +35,13 @@ DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
 
 # Uncomment line below to turn on SQL debugging
 #DB.loggers << Logger.new($stdout)
+
+# Log deprecation information to a file
+#Sequel::Deprecation.output = File.open('deprecated.txt', 'wb')
+
+# Use 5 lines of backtrace when logging deprecation messages
+#Sequel::Deprecation.backtraces = 5
+
 
 module EscData
     def EscData.init_model(model)

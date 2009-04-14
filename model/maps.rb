@@ -21,12 +21,3 @@ end
 
 EscData.init_model(AppsEnvironments)
 
-class AppsKeys < Sequel::Model
-    set_schema do
-        Integer :app_id
-        Integer :key_id
-    end
-end
-
-EscData.init_model(AppsKeys)
-

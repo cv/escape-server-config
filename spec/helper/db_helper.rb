@@ -13,7 +13,6 @@ module DBHelper
         Key.create_table!
         Value.create_table!
         AppsEnvironments.create_table!
-        AppsKeys.create_table!
 
         if Environment[:name => 'default'].nil?
             Environment.create(:name => 'default')

@@ -13,8 +13,8 @@
 #   limitations under the License.
 
 class App < Sequel::Model(:apps)
-    many_to_many :environments
-    one_to_many :keys
+    many_to_many :environments, :class => :Environment
+    one_to_many :keys, :class => :Key
 
     set_schema do
         primary_key :id, :null => false
@@ -22,6 +22,10 @@ class App < Sequel::Model(:apps)
     end
 
     validates_uniqueness_of :name
+
+    after_create do |app|
+        app.add_environment(Environment[:name => 'default'])
+    end
 end
 
 EscData.init_model(App)

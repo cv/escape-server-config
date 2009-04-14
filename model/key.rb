@@ -13,13 +13,14 @@
 #   limitations under the License.
 
 class Key < Sequel::Model(:keys)
-    many_to_one :apps
+    many_to_one :apps, :class => :App
+    one_to_many :values, :class => :Value
 
     set_schema do
         primary_key :id, :null => false
         String :name
 
-        foreign_key :app_id, :table => :apps, :type=>Integer
+        foreign_key :app_id, :table => :apps, :type => Integer
     end
 end
 
