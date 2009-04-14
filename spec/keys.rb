@@ -271,32 +271,30 @@ describe EnvironmentsController, 'Key/Value bits' do
                
     end
     
-    # it 'should not delete an overridden key from an application in the default environment' do
-    #      
-    #      got = put('/environments/deletekey')
-    #      got.status.should == 201
-    # 
-    #      got = put('/environments/deletekey/deletetest')
-    #      got.status.should == 201
-    # 
-    #      value = "default.value"
-    #      got = put('/environments/default/deletetest/mykey', :input => value)
-    #      got.status.should == 201
-    # 
-    #      value = "override.value"
-    #      got = put('/environments/deletekey/deletetest/mykey', :input => value)
-    #      got.status.should == 201
-    # 
-    #      got = delete('/environments/default/deletetest/mykey')
-    #      got.status.should == 403
-    # 
-    #      got = get('/environments/deletekey/deletetest/mykey')
-    #      got.status.should == 200
-    #      got.body.should.not == ""
-    #      got.body.should.include "override.value"
-    #      got.body.should.not.include "default.value"
-    #      
-    # end
+    it 'should not delete an overridden key from an application in the default environment' do
+         got = put('/environments/deletekey')
+         got.status.should == 201
+    
+         got = put('/environments/deletekey/deletetest')
+         got.status.should == 201
+    
+         value = "default.value"
+         got = put('/environments/default/deletetest/mykey', :input => value)
+         got.status.should == 201
+    
+         value = "override.value"
+         got = put('/environments/deletekey/deletetest/mykey', :input => value)
+         got.status.should == 201
+     
+         got = delete('/environments/default/deletetest/mykey')
+         got.status.should == 403
+     
+         got = get('/environments/deletekey/deletetest/mykey')
+         got.status.should == 200
+         got.body.should.not == ""
+         got.body.should.include "override.value"
+         got.body.should.not.include "default.value"
+    end
     
     it 'should encrypt a key value' do
         got = put('/environments/encryptvalue')

@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 class Key < Sequel::Model(:keys)
-    many_to_one :apps, :class => :App
+    many_to_one :app, :class => :App
     one_to_many :values, :class => :Value
 
     set_schema do

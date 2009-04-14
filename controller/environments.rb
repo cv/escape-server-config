@@ -177,18 +177,23 @@ class EnvironmentsController < EscController
         end
 
         if env == "default"
-            # Can't get count(*) from values where environment_id != myenv.id
-            # allValues = Value[:key_id => mykey[:id]]
-            # filtered = allValues.filter(~{:environment_id => myenv[:id]})
-            # 
-            # if filtered.nil?
+            # Don't delete default if we have a value set in a non-default env
+            set = false
+            mykey.app.environments.each do |appenv|
+                if (not Value[:key_id => mykey[:id], :environment_id => appenv[:id]].nil?) and (appenv.name != "default")
+                    set = true
+                    break
+                end
+            end
+            
+            if not set
                 mykey.delete
                 response.status = 200
                 return "Key '#{key}' deleted."
-            # else
-            #     response.status = 403
-            #     return "Key #{key} can't be deleted. It has values set."
-            # end
+            else
+                response.status = 403
+                return "Key #{key} can't be deleted. It has values set."
+            end
         else         
             check_auth(myenv.owner.name, env)
             Value[:key_id => mykey[:id], :environment_id => myenv[:id]].delete
