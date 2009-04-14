@@ -196,9 +196,16 @@ class EnvironmentsController < EscController
             end
         else         
             check_auth(myenv.owner.name, env)
-            Value[:key_id => mykey[:id], :environment_id => myenv[:id]].delete
-            response.status = 200
-            return "Key '#{key}' deleted from the '#{env}' environment."
+            myvalue = Value[:key_id => mykey[:id], :environment_id => myenv[:id]]
+            if myvalue.nil?
+                response.status = 404
+                msg = "Key '#{key}' has no value in the '#{env}' environment."
+            else
+                myvalue.delete
+                response.status = 200
+                msg = "Key '#{key}' deleted from the '#{env}' environment."
+            end
+            return msg
         end
         
     end

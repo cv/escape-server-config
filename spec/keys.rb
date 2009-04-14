@@ -318,4 +318,23 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 200 
         got.body.should.not.include value
     end
+
+    it 'should play nice when trying to delete a key from an env that has not explicit value set' do
+        got = put('/environments/deleteenv')
+        got.status.should == 201
+   
+        got = put('/environments/deleteenv/deletetest')
+        got.status.should == 201
+   
+        value = "default.value"
+        got = put('/environments/default/deletetest/mykey', :input => value)
+        got.status.should == 201
+   
+        got = delete('/environments/deleteenv/deletetest/mykey')
+        got.status.should == 404
+    
+        got = get('/environments/deleteenv/deletetest/mykey')
+        got.status.should == 200
+        got.body.should.include "default.value"
+    end
 end
