@@ -36,15 +36,15 @@ describe AuthController do
     end
 
     it 'should get info from /auth/secret if it supplies the right credentials' do
-        #got = get('/auth/secret', :auth => Base64.encode64("me:me"))
+        #got = get('/auth/secret', :auth => encode_credentials("me", "me"))
         # TODO: Send a patch to Ramaze to make the above work instead of ugly below...
-        got = raw_mock_request(:get, '/auth/secret', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:get, '/auth/secret', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
         got.body.should == "Secret Info"
     end
 
     it 'should not get info from /auth/secret if it supplies the wrong credentials' do
-        got = raw_mock_request(:get, '/auth/secret', 'HTTP_AUTHORIZATION' => Base64.encode64("notadmin:notadmin"))
+        got = raw_mock_request(:get, '/auth/secret', 'HTTP_AUTHORIZATION' => encode_credentials("notadmin", "notadmin"))
         got.status.should == 401
     end
 
@@ -52,13 +52,13 @@ describe AuthController do
         got = put('/environments/mine')
         got.status.should == 201
 
-        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = put('/environments/mine/myapp')
         got.status.should == 401
 
-        got = raw_mock_request(:put, '/environments/mine/myapp', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:put, '/environments/mine/myapp', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 201
 
         got = get('/environments/mine/myapp')
@@ -67,7 +67,7 @@ describe AuthController do
         got = put('/environments/mine/myapp/mykey', :input => "sheep")
         got.status.should == 401
 
-        got = raw_mock_request(:put, '/environments/mine/myapp/mykey', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me"), :input => "myvalue"})
+        got = raw_mock_request(:put, '/environments/mine/myapp/mykey', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me"), :input => "myvalue"})
         got.status.should == 201
 
         got = get('/environments/mine/myapp/mykey')
@@ -77,7 +77,7 @@ describe AuthController do
         got = delete('/environments/mine/myapp/mykey')
         got.status.should == 401
 
-        got = raw_mock_request(:delete, '/environments/mine/myapp/mykey', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:delete, '/environments/mine/myapp/mykey', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         # TODO: This is a little screwy...
@@ -88,7 +88,7 @@ describe AuthController do
         got = delete('/environments/mine/myapp')
         got.status.should == 401
 
-        got = raw_mock_request(:delete, '/environments/mine/myapp', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:delete, '/environments/mine/myapp', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = get('/environments/mine/myapp')
@@ -97,7 +97,7 @@ describe AuthController do
         got = delete('/environments/mine')
         got.status.should == 401
 
-        got = raw_mock_request(:delete, '/environments/mine', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:delete, '/environments/mine', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = get('/environments/mine')
@@ -108,7 +108,7 @@ describe AuthController do
         got = put('/environments/mine')
         got.status.should == 201
 
-        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = raw_mock_request(:post, '/environments/mine', 'HTTP_CONTENT_LOCATION' => "yours")
@@ -122,7 +122,7 @@ describe AuthController do
         got = put('/environments/mine')
         got.status.should == 201
         
-        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = get('/crypt/mine')
@@ -146,7 +146,7 @@ describe AuthController do
         got = get('/crypt/mine/private')
         got.status.should == 401
 
-        got = raw_mock_request(:get, '/crypt/mine', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:get, '/crypt/mine', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
         got.content_type.should == "text/plain"
         got.body.should.not == "[]"
@@ -155,7 +155,7 @@ describe AuthController do
         got.body.should.include "-----BEGIN RSA PRIVATE KEY-----" 
         got.body.should.include "-----END RSA PRIVATE KEY-----" 
 
-        got = raw_mock_request(:get, '/crypt/mine/private', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:get, '/crypt/mine/private', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
         got.content_type.should == "text/plain"
         got.body.should.not == "[]"
@@ -169,13 +169,13 @@ describe AuthController do
         got = put('/environments/mine')
         got.status.should == 201
         
-        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = post('/crypt/mine', '')
         got.status.should == 401
 
-        got = raw_mock_request(:post, '/crypt/mine', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me"), :input => ''})
+        got = raw_mock_request(:post, '/crypt/mine', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me"), :input => ''})
         got.status.should == 201
 
         mykeypair = "
@@ -197,13 +197,13 @@ kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
         got = post('/crypt/mine', :input => mykeypair)
         got.status.should == 401
 
-        got = raw_mock_request(:post, '/crypt/mine', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me"), :input => mykeypair})
+        got = raw_mock_request(:post, '/crypt/mine', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me"), :input => mykeypair})
         got.status.should == 201
 
         got = delete('/crypt/mine')
         got.status.should == 401
 
-        got = raw_mock_request(:delete, '/crypt/mine', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me")})
+        got = raw_mock_request(:delete, '/crypt/mine', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me")})
         got.status.should == 200
     end
 end

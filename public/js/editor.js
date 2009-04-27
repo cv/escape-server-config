@@ -18,29 +18,64 @@ var EscEditor = function() {
 		  	$('#editor').html(userEditor);
         },
 
+        takeOwnership : function(env) {
+			$.ajax({
+                type: "POST",
+                url: "/owner/" + env,
+				success: function(data, textStatus){
+                    alert("Congratulations, you now own the environment '" + env + "'");
+                    EscEditor.editEnvironment(env);
+				},
+			});
+        },
+
+        releaseOwnership : function(env) {
+			$.ajax({
+                type: "DELETE",
+                url: "/owner/" + env,
+				success: function(data, textStatus){
+                    alert("Released ownership of environment '" + env + "'");
+                    EscEditor.editEnvironment(env);
+				},
+			});
+        },
+
 		editEnvironment : function(env) {
 			$('#editor').empty();
 		  	$('#editor').html("<center><h3><b><font size='+1>" + env + "</font></b></center><br />");
-			$('#editor').append("<div id='crypto'></div>");
+			$('#editor').append("<div id='owner'></div>");
 			$.ajax({
-                type: "GET",
-                url: "/crypt/" + env + "/public",
-				success: function(data, textStatus){
-					var pubkey = data.replace("-----BEGIN RSA PUBLIC KEY-----","");
-					pubkey = pubkey.replace("-----END RSA PUBLIC KEY-----","");						 
-					$('#crypto').append("<b>Public key</b>:" + pubkey + "<br />");
+	                type: "GET",
+	                url: "/owner/" + env,
+					success: function(data, textStatus){
+						$('#owner').append("<b>Owner</b>: " + data + "<br />");
 				},
 			});
-			$.ajax({
+
+            if (env != "default") { 
+			    $('#editor').append("<div id='pub_key'></div>");
+			    $('#editor').append("<div id='priv_key'></div>");
+                $('#editor').append("<input type='button' class='own' value='Take Ownership' onClick='EscEditor.takeOwnership(\"" + env + "\");'/>");
+                $('#editor').append("<input type='button' class='disown' value='Release Ownership' onClick='EscEditor.releaseOwnership(\"" + env + "\");'/>");
+			    $.ajax({
+                    type: "GET",
+                    url: "/crypt/" + env + "/public",
+				    success: function(data, textStatus){
+					    var pubkey = data.replace("-----BEGIN RSA PUBLIC KEY-----","");
+					    pubkey = pubkey.replace("-----END RSA PUBLIC KEY-----","");						 
+					    $('#pub_key').append("<b>Public key</b>:" + pubkey + "<br />");
+				    },
+			    });
+			    $.ajax({
 	                type: "GET",
 	                url: "/crypt/" + env + "/private",
 					success: function(data, textStatus){
 						var privkey = data.replace("-----BEGIN RSA PRIVATE KEY-----","");
 						privkey = privkey.replace("-----END RSA PRIVATE KEY-----","");						 
-						$('#crypto').append("<b>Private key</b>:" + privkey + "<br />");
-				},
-			});
-			
+						$('#priv_key').append("<b>Private key</b>:" + privkey + "<br />");
+				    },
+			    });
+            }
 		},
         
         editPropertiesFor : function(env, app) {
@@ -167,22 +202,58 @@ $(document).ready(function() {
     });
 
     $('#new_user_form').submit(function() {
-//        var userName = $('#key_user_name').val();
-//        var userEmail = $('#key_user_email').val();
-//        if (EscEditor.validateName(newName)) {
-//            $('#new_key_name').val("");
-//            $.ajax({
-//                type: "PUT",
-//                url: "/environments/" + envName + "/" + appName + "/" + newName,
-//                data: "",
-//                complete: function(XMLHttpRequest, textStatus) {
-//                    EscEditor.editPropertiesFor(envName, appName);
-//                },
-//            });
-//        } else {
-//            alert("Not going to create new key called " + newName);
-//        }
+        $('#new_user_errors').empty();
+
+        var validated = true;
+        var userName = $('#new_user_name').val();
+        var userEmail = $('#new_user_email').val();
+        var userPass1 = $('#new_user_pass1').val();
+        var userPass2 = $('#new_user_pass2').val();
+
+        if ((userName == null) || (userName == "") || (userName == "User Name")) {
+            $('#new_user_errors').append("<font color='red'>Must specify username</font><br/>");
+            validated = false;
+        };
+
+        if ((userEmail == null) || (userEmail == "") || (userEmail == "User Email")) {
+            $('#new_user_errors').append("<font color='red'>Must specify email address</font><br/>");
+            validated = false;
+        };
+
+        if ((userPass1 == null) || (userPass1 == "")) { 
+            $('#new_user_errors').append("<font color='red'>Blank passwords not allowed</font><br/>");
+            validated = false;
+        };
+
+        if (userPass2 == null) { userPass2 = ""; };
+
+        if (userPass1 != userPass2) {
+            $('#new_user_errors').append("<font color='red'>Password missmatch</font><br/>");
+            validated = false;
+        };
+
+        if (! validated) {
+            return;
+        } else {
+            $('#new_user_name').val("");
+            $('#new_user_email').val("");
+            $('#new_user_pass1').val("");
+            $('#new_user_pass2').val("");
+            $('#new_user_errors').html("<font color='green'>Creating user " + userName + "...</font><br/>");
+            $.ajax({
+                type: "POST",
+                url: "/user/" + userName,
+                data: "email=" + userEmail + "&password=" + userPass1,
+                success: function(XMLHttpRequest, textStatus) {
+                    $('#new_user_errors').append("<font color='green'>done</font><br/>");
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    $('#new_user_errors').append("<font color='red'>Error: " + XMLHttpRequest.responseText + "</font><br/>");
+                },
+            });
+        };
     });
+
 });
 
 

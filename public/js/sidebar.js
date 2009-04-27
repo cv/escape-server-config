@@ -16,6 +16,7 @@ var EscSidebar = function() {
         setDefault : function(what) {
             if (what.value == "") {
                 what.value = what.defaultValue;
+                what.type = "text";
             }
         },
 
@@ -243,6 +244,8 @@ $(document).ready(function() {
         var thisEnv = $(this).siblings("span").text();
         EscSidebar.showEnvEditor(thisEnv);
     });
+
+    // Grab ownership of an environment
 
     // Click on an app delete button
     $('.appdelete').live("click", function() {

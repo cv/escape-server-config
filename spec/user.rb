@@ -86,15 +86,15 @@ describe UserController do
         got = post('/user/somebody', {:password => "newpassword"})
         got.status.should == 401
 
-        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me")})
+        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me")})
         got.status.should == 401
 
-        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => Base64.encode64("somebody:password")})
+        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => encode_credentials("somebody", "password")})
         got.status.should == 200
 
         Owner[:name => "somebody"].password.should == MD5.hexdigest("newpassword")
 
-        got = raw_mock_request(:post, '/user/somebody?email=newemail', {'HTTP_AUTHORIZATION' => Base64.encode64("somebody:newpassword")})
+        got = raw_mock_request(:post, '/user/somebody?email=newemail', {'HTTP_AUTHORIZATION' => encode_credentials("somebody", "newpassword")})
         got.status.should == 200
 
         Owner[:name => "somebody"].email.should == "newemail"
@@ -110,10 +110,10 @@ describe UserController do
         got = delete('/user/somebody')
         got.status.should == 401
 
-        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => Base64.encode64("me:me")})
+        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me")})
         got.status.should == 401
 
-        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => Base64.encode64("somebody:password")})
+        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => encode_credentials("somebody", "password")})
         got.status.should == 200
 
         got = get('/user/somebody')

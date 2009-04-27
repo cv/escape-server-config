@@ -52,7 +52,7 @@ class EscController < Ramaze::Controller
         response['WWW-Authenticate'] = "Basic realm=\"ESCAPE Server - #{env}\""
 
         if auth = request.env['HTTP_AUTHORIZATION']
-            (user, pass) = Base64.decode64(auth).split(':')
+            (user, pass) = Base64.decode64(auth.split(" ")[1]).split(':')
             id = user if id.nil?
             owner = Owner[:name => user]
             if owner && (owner.password == MD5.hexdigest(pass)) && (id == user)

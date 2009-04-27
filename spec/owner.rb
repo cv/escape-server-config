@@ -50,7 +50,7 @@ describe OwnerController do
         got = post('/owner/myenv')
         got.status.should == 401
 
-        got = raw_mock_request(:post, '/owner/myenv', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:post, '/owner/myenv', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = get('/owner/myenv')
@@ -61,7 +61,7 @@ describe OwnerController do
         got = delete('/owner/myenv')
         got.status.should == 401
 
-        got = raw_mock_request(:delete, '/owner/myenv', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:delete, '/owner/myenv', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
         got = get('/owner/myenv')
@@ -73,7 +73,7 @@ describe OwnerController do
     it 'should not be able to change the owner of the default environment' do
         me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
 
-        got = raw_mock_request(:post, '/owner/default', 'HTTP_AUTHORIZATION' => Base64.encode64("me:me"))
+        got = raw_mock_request(:post, '/owner/default', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 403
     end
 
