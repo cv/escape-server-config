@@ -149,25 +149,34 @@ var EscSidebar = function() {
             EscSidebar.loadEnvironments();
         },
 
+        userManagement : function() {
+            EscSidebar.hideEditor();
+            EscEditor.editUsers();
+            $('#editor').show();
+            $('#new_user').show();
+        },
+
+        hideEditor : function() {
+            $('#new_user').hide();
+            $('#new_key').hide();
+            $('#editor').hide();
+        },
+
         showEditor : function(env, app) {
+            EscSidebar.hideEditor();
             if ((app != null) && (app != "") && (env != null) && (env != "")) {
                 EscEditor.editPropertiesFor(env, app);
                 $('#new_key').show();
                 $('#editor').show();
-            } else {
-                $('#new_key').hide();
-                $('#editor').hide();
             };
         },
 
         showEnvEditor : function(env) {
+            EscSidebar.hideEditor();
             if ((env != null) && (env != "")) {
                 EscEditor.editEnvironment(env);
 				$('#new_key').hide();
                 $('#editor').show();
-            } else {
-                $('#editor').hide();
-				$('#new_key').hide();
             };
         },
 
@@ -202,6 +211,9 @@ $(document).ready(function() {
 
     // Contract All 
     $('.contract').live("click", function() { EscSidebar.contractAll() });
+
+    // User Management
+    $('.usermgmt').live("click", function() { EscSidebar.userManagement() });
 
     // Expand or Contract one particular env
     $('.expander_img').live("click", function() {
@@ -245,6 +257,7 @@ $(document).ready(function() {
                 url: "/environments/" + thisEnv + "/" + thisApp,
                 data: {},
                 success: function(data, textStatus) {
+                    EscSidebar.hideEditor();
                     EscSidebar.loadEnvironments();
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -265,6 +278,7 @@ $(document).ready(function() {
                 url: "/environments/" + thisEnv,
                 data: {},
                 success: function(data, textStatus) {
+                    EscSidebar.hideEditor();
                     EscSidebar.loadEnvironments();
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -274,8 +288,7 @@ $(document).ready(function() {
         };
     });
 
+    EscSidebar.hideEditor();
     EscSidebar.loadEnvironments();
-    $('#new_key').hide();
-    $('#editor').hide();
 });
 

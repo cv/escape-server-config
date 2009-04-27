@@ -6,6 +6,18 @@ var EscEditor = function() {
             return true;
         },
 
+        editUsers : function() {
+			$('#editor').empty();
+            var userEditor = "";
+
+		  	userEditor += "<center><h3><b><font size='+1>Users</font></b></center><br />";
+
+
+            userEditor += "";
+
+		  	$('#editor').html(userEditor);
+        },
+
 		editEnvironment : function(env) {
 			$('#editor').empty();
 		  	$('#editor').html("<center><h3><b><font size='+1>" + env + "</font></b></center><br />");
@@ -152,6 +164,24 @@ $(document).ready(function() {
         } else {
             alert("Not going to create new key called " + newName);
         }
+    });
+
+    $('#new_user_form').submit(function() {
+//        var userName = $('#key_user_name').val();
+//        var userEmail = $('#key_user_email').val();
+//        if (EscEditor.validateName(newName)) {
+//            $('#new_key_name').val("");
+//            $.ajax({
+//                type: "PUT",
+//                url: "/environments/" + envName + "/" + appName + "/" + newName,
+//                data: "",
+//                complete: function(XMLHttpRequest, textStatus) {
+//                    EscEditor.editPropertiesFor(envName, appName);
+//                },
+//            });
+//        } else {
+//            alert("Not going to create new key called " + newName);
+//        }
     });
 });
 
