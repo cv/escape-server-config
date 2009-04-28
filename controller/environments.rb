@@ -260,7 +260,7 @@ class EnvironmentsController < EscController
                     value = Value[:key_id => key[:id], :environment_id => Environment[:name => "default"][:id]]
                 end
                 if not value.nil?
-                    pairs.push("#{key[:name]}=#{value[:value]}\n")
+                    pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
                 end
             end
             response.headers["Content-Type"] = "text/plain"
@@ -364,19 +364,19 @@ class EnvironmentsController < EscController
             return "Environment '#{env}' does not exist."
         end
 
+        check_auth(myenv.owner.name, env)
+
         encrypted = false
         if encryption == "encrypt"
             # Do some encryption
             public_key = OpenSSL::PKey::RSA.new(myenv.public_key)
-            encrypted_value = Base64.encode64(public_key.public_encrypt(value))
+            encrypted_value = Base64.encode64(public_key.public_encrypt(value)).strip()
             value = encrypted_value
         end
         
         if encryption != "none"
             encrypted = true
         end
-
-        check_auth(myenv.owner.name, env)
 
         mykey = Key[:name => key, :app_id => myapp[:id]]
         # New one, let's create

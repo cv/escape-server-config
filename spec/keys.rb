@@ -3,6 +3,8 @@
 require 'rubygems'
 require 'ramaze'
 require 'ramaze/spec/helper'
+require 'openssl'
+require 'base64'
 
 require __DIR__('helper/db_helper')
 require __DIR__('../start')
@@ -296,12 +298,16 @@ describe EnvironmentsController, 'Key/Value bits' do
          got.body.should.not.include "default.value"
     end
     
-    it 'should encrypt a key value' do
+    it 'should encrypt a key value when asked and it should be decryptable by the private key' do
         got = put('/environments/encryptvalue')
         got.status.should == 201
 
         got = put('/environments/encryptvalue/anapp')
         got.status.should == 201
+
+        got = get('/crypt/encryptvalue/private')
+        got.status.should == 200
+        priv_key = OpenSSL::PKey::RSA.new(got.body)
 
         value = "my.value"
         got = put('/environments/encryptvalue/anapp/mykey', :input => value)
@@ -309,14 +315,18 @@ describe EnvironmentsController, 'Key/Value bits' do
         
         got = get('/environments/encryptvalue/anapp/mykey')
         got.status.should == 200 
-        got.body.should.include value
+        got.body.should == value
         
-        got = put('/environments/encryptvalue/anapp/mykey', :input => value, :expect => 'encrypt')
+        got = put('/environments/encryptvalue/anapp/mykey', :input => value, :encrypt => "true")
         got.status.should == 200
         
         got = get('/environments/encryptvalue/anapp/mykey')
         got.status.should == 200 
-        got.body.should.not.include value
+        got.body.should.not == value
+
+        un64body = Base64.decode64(got.body)
+        decrypt = priv_key.private_decrypt(un64body)
+        decrypt.should == value
     end
 
     it 'should play nice when trying to delete a key from an env that has not explicit value set' do

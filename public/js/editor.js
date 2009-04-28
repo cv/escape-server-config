@@ -61,18 +61,14 @@ var EscEditor = function() {
                     type: "GET",
                     url: "/crypt/" + env + "/public",
 				    success: function(data, textStatus){
-					    var pubkey = data.replace("-----BEGIN RSA PUBLIC KEY-----","");
-					    pubkey = pubkey.replace("-----END RSA PUBLIC KEY-----","");						 
-					    $('#pub_key').append("<b>Public key</b>:" + pubkey + "<br />");
+					    $('#pub_key').append("<b>Public key</b>:<br/><pre>" + data + "</pre><br />");
 				    },
 			    });
 			    $.ajax({
 	                type: "GET",
 	                url: "/crypt/" + env + "/private",
 					success: function(data, textStatus){
-						var privkey = data.replace("-----BEGIN RSA PRIVATE KEY-----","");
-						privkey = privkey.replace("-----END RSA PRIVATE KEY-----","");						 
-						$('#priv_key').append("<b>Private key</b>:" + privkey + "<br />");
+						$('#priv_key').append("<b>Private key</b>:<br/><pre>" + data + "</pre><br />");
 				    },
 			    });
             }
@@ -135,13 +131,13 @@ var EscEditor = function() {
 					// Click on a key encrypt button
 					$('.keyencrypt').click(function() {
 						var thisKey = $(this).parent().siblings("th").text();
-						var thisValue = $(this).parent().siblings("td#keyeditbox").text();
-						
+						var thisValue = $(this).parent().siblings(".keyeditbox").text();
+
 				        if ((thisKey != null) && (thisKey != "")) {
 							// Encrypt the key
 							$.ajax({
 				                type: "PUT",
-				                url: "/environments/" + env + "/" + app + "/" + thisKey,
+				                url: "/environments/" + env + "/" + app + "/" + thisKey + "?encrypt",
 				                data: thisValue,
 				                success: function(data, textStatus) {
 									$('#editor').empty(); 
