@@ -21,99 +21,101 @@ class UserController < EscController
     def index(name = nil)
         # Sanity check what we've got first
         if name && (not name =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            respond "Invalid user name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
+            respond("Invalid user name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
-        # Undefined
-        if name.nil?
-            respond "Undefined", 400
-        end
+        @name = name
 
         # Getting...
         if request.get?
-            getUser(name)
+            if name.nil?
+                listAllUsers
+            else
+                getUserDetails
+            end
 
         # Posting...
         elsif request.post?
-            createUpdateUser(name)
+            createUpdateUser
 
+        # Deleting...
         elsif request.delete?
-            deleteUser(name)
+            deleteUser
 
-        # Not defined
+        # Not defined...
         else
-            response.status = 400
+            respond("Undefined", 400)
         end
     end
 
     private
 
-    def getUser(name)
-        user = Owner[:name => name]
+    def listAllUsers
+        response.headers["Content-Type"] = "application/json"
 
-        if not user
-            response.status = 404
-            return "User #{name} not found"
-        else
-            response.headers["Content-Type"] = "application/json"
-            data = {}
-            data["name"] = user.name
-            data["email"] = user.email
-            return data.to_json
+        data = []
+        Owner.all.each do |user|
+            data.push(user.name)
+        end
+
+        return data.sort.to_json
+    end
+
+    def getUser(failOnError = true)
+        respond("Undefined", 400) if @name.nil?
+        
+        @user = Owner[:name => @name]
+
+        if failOnError and not @user
+            respond("User #{@name} not found", 404) 
         end
     end
 
-    def createUpdateUser(name)
-        user = Owner[:name => name]
+    def getUserDetails
+        getUser
+
+        response.headers["Content-Type"] = "application/json"
+        data = {}
+        data["name"] = @user.name
+        data["email"] = @user.email
+        return data.to_json
+    end
+
+    def createUpdateUser
+        getUser(false)
 
         email = request["email"] rescue nil
         password = MD5.hexdigest(request["password"]) rescue nil
 
         # No such user, we're creating...
-        if user.nil?
-            if email.nil?
-                response.status = 403
-                return "email missing"
-            end
-
-            if password.nil?
-                response.status = 403
-                return "password missing"
-            end
+        if @user.nil?
+            respond("email missing", 403) if email.nil?
+            respond("password missing", 403) if password.nil?
 
             begin
-                Owner.create(:name => name, :email => email, :password => password)
-                response.status = 201
+                Owner.create(:name => @name, :email => email, :password => password)
+                respond("Created user #{@name}", 201)
             rescue 
-                response.status = 403
-                return "Error creating user. Does it already exist?"
+                respond("Error creating user. Does it already exist?", 403)
             end
         # User exists, we're updating
         else
-            check_auth(name)
-            if not email.nil?
-                user.update(:email => email)
-            end
-            if not password.nil?
-                user.update(:password => password) 
-            end
+            check_auth(@name)
+            @user.update(:email => email) unless email.nil?
+            @user.update(:password => password) unless password.nil?
         end
     end
 
-    def deleteUser(name)
-        user = Owner[:name => name]
-        
-        if user.nil?
-            respond "User #{name} not found", 404
-        else
-            check_auth(name)
-            user.environments.each do |env|
-                env.owner_id = 1
-            end
-            user.remove_all_environments
-            user.delete
-            respond "User #{name} deleted", 200
+    def deleteUser
+        getUser
+
+        check_auth(@name)
+        @user.environments.each do |env|
+            env.owner_id = 1
         end
+        @user.remove_all_environments
+        @user.delete
+        respond("User #{@name} deleted", 200)
     end
 
 end

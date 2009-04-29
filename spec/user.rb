@@ -23,9 +23,20 @@ describe UserController do
         "Basic " + Base64.encode64("#{username}:#{password}")
     end
 
-    it 'should return a 400 on GET /user' do
+    it 'should return a list of users on GET /user' do
         got = get('/user')
-        got.status.should == 400
+        got.status.should == 200
+        got.body.should == '["nobody"]'
+
+        email = "someone@somewhere.com"
+        password = "somepassword"
+
+        got = post('/user/somebody', {:email => email, :password => password})
+        got.status.should == 201
+        
+        got = get('/user')
+        got.status.should == 200
+        got.body.should == '["nobody","somebody"]'
     end
 
     it 'should return 404 for a user that does not exist' do

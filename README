@@ -12,12 +12,12 @@ First off - this a Ruby app. Dev and tested with Ruby 1.8 on OSX.
 
 Required ruby gems:
 
-    ramaze
+    ramaze (>= 2009.01)
     rack 
-    sequel (2.11.0)
+    sequel (= 2.11.0)
     sqlite
     json
-    mongrel
+    mongrel (>= 1.1.5)
 	openssl
 	
 Optional ruby gems:
