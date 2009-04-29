@@ -100,7 +100,7 @@ class UserController < EscController
             end
         # User exists, we're updating
         else
-            check_auth(@name)
+            check_auth(@name, "User #{@name}")
             @user.update(:email => email) unless email.nil?
             @user.update(:password => password) unless password.nil?
         end
@@ -109,7 +109,7 @@ class UserController < EscController
     def deleteUser
         getUser
 
-        check_auth(@name)
+        check_auth(@name, "User #{@name}")
         @user.environments.each do |env|
             env.owner_id = 1
         end

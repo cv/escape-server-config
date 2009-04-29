@@ -44,12 +44,12 @@ class EscController < Ramaze::Controller
     end
   
 
-    def check_auth(id = nil, env = "")
+    def check_auth(id = nil, realm = "")
         if id == "nobody"
             return id
         end
 
-        response['WWW-Authenticate'] = "Basic realm=\"ESCAPE Server - #{env}\""
+        response['WWW-Authenticate'] = "Basic realm=\"ESCAPE Server - #{realm}\""
 
         if auth = request.env['HTTP_AUTHORIZATION']
             (user, pass) = Base64.decode64(auth.split(" ")[1]).split(':')

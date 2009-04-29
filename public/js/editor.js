@@ -8,14 +8,18 @@ var EscEditor = function() {
 
         editUsers : function() {
 			$('#editor').empty();
-            var userEditor = "";
+            $('#editor').append("<center><h3>Users</h3></center><br />");
+            $('#editor').append("<ul id='user_list'></ul>");
 
-		  	userEditor += "<center><h3><b><font size='+1>Users</font></b></center><br />";
-
-
-            userEditor += "";
-
-		  	$('#editor').html(userEditor);
+            $.getJSON("/user",
+                function(data) {
+                    $.each(data, function(i, name) {
+                        if (name != "nobody") {
+                            $('#user_list').append("<li class='edit_user'>" + name + "</li>");
+                        };
+                    });
+                }
+            );
         },
 
         takeOwnership : function(env) {
@@ -173,6 +177,68 @@ var EscEditor = function() {
             });
         },
 
+        submitUserDetails : function() {
+            $('#new_user_errors').empty();
+
+            var validated = true;
+            var userName = $('#new_user_name').val();
+            var userEmail = $('#new_user_email').val();
+            var userPass1 = $('#new_user_pass1').val();
+            var userPass2 = $('#new_user_pass2').val();
+
+            if ((userName == null) || (userName == "") || (userName == "User Name")) {
+                $('#new_user_errors').append("<font color='red'>Must specify username</font><br/>");
+                validated = false;
+            };
+
+            if ((userEmail == null) || (userEmail == "") || (userEmail == "User Email")) {
+                $('#new_user_errors').append("<font color='red'>Must specify email address</font><br/>");
+                validated = false;
+            };
+
+            if ((userPass1 == null) || (userPass1 == "")) { 
+                $('#new_user_errors').append("<font color='red'>Blank passwords not allowed</font><br/>");
+                validated = false;
+            };
+
+            if (userPass2 == null) { userPass2 = ""; };
+
+            if (userPass1 != userPass2) {
+                $('#new_user_errors').append("<font color='red'>Password missmatch</font><br/>");
+                validated = false;
+            };
+
+            if (! validated) {
+                return;
+            } else {
+                $('#new_user_name').val("");
+                $('#new_user_email').val("");
+                $('#new_user_pass1').val("");
+                $('#new_user_pass2').val("");
+                $('#new_user_errors').html("<font color='green'>Creating user " + userName + "...</font><br/>");
+                $.ajax({
+                    type: "POST",
+                    url: "/user/" + userName,
+                    data: "email=" + userEmail + "&password=" + userPass1,
+                    success: function(XMLHttpRequest, textStatus) {
+                        $('#new_user_errors').append("<font color='green'>done</font><br/>");
+                        EscEditor.clearNewUserForm();
+                        EscEditor.editUsers();
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        $('#new_user_errors').append("<font color='red'>Error: " + XMLHttpRequest.responseText + "</font><br/>");
+                    },
+                });
+            };
+        },
+
+        clearNewUserForm : function() {
+            EscSidebar.setDefault($('#new_user_name'));
+            EscSidebar.setDefault($('#new_user_email'));
+            EscSidebar.setDefault($('#new_user_pass1'));
+            EscSidebar.setDefault($('#new_user_pass2'));
+        },
+
 // End of namespace
     };
 }();
@@ -198,58 +264,19 @@ $(document).ready(function() {
     });
 
     $('#new_user_form').submit(function() {
-        $('#new_user_errors').empty();
-
-        var validated = true;
-        var userName = $('#new_user_name').val();
-        var userEmail = $('#new_user_email').val();
-        var userPass1 = $('#new_user_pass1').val();
-        var userPass2 = $('#new_user_pass2').val();
-
-        if ((userName == null) || (userName == "") || (userName == "User Name")) {
-            $('#new_user_errors').append("<font color='red'>Must specify username</font><br/>");
-            validated = false;
-        };
-
-        if ((userEmail == null) || (userEmail == "") || (userEmail == "User Email")) {
-            $('#new_user_errors').append("<font color='red'>Must specify email address</font><br/>");
-            validated = false;
-        };
-
-        if ((userPass1 == null) || (userPass1 == "")) { 
-            $('#new_user_errors').append("<font color='red'>Blank passwords not allowed</font><br/>");
-            validated = false;
-        };
-
-        if (userPass2 == null) { userPass2 = ""; };
-
-        if (userPass1 != userPass2) {
-            $('#new_user_errors').append("<font color='red'>Password missmatch</font><br/>");
-            validated = false;
-        };
-
-        if (! validated) {
-            return;
-        } else {
-            $('#new_user_name').val("");
-            $('#new_user_email').val("");
-            $('#new_user_pass1').val("");
-            $('#new_user_pass2').val("");
-            $('#new_user_errors').html("<font color='green'>Creating user " + userName + "...</font><br/>");
-            $.ajax({
-                type: "POST",
-                url: "/user/" + userName,
-                data: "email=" + userEmail + "&password=" + userPass1,
-                success: function(XMLHttpRequest, textStatus) {
-                    $('#new_user_errors').append("<font color='green'>done</font><br/>");
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    $('#new_user_errors').append("<font color='red'>Error: " + XMLHttpRequest.responseText + "</font><br/>");
-                },
-            });
-        };
+        EscEditor.submitUserDetails()
     });
 
+    $(".edit_user").live("click", function() {
+        $.getJSON("/user/" + $(this).text(), 
+            function(data) {
+                $('#new_user_name').val(data.name);
+                $('#new_user_email').val(data.email);
+                $('#new_user_pass1').val("");
+                $('#new_user_pass2').val("");
+            }
+        );
+    });
 });
 
 
