@@ -21,51 +21,46 @@ class EnvironmentsController < EscController
     def index(env = nil, app = nil, key = nil)
         # Sanity check what we've got first
         if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            response.status = 403
-            return "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+            respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
         if app && (not app =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            response.status = 403
-            return "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+            respond("Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
         if key && (not key =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            response.status = 403
-            return "Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+            respond("Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
+
+        @env = env
+        @app = app
+        @key = key
 
         # Getting...
         if request.get?
             # List all environments
             if env.nil?
-                listEnvs()
+                listEnvs
             # List all apps in specified environment
             elsif app.nil?
-                listApps(env)
+                listApps
             # List keys and values for app in environment
             elsif key.nil?
-                listKeys(env, app)
+                listKeys
             # We're getting value for specific key
             else 
-                getValue(env, app, key)
+                getValue
             end
 
         # Copying...
         elsif request.post?
             # Undefined
             if env.nil?
-                response.status = 400
+                respond("Undefined", 400)
             # You're copying an env
             elsif app.nil?
-                if request.env['HTTP_CONTENT_LOCATION']
-                    # We can copy to Location:
-                    copyEnv(env,request.env['HTTP_CONTENT_LOCATION'])
-                    response.status = 201 
-                else
-                    response.status = 406
-                    return "Missing Location header. Can't copy environment"
-                end
+                # env is the target, Location Header has the source
+                copyEnv
             end
 
         # Creating...
@@ -75,19 +70,13 @@ class EnvironmentsController < EscController
                 response.status = 400
             # You're creating a new env
             elsif app.nil?
-                createEnv(env)
+                createEnv
             # You're creating a new app
             elsif key.nil?
-                createApp(env, app)
+                createApp
             # Key stuff
             else
-                if request.env['QUERY_STRING'] =~ /encrypt/
-                    encryption = "encrypt"
-                else
-                    encryption = 'none'
-                end
-                value = request.body.read
-                setValue(env, app, key, value, encryption)
+                setValue
             end
 
         # Deleting...
@@ -97,115 +86,95 @@ class EnvironmentsController < EscController
                 response.status = 400
             # You're deleting an env
             elsif app.nil?
-                deleteEnv(env)
+                deleteEnv
             # You're deleting an app
             elsif key.nil?
-                deleteApp(env, app)
+                deleteApp
             # You're deleting a key
             else             
-                deleteKey(env, app, key)
+                deleteKey
             end
         end
     end
 
     private
 
+    def getEnv(failOnError = true)
+        @myEnv = Environment[:name => @env]
+        respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and failOnError
+        @envId = @myEnv[:id] unless @myEnv.nil?
+        @defaultId = Environment[:name => "default"][:id]
+    end
+
+    def getApp(failOnError = true)
+        @myApp = App[:name => @app]
+        respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and failOnError
+        @appId = @myApp[:id] unless @myApp.nil?
+    end
+
+    def getKey(failOnError = true)
+        @myKey = Key[:name => @key, :app_id => @appId]
+        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
+        @keyId = @myKey[:id] unless @myKey.nil?
+    end
+
     #
     # Deletion
     #
 
-    def deleteEnv(env)
-        if env == "default"
-            response.status = 403
-            return "Not allowed to delete default environment!"
-        end
-
-        myEnv = Environment[:name => env]
-        if myEnv
-            check_auth(myEnv.owner.name, env)
-            myEnv.delete
-            response.status = 200
-            return "Environment '#{env}' deleted."
-        else
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        end
+    def deleteEnv
+        respond("Not allowed to delete default environment!", 403) if @env == "default"
+        getEnv
+        check_auth(@myEnv.owner.name, "Environment #{@env}")
+        @myEnv.delete
+        respond("Environment '#{@env}' deleted.", 200)
     end
 
-    def deleteApp(env, app)
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        end
+    def deleteApp
+        getApp
 
-        myapp = App[:name => app]
-        if myapp.nil?
-            response.status = 404
-            return "Application '#{app}' does not exist."
-        end
-
-        if env == "default"
-            myapp.delete
-            response.status = 200
-            return "Applicaton '#{app}' deleted."
+        if @env == "default"
+            # TODO: What if this app has values in other environments???
+            @myApp.delete
+            respond("Applicaton '#{@app}' deleted.", 200)
         else         
-            check_auth(myenv.owner.name, env)
-            myapp.remove_environment(myenv)
-            response.status = 200
-            return "Application '#{app}' deleted from the '#{env}' environment."
+            getEnv
+            check_auth(@myEnv.owner.name, "Environment #{@env}")
+            @myApp.remove_environment(@myEnv)
+            respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
         end
     end
 
-    def deleteKey(env, app, key)
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        end
+    def deleteKey
+        getEnv
+        getApp
+        getKey
 
-        myapp = App[:name => app]
-        if myapp.nil?
-            response.status = 404
-            return "Application '#{app}' does not exist."
-        end
-        
-        mykey = Key[:name => key, :app_id => myapp[:id]]
-        if mykey.nil?
-            response.status = 404
-            return "Key '#{key}' does not exist."
-        end
-
-        if env == "default"
+        if @env == "default"
             # Don't delete default if we have a value set in a non-default env
             set = false
-            mykey.app.environments.each do |appenv|
-                if (not Value[:key_id => mykey[:id], :environment_id => appenv[:id]].nil?) and (appenv.name != "default")
+            @myKey.app.environments.each do |appenv|
+                if (not Value[:key_id => @keyId, :environment_id => appenv[:id]].nil?) and (appenv.name != "default")
                     set = true
                     break
                 end
             end
             
             if not set
-                mykey.delete
-                response.status = 200
-                return "Key '#{key}' deleted."
+                @myKey.delete
+                respond("Key '#{@key}' deleted from application '#{@app}'.", 200)
             else
-                response.status = 403
-                return "Key #{key} can't be deleted. It has values set."
+                respond("Key #{@key} can't be deleted. It has non default values set.", 403)
             end
         else         
-            check_auth(myenv.owner.name, env)
-            myvalue = Value[:key_id => mykey[:id], :environment_id => myenv[:id]]
-            if myvalue.nil?
-                response.status = 404
-                msg = "Key '#{key}' has no value in the '#{env}' environment."
+            check_auth(@myEnv.owner.name, "Environment #{@env}")
+            myValue = Value[:key_id => @keyId, :environment_id => @envId]
+            if myValue.nil?
+                respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
             else
-                myvalue.delete
-                response.status = 200
-                msg = "Key '#{key}' deleted from the '#{env}' environment."
+                myValue.delete
+                respond("Key '#{@key}' deleted from the '#{@env}' environment.", 200)
             end
-            return msg
         end
         
     end
@@ -223,85 +192,61 @@ class EnvironmentsController < EscController
         return envs.sort.to_json
     end
 
-    def listApps(env)
+    def listApps
         # List all apps in specified environment
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        else
-            apps = Array.new
-            myenv.apps.each do |app|
-                apps.push(app[:name])
-            end
-            response.headers["Content-Type"] = "application/json"
-            return apps.sort.to_json
+        getEnv
+
+        apps = Array.new
+        @myEnv.apps.each do |app|
+            apps.push(app[:name])
         end
+
+        response.headers["Content-Type"] = "application/json"
+        return apps.sort.to_json
     end
     
-    def listKeys(env, app, getDefaults = true)
+    def listKeys(getDefaults = true)
         # List keys and values for app in environment
-        myenv = Environment[:name => env]
-        if myenv.nil? # Env does not exist
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        end
+        getEnv
+        getApp
 
-        myapp = App[:name => app]
-
-        if myapp.nil?
-            response.status = 404
-            return "Application '#{app}' does not exist."
-        elsif myenv.apps.include? myapp
+        if @myEnv.apps.include? @myApp
             pairs = Array.new
-            myapp.keys.each do |key|
-                value = Value[:key_id => key[:id], :environment_id => myenv[:id]]
+            @myApp.keys.each do |key|
+                value = Value[:key_id => key[:id], :environment_id => @envId]
+
                 if value.nil? && getDefaults # Got no value in specified env, what's in default and do we want defaults?
-                    value = Value[:key_id => key[:id], :environment_id => Environment[:name => "default"][:id]]
+                    value = Value[:key_id => key[:id], :environment_id => @defaultId]
                 end
+
                 if not value.nil?
                     pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
                 end
             end
+
             response.headers["Content-Type"] = "text/plain"
             return pairs.sort
         else
-            response.status = 404
-            return "Application '#{app}' is not included in Environment '#{env}'."
+            respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
         end
     end
 
 
-    def getValue(env, app, key, getDefaults = true)
-        myapp = App[:name => app]
-        if myapp.nil?
-            response.status = 404
-            return "Application '#{app}' does not exist."
+    def getValue(getDefaults = true)
+        getEnv
+        getApp
+
+        if not @myEnv.apps.include? @myApp
+            respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
         end
 
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        end
+        getKey(false)
 
-        if not myenv.apps.include?(myapp)
-            response.status = 404
-            return "Application '#{app}' is not included in Environment '#{env}'."
-        end
-
-        mykey = Key[:name => key, :app_id => myapp[:id]]
-        if mykey.nil?
-            response.status = 404
-            return "There is no key '#{key}' for Application '#{app}' in Environment '#{env}'."
-        end
-
-        value = Value[:key_id => mykey[:id], :environment_id => myenv[:id]]
+        value = Value[:key_id => @keyId, :environment_id => @myEnv[:id]]
         if value.nil? && getDefaults # No value for this env, is there one for default and do we want defaults?
-            value = Value[:key_id => mykey[:id], :environment_id => Environment[:name => "default"][:id]]
+            value = Value[:key_id => @keyId, :environment_id => @defaultId]
             if value.nil? # No default value...
-                response.status = 404
-                return "No default value"
+                respond("No default value", 404)
             end
         end
 
@@ -313,107 +258,90 @@ class EnvironmentsController < EscController
     # Creaters
     #
 
-    def createEnv(env)
-        if Environment[:name => env]
-            response.status = 200
-            return "Environment '#{env}' already exists."
-        else
-            Environment.create(:name => env)
-            createCryptoKeys(env,"pair")      
-            response.status = 201
-            return "Environment created."
-        end
+    def createEnv
+        respond("Environment '#{@env}' already exists.", 200) if Environment[:name => @env]
+
+        @myEnv = Environment.create(:name => @env)
+        createCryptoKeys(@env, "pair")      
+        respond("Environment created.", 201)
     end
 
-    def createApp(env, app)
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist"
+    def createApp
+        getEnv
+        check_auth(@myEnv.owner.name, "Environment #{@env}")
+        getApp(false)
+        respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @myEnv
+
+        if @myApp.nil?
+            @myApp = App.create(:name => @app)
         end
+        @myEnv.add_app(@myApp) unless @myEnv.apps.include? @myApp
 
-        check_auth(myenv.owner.name, env)
-
-        msg = nil
-        myapp = App[:name => app]
-        if myapp.nil?
-            myapp = App.create(:name => app)
-
-            response.status = 201
-            msg = "Application '#{app}' created."
-        else
-            response.status = 200
-            msg = "Application '#{app}' already exists."
-        end
-
-        myenv.add_app(myapp) unless myenv.apps.include?(myapp)
-
-        return msg
+        respond("Application '#{@app}' created in environment '#{@env}'.", 201)
     end
 
-    def setValue(env, app, key, value, encryption = "none")
-        myapp = App[:name => app]
-        if myapp.nil?
-            response.status = 404
-            return "Application '#{app}' does not exist."
-        end
+    def setValue
+        getEnv
+        check_auth(@myEnv.owner.name, "Environment #{@env}")
+        getApp
 
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        end
-
-        check_auth(myenv.owner.name, env)
-
-        encrypted = false
-        if encryption == "encrypt"
+        value = request.body.read
+        if request.env['QUERY_STRING'] =~ /encrypt/
+            encrypted = true
             # Do some encryption
-            public_key = OpenSSL::PKey::RSA.new(myenv.public_key)
+            public_key = OpenSSL::PKey::RSA.new(@myEnv.public_key)
             encrypted_value = Base64.encode64(public_key.public_encrypt(value)).strip()
             value = encrypted_value
-        end
-        
-        if encryption != "none"
-            encrypted = true
+        else
+            encrypted = false
         end
 
-        mykey = Key[:name => key, :app_id => myapp[:id]]
+        myKey = Key[:name => @key, :app_id => @appId]
         # New one, let's create
-        if mykey.nil?
-            mykey = Key.create(:name => key, :app_id => myapp[:id])
-            myapp.add_key(mykey)
-            defaultenv = Environment[:name => 'default']
-            Value.create(:key_id => mykey[:id], :environment_id => defaultenv[:id], :value => value, :is_encrypted => encrypted)
-            Value.create(:key_id => mykey[:id], :environment_id => myenv[:id], :value => value, :is_encrypted => encrypted)
+        if myKey.nil?
+            myKey = Key.create(:name => @key, :app_id => @appId)
+            @myApp.add_key(myKey)
+            Value.create(:key_id => myKey[:id], :environment_id => @defaultId, :value => value, :is_encrypted => encrypted)
+            Value.create(:key_id => myKey[:id], :environment_id => @envId, :value => value, :is_encrypted => encrypted)
             response.status = 201
         # We're updating the config
         else             
-            myvalue = Value[:key_id => mykey[:id], :environment_id => myenv[:id]]
-            if myvalue.nil? # New value...
-                Value.create(:key_id => mykey[:id], :environment_id => myenv[:id], :value => value, :is_encrypted => encrypted)
-                response.status = 201
+            myValue = Value[:key_id => myKey[:id], :environment_id => @envId]
+            if myValue.nil? # New value...
+                Value.create(:key_id => myKey[:id], :environment_id => @envId, :value => value, :is_encrypted => encrypted)
+                respond("Created key '#{@key}", 201)
             else # Updating the value
-                myvalue.update(:value => value)
-                response.status = 200
+                myValue.update(:value => value, :is_encrypted => encrypted)
+                respond("Updated key '#{@key}", 200)
             end
         end
     end
     
-    def copyEnv(fromEnv,toEnv)
+    def copyEnv
+        respond("Missing Location header. Can't copy environment", 406) unless request.env['HTTP_CONTENT_LOCATION']
+
+        srcEnv = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
+        respond("Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404) if srcEnv.nil?
+
+        getEnv(false)
+        respond("Target environment #{@env} already exists.", 409) unless @myEnv.nil?
+
         # Create new env
-        createEnv(toEnv)
+        @myEnv = Environment.create(:name => @env)
+        createCryptoKeys(@env, "pair")      
+
+        srcEnvId = srcEnv[:id]
+        destEnvId = @myEnv[:id]
         # Copy applications into new env
-        allExistingApps = JSON.parse(listApps(fromEnv))
-        allExistingApps.each do |existingApp|
-            createApp(toEnv, existingApp)
-            allExistingValues = listKeys(fromEnv, existingApp, false)
-            allExistingValues.each do |line|
-                (key, value) = line.chomp.split('=', 2)
-                setValue(toEnv, existingApp, key, value)
+        srcEnv.apps.each do |existingApp|
+            @myEnv.add_app(existingApp)
+            # Copy overridden values
+            p " - Checking override values for app '#{existingApp[:name]}'"
+            existingApp.keys.each do |key|
+                value = Value[:key_id => key[:id], :environment_id => srcEnvId]
+                Value.create(:key_id => key[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
             end
         end
     end
-
 end    
 

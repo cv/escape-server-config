@@ -79,7 +79,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         got = put('/environments/myenv/appname')
-        got.status.should == 200
+        got.status.should == 201
 
         got = get('/environments/myenv/appname/key')
         got.status.should == 200
@@ -124,7 +124,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         got = put('/environments/myenv/appname')
-        got.status.should == 200
+        got.status.should == 201
 
         newvalue = "new.value"
         got = put('/environments/myenv/appname/key', :input => newvalue)
@@ -160,7 +160,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         got = put('/environments/myenv/appname')
-        got.status.should == 200
+        got.status.should == 201
 
         got = get('/environments/myenv/appname/key')
         got.status.should == 200
@@ -197,7 +197,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         got = put('/environments/myenv/appname')
-        got.status.should == 200
+        got.status.should == 201
 
         key1 = "key1"
         value1 = "value1"

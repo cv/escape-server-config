@@ -112,9 +112,9 @@ var EscSidebar = function() {
             var newEnvName = $(this).find(":input").val();
             $(this).find(":input").val("");
             $.ajax({
-				beforeSend: function(request) {request.setRequestHeader("Content-Location", newEnvName)},
+				beforeSend: function(request) {request.setRequestHeader("Content-Location", envName)},
                 type: "POST",
-                url: "/environments/" + envName,
+                url: "/environments/" + newEnvName,
                 data: {},
                 success: function(data, textStatus) {
                     EscSidebar.loadEnvironments();

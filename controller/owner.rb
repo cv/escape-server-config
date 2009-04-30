@@ -19,81 +19,82 @@ class OwnerController < EscController
     def index(env = nil)
         # Sanity check what we've got first
         if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            respond "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
+            respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
         # Undefined
         if env.nil?
-            respond "Undefined", 400
+            respond("Undefined", 400)
         end
+
+        @env = env
 
         # Getting...
         if request.get?
-            getOwner(env)
+            getOwner
         elsif request.post?
-            setOwner(env)
+            setOwner
         elsif request.delete?
-            clearOwner(env)
+            clearOwner
         else
-            respond "Undefined", 400
+            respond("Undefined", 400)
         end
     end
 
     private
 
-    def getOwner(env)
-        myEnv = Environment[:name => env]
+    def getEnv
+        @myEnv = Environment[:name => @env]
         
-        if myEnv.nil?
-            respond "Environment '#{env}' does not exist", 404
+        if @myEnv.nil?
+            respond("Environment '#{@env}' does not exist", 404)
         end
 
-        owner = Owner[:id => myEnv.owner_id]
+    end
+
+    def getOwner
+        getEnv
+
+        owner = Owner[:id => @myEnv.owner_id]
 
         response.headers["Content-Type"] = "text/plain"   
         return owner.name
     end
 
-    def setOwner(env)
-        if env == "default"
-            respond "No one can own the 'default' environment", 403
+    def setOwner
+        if @env == "default"
+            respond("No one can own the 'default' environment", 403)
         end
 
-        myEnv = Environment[:name => env]
-        
-        if myEnv.nil?
-            respond "Environment '#{env}' does not exist", 404
-        end
+        getEnv
 
-        if myEnv.owner_id == 1
-            auth = check_auth(nil, env)
+        if @myEnv.owner_id == 1
+            auth = check_auth(nil, "Environment #{@env}")
         else
-            auth = check_auth(myEnv.owner.name, env)
+            auth = check_auth(@myEnv.owner.name, "Environment #{@env}")
         end
 
         owner = Owner[:name => auth]
 
         respond("Owner #{auth} not found", 404) if owner.nil?
 
-        myEnv.owner = owner
-        myEnv.save
+        @myEnv.owner = owner
+        @myEnv.save
+        return "Owner of environment #{@env} is now #{auth}"
     end
 
-    def clearOwner(env)
-        myEnv = Environment[:name => env]
+    def clearOwner
+        getEnv
 
-        if myEnv.nil?
-            respond "Environment '#{env}' does not exist", 404
-        end
-
-        if myEnv.owner_id == 1
-            respond("Environment #{env} is not owned by anyone", 200)
+        if @myEnv.owner_id == 1
+            respond("Environment #{@env} is not owned by anyone", 200)
         else
-            auth = check_auth(myEnv.owner.name, env)
+            auth = check_auth(@myEnv.owner.name, "Environment #{@env}")
         end
 
-        myEnv.owner = Owner[:name => "nobody"]
-        myEnv.save
+        @myEnv.owner = Owner[:name => "nobody"]
+        @myEnv.save
+        return "Owner of environment #{@env} is now nobody"
     end
     
 end

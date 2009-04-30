@@ -113,11 +113,21 @@ describe EnvironmentsController, 'Environment bits' do
         got = put('/environments/copyme')
         got.status.should == 201
          
-        copy_target = "mycopy"
-        got = raw_mock_request(:post, '/environments/copyme', 'HTTP_CONTENT_LOCATION' => copy_target)
+        got = raw_mock_request(:post, '/environments/mycopy', 'HTTP_CONTENT_LOCATION' => "copyme")
         got.status.should == 201
         
         got = get('/environments/mycopy')
         got.status.should == 200 
+    end
+
+    it 'should throw a 409 error if trying to copy to an environment that already exists' do
+        got = put('/environments/copyme')
+        got.status.should == 201
+         
+        got = put('/environments/mycopy')
+        got.status.should == 201
+         
+        got = raw_mock_request(:post, '/environments/mycopy', 'HTTP_CONTENT_LOCATION' => "copyme")
+        got.status.should == 409
     end
 end

@@ -101,7 +101,7 @@ describe EnvironmentsController, 'Application bits' do
         got.body.should == '["appname"]'
         
         got = put('/environments/default/appname')
-        got.status.should == 200
+        got.status.should == 201
 
         got = get('/environments/default')
         got.status.should == 200
@@ -120,7 +120,7 @@ describe EnvironmentsController, 'Application bits' do
         got.body.should == '["appname"]'
         
         got = put('/environments/myenv/appname')
-        got.status.should == 200
+        got.status.should == 201
 
         got = get('/environments/myenv')
         got.status.should == 200

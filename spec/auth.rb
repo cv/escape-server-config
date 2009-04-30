@@ -111,7 +111,7 @@ describe AuthController do
         got = raw_mock_request(:post, '/owner/mine', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
 
-        got = raw_mock_request(:post, '/environments/mine', 'HTTP_CONTENT_LOCATION' => "yours")
+        got = raw_mock_request(:post, '/environments/yours', 'HTTP_CONTENT_LOCATION' => "mine")
         got.status.should == 201
         
         got = get('/environments/yours')

@@ -233,10 +233,14 @@ var EscEditor = function() {
         },
 
         clearNewUserForm : function() {
-            EscSidebar.setDefault($('#new_user_name'));
-            EscSidebar.setDefault($('#new_user_email'));
-            EscSidebar.setDefault($('#new_user_pass1'));
-            EscSidebar.setDefault($('#new_user_pass2'));
+            $('#new_user_name').focus();
+            $('#new_user_name').blur();
+            $('#new_user_email').focus();
+            $('#new_user_email').blur();
+            $('#new_user_pass1').focus();
+            $('#new_user_pass1').blur();
+            $('#new_user_pass2').focus();
+            $('#new_user_pass2').blur();
         },
 
 // End of namespace
