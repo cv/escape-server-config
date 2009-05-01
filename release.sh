@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION=0.2
-PREV_REV=119
+VERSION=0.3
+PREV_REV=223
 
 REV=`svn info | awk '/^Revision: / { print $2 }'`
 URL=`svn info | awk '/^URL: / { print $2 }'`
