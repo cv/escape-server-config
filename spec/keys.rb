@@ -33,8 +33,6 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.content_type.should == "text/plain"
     end
 
-    # TODO: When we set a value, have the option to set its content type. We then get the header set when we ask for it?
-
     it 'should set the key in the default environment when we add it to a different environment' do
         got = put('/environments/newenv')
         got.status.should == 201
@@ -316,6 +314,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = get('/environments/encryptvalue/anapp/mykey')
         got.status.should == 200 
         got.body.should == value
+        got.content_type.should == "text/plain"
         
         got = put('/environments/encryptvalue/anapp/mykey', :input => value, :encrypt => "true")
         got.status.should == 200
@@ -323,10 +322,19 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = get('/environments/encryptvalue/anapp/mykey')
         got.status.should == 200 
         got.body.should.not == value
+        got.content_type.should == "application/octet-stream"
+        got.headers["Content-Transfer-Encoding"].should == "base64"
+
 
         un64body = Base64.decode64(got.body)
         decrypt = priv_key.private_decrypt(un64body)
         decrypt.should == value
+
+        got = get('/environments/encryptvalue/anapp')
+        got.status.should == 200 
+        got.body.should.include "mykey="
+        got.content_type.should == "text/plain"
+        got.headers["X-Encrypted"].should == '["mykey"]'
     end
 
     it 'should play nice when trying to delete a key from an env that has not explicit value set' do
@@ -336,8 +344,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/deleteenv/deletetest')
         got.status.should == 201
    
-        value = "default.value"
-        got = put('/environments/default/deletetest/mykey', :input => value)
+        got = put('/environments/default/deletetest/mykey', :input => "default.value")
         got.status.should == 201
    
         got = delete('/environments/deleteenv/deletetest/mykey')
@@ -345,6 +352,52 @@ describe EnvironmentsController, 'Key/Value bits' do
     
         got = get('/environments/deleteenv/deletetest/mykey')
         got.status.should == 200
-        got.body.should.include "default.value"
+        got.body.should == "default.value"
+    end
+
+    it 'should set a header specifying if a specific value is the default or if its overridden' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+   
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+   
+        got = put('/environments/default/myapp/mykey', :input => "default.value")
+        got.status.should == 201
+
+        got = get('/environments/myenv/myapp/mykey')
+        got.status.should == 200
+        got.body.should == "default.value"
+        got.headers["X-Value-Type"].should == "default"
+
+        got = put('/environments/myenv/myapp/mykey', :input => "override.value")
+        got.status.should == 201
+
+        got = get('/environments/myenv/myapp/mykey')
+        got.status.should == 200
+        got.body.should == "override.value"
+        got.headers["X-Value-Type"].should == "override"
+    end
+
+    it 'should set headers that specify the default and the overridden keys when getting all values' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+   
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+   
+        got = put('/environments/default/myapp/default.key', :input => "default.value")
+        got.status.should == 201
+
+        got = put('/environments/myenv/myapp/override.key', :input => "override.value")
+        got.status.should == 201
+
+        got = get('/environments/myenv/myapp')
+        got.status.should == 200
+        got.body.should.include "default.key=default.value"
+        got.body.should.include "override.key=override.value"
+        got.headers["X-Default-Values"].should == '["default.key"]'
+        got.headers["X-Override-Values"].should == '["override.key"]'
+        got.headers["X-Encrypted"].should == '[]'
     end
 end

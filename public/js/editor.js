@@ -102,10 +102,16 @@ var EscEditor = function() {
                         table += ('<tr class="tr-' + rowcolour + '">');
                         table += ("<th>" + key + "</th>");
                         table += ("<td id='" + key + "' class='keyeditbox'>" + value + "</td>");
+
 						table += ("<td class='edittablebutton'>");
-                        table += ("<img class='keydelete' src='/images/delete.png'/></td>");
+                        // TODO: Only show delete if we are default env or this is an override value
+                        table += ("<img class='keydelete' src='/images/delete.png'/>");
+                        table += ("</td>");
+
 						table += ("<td class='edittablebutton'>");
+                        // TODO: Only show encrypt if this is overried and not encrypted already
                         table += ("<img class='keyencrypt' src='/images/encrypt.png'/></td>");
+                        table += ("</td>");
                     });
                     table += "</table>";
                     $('#editor').append(table);

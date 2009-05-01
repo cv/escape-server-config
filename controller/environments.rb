@@ -205,26 +205,34 @@ class EnvironmentsController < EscController
         return apps.sort.to_json
     end
     
-    def listKeys(getDefaults = true)
+    def listKeys
         # List keys and values for app in environment
         getEnv
         getApp
 
         if @myEnv.apps.include? @myApp
             pairs = Array.new
+            defaults = Array.new
+            overrides = Array.new
+            encrypted = Array.new
             @myApp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => @envId]
 
-                if value.nil? && getDefaults # Got no value in specified env, what's in default and do we want defaults?
+                if value.nil? # Got no value in specified env, what's in default and do we want defaults?
                     value = Value[:key_id => key[:id], :environment_id => @defaultId]
+                    defaults.push(key[:name])
+                else
+                    overrides.push(key[:name])
                 end
-
-                if not value.nil?
-                    pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
-                end
+                
+                encrypted.push(key[:name]) if value[:is_encrypted]
+                pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
             end
 
             response.headers["Content-Type"] = "text/plain"
+            response.headers["X-Default-Values"] = defaults.sort.to_json
+            response.headers["X-Override-Values"] = overrides.sort.to_json
+            response.headers["X-Encrypted"] = encrypted.sort.to_json
             return pairs.sort
         else
             respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
@@ -232,7 +240,7 @@ class EnvironmentsController < EscController
     end
 
 
-    def getValue(getDefaults = true)
+    def getValue
         getEnv
         getApp
 
@@ -243,14 +251,23 @@ class EnvironmentsController < EscController
         getKey(false)
 
         value = Value[:key_id => @keyId, :environment_id => @myEnv[:id]]
-        if value.nil? && getDefaults # No value for this env, is there one for default and do we want defaults?
+        if value.nil?
             value = Value[:key_id => @keyId, :environment_id => @defaultId]
             if value.nil? # No default value...
                 respond("No default value", 404)
             end
+            response.headers["X-Value-Type"] = "default"
+        else
+            response.headers["X-Value-Type"] = "override"
         end
 
-        response.headers["Content-Type"] = "text/plain"
+        if value[:is_encrypted]
+            response.headers["Content-Type"] = "application/octet-stream"
+            response.headers["Content-Transfer-Encoding"] = "base64"
+        else
+            response.headers["Content-Type"] = "text/plain"
+        end
+
         return value[:value]
     end
 
