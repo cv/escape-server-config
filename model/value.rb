@@ -24,6 +24,11 @@ class Value < Sequel::Model(:values)
         foreign_key :key_id, :table => :keys, :type => Integer
         foreign_key :environment_id, :table => :environments, :type => Integer
     end
+    
+    def default?
+      self[:environment_id] == Environment.default[:id]
+    end
+    
 end
 
 EscData.init_model(Value)

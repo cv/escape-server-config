@@ -250,15 +250,15 @@ class EnvironmentsController < EscController
 
         getKey(false)
 
-        value = Value[:key_id => @keyId, :environment_id => @myEnv[:id]]
+        value = @myApp.get_key_value(@myKey, @myEnv)
         if value.nil?
-            value = Value[:key_id => @keyId, :environment_id => @defaultId]
-            if value.nil? # No default value...
-                respond("No default value", 404)
-            end
-            response.headers["X-Value-Type"] = "default"
+            respond("No default value", 404)
         else
-            response.headers["X-Value-Type"] = "override"
+            if value.default?
+                response.headers["X-Value-Type"] = "default"
+            else
+                response.headers["X-Value-Type"] = "override"
+            end
         end
 
         if value[:is_encrypted]
@@ -313,24 +313,10 @@ class EnvironmentsController < EscController
             encrypted = false
         end
 
-        myKey = Key[:name => @key, :app_id => @appId]
-        # New one, let's create
-        if myKey.nil?
-            myKey = Key.create(:name => @key, :app_id => @appId)
-            @myApp.add_key(myKey)
-            Value.create(:key_id => myKey[:id], :environment_id => @defaultId, :value => value, :is_encrypted => encrypted)
-            Value.create(:key_id => myKey[:id], :environment_id => @envId, :value => value, :is_encrypted => encrypted)
-            response.status = 201
-        # We're updating the config
-        else             
-            myValue = Value[:key_id => myKey[:id], :environment_id => @envId]
-            if myValue.nil? # New value...
-                Value.create(:key_id => myKey[:id], :environment_id => @envId, :value => value, :is_encrypted => encrypted)
-                respond("Created key '#{@key}", 201)
-            else # Updating the value
-                myValue.update(:value => value, :is_encrypted => encrypted)
-                respond("Updated key '#{@key}", 200)
-            end
+        if @myApp.set_key_value(@key, @myEnv, value, encrypted)
+          respond("Created key '#{@key}", 201)
+        else
+          respond("Updated key '#{@key}", 200)
         end
     end
     

@@ -32,7 +32,7 @@ task :default => [:test]
 
 desc 'Run all the spec tests'
 task :test => [:clean] do
-    FileList.new('spec/*.rb').each do |file|
+    FileList.new('spec/*.rb','spec/model/*.rb').each do |file|
         ruby file
     end
 end

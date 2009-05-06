@@ -182,11 +182,29 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = get('/environments/default/appname')
         got.status.should == 200
         got.body.should.not == ""
-        got.body.should.include "#{key1}=#{value1}"
-        got.body.should.include "#{key2}=#{value2}"
+        got.body.should == "#{key1}=#{value1}\n#{key2}=#{value2}"
         got.content_type.should == "text/plain"
     end
 
+    it 'should not create duplicates when the same key is put twice' do
+        got = put('/environments/default/appname')
+        got.status.should == 201
+
+        key1 = "key1"
+        value1 = "value1"
+        got = put("/environments/default/appname/#{key1}", :input => value1)
+        got.status.should == 201
+
+        got = put("/environments/default/appname/#{key1}", :input => value1)
+        got.status.should == 200
+
+        got = get('/environments/default/appname')
+        got.status.should == 200
+        got.body.should.not == ""
+        got.body.should == "#{key1}=#{value1}"
+        got.content_type.should == "text/plain"
+    end
+    
     it 'should list values for the specified environment when asking for all' do
         got = put('/environments/default/appname')
         got.status.should == 201
