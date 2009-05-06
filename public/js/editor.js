@@ -2,7 +2,7 @@
 var EscEditor = function() {
     return {
 
-        validateName : function(name) {
+        validateName : function(name, envName, appName) {
             return true;
         },
 
@@ -249,17 +249,8 @@ var EscEditor = function() {
             $('#new_user_pass2').blur();
         },
 
-// End of namespace
-    };
-}();
-
-$(document).ready(function() {
-    $('#new_key_form').submit(function() {
-        var newName = $('#new_key_name').val();
-        var envName = $('#key_env_name').val();
-        var appName = $('#key_app_name').val();
-        if (EscEditor.validateName(newName)) {
-            $('#new_key_name').val("");
+		addKey : function(newName, envName, appName) {
+			$('#new_key_name').val("");
             $.ajax({
                 type: "PUT",
                 url: "/environments/" + envName + "/" + appName + "/" + newName,
@@ -268,6 +259,30 @@ $(document).ready(function() {
                     EscEditor.editPropertiesFor(envName, appName);
                 },
             });
+		}
+
+// End of namespace
+    };
+}();
+
+
+$(document).ready(function() {
+    $('#new_key_form').submit(function() {
+        var newName = $('#new_key_name').val();
+        var envName = $('#key_env_name').val();
+        var appName = $('#key_app_name').val();
+        if (EscEditor.validateName(newName, envName, appName)) {
+            $.ajax({
+                type: "GET",
+                url: "/environments/" + envName + "/" + appName,
+                success: function(data, textStatus) {
+					if ( data.search(newName + '=') > -1) {
+						alert(newName + ' exists!');
+					} else {
+						EscEditor.addKey(newName, envName, appName);	
+					}
+				},
+			});
         } else {
             alert("Not going to create new key called " + newName);
         }
