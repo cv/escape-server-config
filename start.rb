@@ -13,17 +13,41 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Add bundled vendor libs to the load path
-p " - Before:"
-p $LOAD_PATH
+#
+# Configuration Area Start
+#
 
+# $connectionString: This sets the connection string to use for your database. 
+# 
+# SQLite
+$connectionString = "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db"
+# MySQL
+#$connectionString = "mysql://escape:escape@localhost/escape"
+# Postgres
+#$connectionString = "postgres://escape:escape@localhost/escape"
+# Oracle
+#$connectionString = "oracle://escape:escape@localhost/escape"
+# MySQL over JDBC for JRuby
+#$connectionString = "jdbc:mysql://localhost/escape?user=escape&password=escape"
+
+# $listenPort: The TCP port we need to listen on to service requests
+#
+$listenPort = 7000
+
+# $accessLog: Path to the file where we need to log access to
+#
+$accessLog = "access.log"
+
+#
+# Configuration Area Start
+#
+
+
+# Add bundled vendor libs to the load path
 vendor = File.expand_path(File.dirname(__FILE__)) + "/vendor"
 Dir.glob(vendor + "/**/lib") do |lib|
     $LOAD_PATH.unshift(lib)
 end
-
-p " - After:"
-p $LOAD_PATH
 
 require 'ramaze'
 
@@ -37,4 +61,8 @@ EscapeVersion = 0.3
 require 'model/init'
 require 'controller/init'
 
-Ramaze.start :adapter => :mongrel, :port => 7000
+log = Logger.new($accessLog)
+Rack::CommonLogger.new(Ramaze::Log, log)
+
+Ramaze.start :adapter => :mongrel, :port => $listenPort
+

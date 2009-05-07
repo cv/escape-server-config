@@ -17,33 +17,10 @@
 require 'sequel'
 require 'logger'
 
-# SQLite is the default database - require ruby sqlite3 libs
-DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
-
-# MySQL - requires ruby mysql client
-#DB = Sequel.mysql('escape', :user => 'escape', :password => 'escape', :host => 'localhost')
-
-# Postgres - requires ruby postgres client
-# NOTE: There's a bug somewhere with key/value stuff here. Don't use
-#DB = Sequel.connect('postgres://esc:password@localhost/escape')
-
-# Oracle - requires ruby-oci8 gem
-# NOTE: Currently broken due to auto increment issues in Sequel 2.10.0
-#DB = Sequel.connect('oracle://escape:escape@localhost/XE')
-
-# JDBC for JRuby
-#DB = Sequel.connect("jdbc:mysql://localhost/escape?user=escape&password=escape")
-#DB = Sequel.connect("jdbc:sqlite:escape.db")
+DB = Sequel.connect($connectionString)
 
 # Uncomment line below to turn on SQL debugging
 #DB.loggers << Logger.new($stdout)
-
-# Log deprecation information to a file
-#Sequel::Deprecation.output = File.open('deprecated.txt', 'wb')
-
-# Use 5 lines of backtrace when logging deprecation messages
-#Sequel::Deprecation.backtraces = 5
-
 
 module EscData
     def EscData.init_model(model)

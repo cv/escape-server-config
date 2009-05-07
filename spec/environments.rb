@@ -2,13 +2,8 @@
 
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
-require 'ramaze'
-require 'ramaze/spec/helper'
 require 'base64'
 require 'md5'
-
-require __DIR__('helper/db_helper')
-require __DIR__('../start')
 
 describe EnvironmentsController, 'Environment bits' do
     behaves_like 'http', 'db_helper'

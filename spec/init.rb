@@ -18,3 +18,11 @@ vendor = File.expand_path(File.dirname(__FILE__) + "/../vendor")
 Dir.glob(vendor + "/**/lib") do |lib|
     $LOAD_PATH.push(lib)
 end
+
+require 'ramaze'
+require 'ramaze/spec/helper'
+
+require __DIR__('helper/db_helper')
+require __DIR__('../start')
+
+
