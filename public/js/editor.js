@@ -1,7 +1,60 @@
-
 var EscEditor = function() {
     return {
 
+		encode : function(stringToEncode) {
+			return stringToEncode.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/, "&apos;");
+		},
+		
+		KeyValue : function (key, value, isEncrypted, isOverridden, isDefault) {
+			this.key = key;
+			this.keyValue = value;
+			this.isEncrypted = isEncrypted;
+			this.isOverridden = isOverridden;
+			this.isDefault = isDefault;
+		},
+
+		createKeyValues : function(keyValuePairs, encryptedKeys, overriddenKeys, defaultKeys)
+		{
+			var keyValues = [];
+			$.each(keyValuePairs.split('\n'), function(i, item) {
+		        var key = item.slice(0, item.indexOf("="));
+		        var value = item.slice(item.indexOf("=") + 1);
+			    keyValues.push(new EscEditor.KeyValue(key, value, $.inArray(key, encryptedKeys) > -1, $.inArray(key, overriddenKeys) > -1, $.inArray(key, defaultKeys) > -1));
+			});
+			
+			return keyValues;
+		},
+
+		createTableForKeyValues : function(keyValues) {
+			var table = '<table class="keyvalue" id="key_value_table">';
+        	table += ('<tr class="keyvalueheader"><th>Key</th><th>Value</th><th>&nbsp;</th><th>&nbsp;</th></tr>');
+			rowcolour = 1
+        	$.each(keyValues, function(i, item) {
+				if (rowcolour == 1) { //Alternating row colours
+					rowcolour = 0
+				} else {
+					rowcolour = 1
+				}
+			
+            	table += ('<tr class="tr-' + rowcolour + '">');
+            	table += ("<th>" + item.key + "</th>");
+            	table += ("<td id='" + item.key + "' class='keyeditbox'>" + EscEditor.encode(item.keyValue) + "</td>");
+
+				table += ("<td class='edittablebutton'>");
+            	// TODO: Only show delete if we are default env or this is an override value
+            	table += ("<img class='keydelete' src='/images/delete.png'/>");
+            	table += ("</td>");
+
+				table += ("<td class='edittablebutton'>");
+            	//TODO: if ( !item.encrypted && item.isOverridden) {
+            		table += ("<img class='keyencrypt' src='/images/encrypt.png'/></td>");
+				//}	
+            	table += ("</td>");
+        	});
+        	table += "</table>";
+			return table;
+		},
+		
         validateName : function(name, envName, appName) {
             return true;
         },
@@ -84,98 +137,76 @@ var EscEditor = function() {
             $.ajax({
                 type: "GET",
                 url: "/environments/" + env + "/" + app,
-                success: function(data, textStatus) {
-                    $('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
-                    var table = '<table class="keyvalue" id="key_value_table">';
-                    table += ('<tr class="keyvalueheader"><th>Key</th><th>Value</th><th>&nbsp;</th><th>&nbsp;</th></tr>');
-					rowcolour = 1
-                    $.each(data.split('\n'), function(i, item) {
-						if (rowcolour == 1) { //Alternating row colours
-							rowcolour = 0
-						} else {
-							rowcolour = 1
-						}
+				complete: function(XMLHttpRequest, textStatus) {
+			       if ( textStatus == "success" ) {
+						var keyValues = EscEditor.createKeyValues(XMLHttpRequest.responseText,
+							XMLHttpRequest.getResponseHeader("X-Encrypted"),
+							XMLHttpRequest.getResponseHeader("X-Override-Values"), 
+							XMLHttpRequest.getResponseHeader("X-Default-Values"));
+                    	$('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
+                    	var table = EscEditor.createTableForKeyValues(keyValues);
+						$('#editor').append(table);
+                    	$('#key_env_name').val(env);
+                    	$('#key_app_name').val(app);
+				    	// Click on a key delete button
+				    	$('.keydelete').click(function() {
+							var thisKey = $(this).parent().siblings("th").text();
+							var confirmation = confirm('Are you sure you want to delete ' + thisKey + '?');
 
-                        var key = item.slice(0, item.indexOf("="));
-                        var value = item.slice(item.indexOf("=") + 1);
+				        	if ((confirmation) && (thisKey != null) && (thisKey != "")){
+								// Delete the key
+								$.ajax({
+				                	type: "DELETE",
+				                	url: "/environments/" + env + "/" + app + "/" + thisKey,
+				                	data: {},
+				                	success: function(data, textStatus) {
+										$('#editor').empty(); 
+				                    	EscSidebar.showEditor(env, app);
+				                	},
+				                	error: function(XMLHttpRequest, textStatus, errorThrown) {
+				                    	alert("Error deleting '" + thisKey +"': " + XMLHttpRequest.responseText);
+				                	},
+				            	})
+				        	};
+				    	});
+						// Click on a key encrypt button
+						$('.keyencrypt').click(function() {
+							var thisKey = $(this).parent().siblings("th").text();
+							var thisValue = $(this).parent().siblings(".keyeditbox").text();
+
+					        if ((thisKey != null) && (thisKey != "")) {
+								// Encrypt the key
+								$.ajax({
+					                type: "PUT",
+					                url: "/environments/" + env + "/" + app + "/" + thisKey + "?encrypt",
+					                data: thisValue,
+					                success: function(data, textStatus) {
+										$('#editor').empty(); 
+					                    EscSidebar.showEditor(env, app);
+					                },
+					                error: function(XMLHttpRequest, textStatus, errorThrown) {
+					                    alert("Error encrypting '" + thisKey +"': " + XMLHttpRequest.responseText);
+					                },
+					            })
+					        };
+					    });
 						
-                        table += ('<tr class="tr-' + rowcolour + '">');
-                        table += ("<th>" + key + "</th>");
-                        table += ("<td id='" + key + "' class='keyeditbox'>" + value + "</td>");
-
-						table += ("<td class='edittablebutton'>");
-                        // TODO: Only show delete if we are default env or this is an override value
-                        table += ("<img class='keydelete' src='/images/delete.png'/>");
-                        table += ("</td>");
-
-						table += ("<td class='edittablebutton'>");
-                        // TODO: Only show encrypt if this is overried and not encrypted already
-                        table += ("<img class='keyencrypt' src='/images/encrypt.png'/></td>");
-                        table += ("</td>");
-                    });
-                    table += "</table>";
-                    $('#editor').append(table);
-                    $('#key_env_name').val(env);
-                    $('#key_app_name').val(app);
-				    // Click on a key delete button
-				    $('.keydelete').click(function() {
-						var thisKey = $(this).parent().siblings("th").text();
-						var confirmation = confirm('Are you sure you want to delete ' + thisKey + '?');
-
-				        if ((confirmation) && (thisKey != null) && (thisKey != "")){
-							// Delete the key
-							$.ajax({
-				                type: "DELETE",
-				                url: "/environments/" + env + "/" + app + "/" + thisKey,
-				                data: {},
-				                success: function(data, textStatus) {
-									$('#editor').empty(); 
-				                    EscSidebar.showEditor(env, app);
-				                },
-				                error: function(XMLHttpRequest, textStatus, errorThrown) {
-				                    alert("Error deleting '" + thisKey +"': " + XMLHttpRequest.responseText);
-				                },
-				            })
-				        };
-				    });
-					// Click on a key encrypt button
-					$('.keyencrypt').click(function() {
-						var thisKey = $(this).parent().siblings("th").text();
-						var thisValue = $(this).parent().siblings(".keyeditbox").text();
-
-				        if ((thisKey != null) && (thisKey != "")) {
-							// Encrypt the key
-							$.ajax({
-				                type: "PUT",
-				                url: "/environments/" + env + "/" + app + "/" + thisKey + "?encrypt",
-				                data: thisValue,
-				                success: function(data, textStatus) {
-									$('#editor').empty(); 
-				                    EscSidebar.showEditor(env, app);
-				                },
-				                error: function(XMLHttpRequest, textStatus, errorThrown) {
-				                    alert("Error encrypting '" + thisKey +"': " + XMLHttpRequest.responseText);
-				                },
-				            })
-				        };
-				    });
-					
-					
-                    $.uiTableEdit($('#key_value_table'), {
-                        find: ".keyeditbox",
-                        editDone: function(newText, oldText, e, td) {
-                            var key = td.siblings('th').text();
-                            var value = td.text();
-                            $.ajax({
-                                type: "PUT",
-                                url: "/environments/" + env + "/" + app + "/" + key,
-                                data: value,
-                                complete: function(XMLHttpRequest, textStatus) {
-                                    $('#app_list').change();  
-                                },
-                            });
-                        },
-                    });
+                    	$.uiTableEdit($('#key_value_table'), {
+                        	find: ".keyeditbox",
+                        	editDone: function(newText, oldText, e, td) {
+                            	var key = td.siblings('th').text();
+                            	var value = td.text();
+                            	$.ajax({
+                                	type: "PUT",
+                                	url: "/environments/" + env + "/" + app + "/" + key,
+                                	data: value,
+                                	complete: function(XMLHttpRequest, textStatus) {
+                                    	$('#app_list').change();  
+                                	},
+                            	});
+                        	},
+                    	});
+					}
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error getting properties for app '" + app + "' in environment '" + env + "'");

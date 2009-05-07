@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>Editor Tests</title>    
+    <script language="javascript" src="../public/js/jquery.js" type="text/javascript"></script>
+    <script language="javascript" src="../public/js/editor.js" type="text/javascript"></script>
+    <script language="javascript" src="qunit/testrunner.js" type="text/javascript"></script>
+    <!-- add a script reference to your library here -->
+    <link media="screen" href="qunit/testsuite.css" type="text/css" rel="stylesheet"/>    
+</head>
+<body>
+
+<script language="javascript" type="text/javascript">
+
+module("editor");
+
+test("should create key value pairs", function(){
+    expect(5);
+ 	var keyValues = EscEditor.createKeyValues("key1=v1", new Array(), new Array(), new Array());
+    equals(keyValues.length, 1, "Should parse 1 key value pair");
+    equals(keyValues[0].key, "key1", "Key should be key1");
+    ok(!keyValues[0].isEncrypted, "Value is not encrypted");
+    ok(!keyValues[0].isOverridden, "Value is not overridden");
+    ok(!keyValues[0].isDefault, "Value is not default");
+});
+
+test("should create key value pairs with encrypted is true", function(){
+    expect(5);
+ 	var keyValues = EscEditor.createKeyValues("key1=v1", ['key1'], new Array(), new Array());
+    equals(keyValues.length, 1, "Should parse 1 key value pair");
+    equals(keyValues[0].key, "key1", "Key should be key1");
+    ok(keyValues[0].isEncrypted, "Value is encrypted");
+    ok(!keyValues[0].isOverridden, "Value is not overridden");
+    ok(!keyValues[0].isDefault, "Value is not default");
+});
+
+test("should create key value pairs with overridden is true", function(){
+    expect(5);
+ 	var keyValues = EscEditor.createKeyValues("key1=v1", new Array(), ['key1'], new Array());
+    equals(keyValues.length, 1, "Should parse 1 key value pair");
+    equals(keyValues[0].key, "key1", "Key should be key1");
+    ok(!keyValues[0].isEncrypted, "Value is not encrypted");
+    ok(keyValues[0].isOverridden, "Value is overridden");
+    ok(!keyValues[0].isDefault, "Value is not default");
+});
+
+test("should create key value pairs with default is true", function(){
+    expect(5);
+ 	var keyValues = EscEditor.createKeyValues("key1=v1", new Array(),  new Array(), ['key1']);
+    equals(keyValues.length, 1, "Should parse 1 key value pair");
+    equals(keyValues[0].key, "key1", "Key should be key1");
+    ok(!keyValues[0].isEncrypted, "Value is not encrypted");
+    ok(!keyValues[0].isOverridden, "Value is overridden");
+    ok(keyValues[0].isDefault, "Value is default");
+});
+
+test("should encode html", function(){
+    expect(1);
+ 	var result = EscEditor.encode("&<script>&\"\'");
+    equals(result, "&amp;&lt;script&gt;&amp;&quot;&apos;", "Should encode");
+});
+
+
+</script>
+
+        <h1>Editor Tests</h1>
+        <h2 id="banner"></h2>
+        <ol id="tests"></ol>
+        <div id="results"></div>
+        <div id="main"></div>        
+        
+        <!-- Any HTML you may require for your tests to work properly -->
+        
+</body>
+</html>
