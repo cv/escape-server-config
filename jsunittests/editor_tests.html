@@ -14,11 +14,12 @@
 
 module("editor");
 
-test("should create key value pairs", function(){
-    expect(5);
+test("should create single key value pair", function(){
+    expect(6);
  	var keyValues = EscEditor.createKeyValues("key1=v1", new Array(), new Array(), new Array());
     equals(keyValues.length, 1, "Should parse 1 key value pair");
     equals(keyValues[0].key, "key1", "Key should be key1");
+    equals(keyValues[0].keyValue, "v1", "Key value should be v1");
     ok(!keyValues[0].isEncrypted, "Value is not encrypted");
     ok(!keyValues[0].isOverridden, "Value is not overridden");
     ok(!keyValues[0].isDefault, "Value is not default");
@@ -52,6 +53,18 @@ test("should create key value pairs with default is true", function(){
     ok(!keyValues[0].isEncrypted, "Value is not encrypted");
     ok(!keyValues[0].isOverridden, "Value is overridden");
     ok(keyValues[0].isDefault, "Value is default");
+});
+
+test("should create multiple key value pairs", function(){
+    expect(7);
+ 	var keyValues = EscEditor.createKeyValues("key1=v1\nkey2=v2", new Array(), ["key1", "key2"], new Array());
+    equals(keyValues.length, 2, "Should parse 2 key value pairs");
+    equals(keyValues[0].key, "key1", "First key should be key1");
+    equals(keyValues[1].key, "key2", "Second key should be key2");
+    ok(!keyValues[0].isEncrypted, "Value is not encrypted");
+    ok(keyValues[0].isOverridden, "Value for key1 is overridden");
+    ok(keyValues[1].isOverridden, "Value for key2 is overridden");
+    ok(!keyValues[0].isDefault, "Value is not default");
 });
 
 test("should encode html", function(){

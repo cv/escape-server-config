@@ -41,14 +41,14 @@ var EscEditor = function() {
             	table += ("<td id='" + item.key + "' class='keyeditbox'>" + EscEditor.encode(item.keyValue) + "</td>");
 
 				table += ("<td class='edittablebutton'>");
-            	// TODO: Only show delete if we are default env or this is an override value
-            	table += ("<img class='keydelete' src='/images/delete.png'/>");
+            	if (item.isOverridden) {
+            		table += ("<img class='keydelete' src='/images/delete.png'/>");
+				}
             	table += ("</td>");
-
 				table += ("<td class='edittablebutton'>");
-            	//TODO: if ( !item.encrypted && item.isOverridden) {
+            	if ( !item.isEncrypted && item.isOverridden) {
             		table += ("<img class='keyencrypt' src='/images/encrypt.png'/></td>");
-				//}	
+				}	
             	table += ("</td>");
         	});
         	table += "</table>";
@@ -140,9 +140,9 @@ var EscEditor = function() {
 				complete: function(XMLHttpRequest, textStatus) {
 			       if ( textStatus == "success" ) {
 						var keyValues = EscEditor.createKeyValues(XMLHttpRequest.responseText,
-							XMLHttpRequest.getResponseHeader("X-Encrypted"),
-							XMLHttpRequest.getResponseHeader("X-Override-Values"), 
-							XMLHttpRequest.getResponseHeader("X-Default-Values"));
+							jsonParse(XMLHttpRequest.getResponseHeader("X-Encrypted")),
+							jsonParse(XMLHttpRequest.getResponseHeader("X-Override-Values")), 
+							jsonParse(XMLHttpRequest.getResponseHeader("X-Default-Values")));
                     	$('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
                     	var table = EscEditor.createTableForKeyValues(keyValues);
 						$('#editor').append(table);
