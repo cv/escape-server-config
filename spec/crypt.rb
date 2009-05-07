@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
+require 'init'
 require 'ramaze'
 require 'ramaze/spec/helper'
 
@@ -49,10 +50,10 @@ describe CryptController, 'Encryption bits' do
            got.status.should == 200
            got.content_type.should == "text/plain"
            got.body.should.not == "[]"
-           got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
-           got.body.should.include "-----END RSA PUBLIC KEY-----" 
-           got.body.should.include "-----BEGIN RSA PRIVATE KEY-----" 
-           got.body.should.include "-----END RSA PRIVATE KEY-----" 
+           got.body.should.include "-----BEGIN "
+           got.body.should.include "-----END "
+           got.body.should.include " PUBLIC KEY-----" 
+           got.body.should.include " PRIVATE KEY-----" 
        end
        
        it 'should get just a public key when trying to GET a public key' do
@@ -63,10 +64,10 @@ describe CryptController, 'Encryption bits' do
            got.status.should == 200
            got.content_type.should == "text/plain"
            got.body.should.not == "[]"
-           got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
-           got.body.should.include "-----END RSA PUBLIC KEY-----" 
-           got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----" 
-           got.body.should.not.include "-----END RSA PRIVATE KEY-----" 
+           got.body.should.include "-----BEGIN "
+           got.body.should.include "-----END "
+           got.body.should.include " PUBLIC KEY-----" 
+           got.body.should.not.include " PRIVATE KEY-----" 
        end  
        
        it 'should get just a private key when trying to GET a private key' do
@@ -77,10 +78,10 @@ describe CryptController, 'Encryption bits' do
            got.status.should == 200
            got.content_type.should == "text/plain"
            got.body.should.not == "[]"
-           got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
-           got.body.should.not.include "-----END RSA PUBLIC KEY-----" 
-           got.body.should.include "-----BEGIN RSA PRIVATE KEY-----" 
-           got.body.should.include "-----END RSA PRIVATE KEY-----" 
+           got.body.should.not.include " PUBLIC KEY-----" 
+           got.body.should.include "-----BEGIN "
+           got.body.should.include "-----END "
+           got.body.should.include " PRIVATE KEY-----" 
        end     
 
        it 'should delete an existing keypair' do
@@ -92,8 +93,8 @@ describe CryptController, 'Encryption bits' do
        
            got = get('/crypt/delete_me')
            got.status.should == 200
-           got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
-           got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----" 
+           got.body.should.not.include " PUBLIC KEY-----" 
+           got.body.should.not.include " PRIVATE KEY-----" 
        end
        
        it 'should not delete default keys' do    
@@ -104,8 +105,8 @@ describe CryptController, 'Encryption bits' do
        it 'should not encrypt the default environment' do           
            got = get('/crypt/default')
            got.status.should == 200
-           got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
-           got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----"
+           got.body.should.not.include " PUBLIC KEY-----" 
+           got.body.should.not.include " PRIVATE KEY-----"
        end
        
     it 'should generate new keypair for an existing environment' do
@@ -125,11 +126,11 @@ describe CryptController, 'Encryption bits' do
            
         got = get('/crypt/updatemykeys')
         got.status.should == 200
-        got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
-        got.body.should.include "-----BEGIN RSA PRIVATE KEY-----"          
+        got.body.should.include " PUBLIC KEY-----" 
+        got.body.should.include " PRIVATE KEY-----"          
 
         new_priv = get('/crypt/updatemykeys/private')
-        new_priv.status.should.equal? 200
+        new_priv.status.should == 200
         new_priv.body.should.not.equal? old_priv.body
 
         new_pub = get('/crypt/updatemykeys/public')
@@ -164,11 +165,12 @@ kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
            
            got = get('/crypt/updatemykeys/public')
            got.status.should == 200
-           got.body.should.include "-----BEGIN RSA PUBLIC KEY-----"
+           got.body.should.include "-----BEGIN "
+           got.body.should.include " PUBLIC KEY-----"
            got.body.should.include "MEgCQQCsEJqRpZbUL8jDKuz8O651LDSI50/7nE5EzI+1IussWGpDgrm5mNtEJayK"
            got.body.should.include "EZqWGC3Xv+7YOiW+naT3Uuwpv8uzAgMBAAE="
-           got.body.should.include "-----END RSA PUBLIC KEY-----"
-           got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----"
+           got.body.should.include "-----END "
+           got.body.should.not.include " PRIVATE KEY-----"
            got.body.should.not.include "MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY"
            got.body.should.not.include "20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe"
            got.body.should.not.include "4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU"
@@ -176,15 +178,14 @@ kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
            got.body.should.not.include "6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI"
            got.body.should.not.include "N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk"
            got.body.should.not.include "kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X"
-           got.body.should.not.include "-----END RSA PRIVATE KEY-----"
            
            got = get('/crypt/updatemykeys/private')
            got.status.should == 200
-           got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----"
+           got.body.should.not.include " PUBLIC KEY-----"
            got.body.should.not.include "MEgCQQCsEJqRpZbUL8jDKuz8O651LDSI50/7nE5EzI+1IussWGpDgrm5mNtEJay"
            got.body.should.not.include "KEZqWGC3Xv+7YOiW+naT3Uuwpv8uzAgMBAAE="
-           got.body.should.not.include "-----END RSA PUBLIC KEY-----"
-           got.body.should.include "-----BEGIN RSA PRIVATE KEY-----"
+           got.body.should.include "-----BEGIN "
+           got.body.should.include " PRIVATE KEY-----"
            got.body.should.include "MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY"
            got.body.should.include "20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe"
            got.body.should.include "4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU"
@@ -192,7 +193,7 @@ kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
            got.body.should.include "6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI"
            got.body.should.include "N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk"
            got.body.should.include "kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X"
-           got.body.should.include "-----END RSA PRIVATE KEY-----"
+           got.body.should.include "-----END "
        end
 
        it 'should reject broken keypair' do

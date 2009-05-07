@@ -11,14 +11,15 @@ For more information please go to http://code.google.com/p/escservesconfig/
 First off - this a Ruby app. Dev and tested with Ruby 1.8 on OSX.
 
 Required ruby gems:
-
-    ramaze (>= 2009.01)
-    rack 
-    sequel (= 2.11.0)
-    sqlite
-    json
-    mongrel (>= 1.1.5)
+    sqlite (or mysql or oracle or postgres)
 	openssl
+
+Bundled ruby gems:
+    ramaze 
+    rack 
+    sequel
+    json
+    mongrel
 	
 Optional ruby gems:
 

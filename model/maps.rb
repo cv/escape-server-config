@@ -13,6 +13,8 @@
 #   limitations under the License.
 
 class AppsEnvironments < Sequel::Model
+    plugin :schema
+
     set_schema do
         Integer :app_id
         Integer :environment_id

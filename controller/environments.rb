@@ -339,7 +339,6 @@ class EnvironmentsController < EscController
         srcEnv.apps.each do |existingApp|
             @myEnv.add_app(existingApp)
             # Copy overridden values
-            p " - Checking override values for app '#{existingApp[:name]}'"
             existingApp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => srcEnvId]
                 Value.create(:key_id => key[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?

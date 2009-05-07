@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
+require 'init'
 require 'ramaze'
 require 'ramaze/spec/helper'
 require 'base64'
@@ -129,19 +130,19 @@ describe AuthController do
         got.status.should == 200
         got.content_type.should == "text/plain"
         got.body.should.not == "[]"
-        got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
-        got.body.should.include "-----END RSA PUBLIC KEY-----" 
-        got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----" 
-        got.body.should.not.include "-----END RSA PRIVATE KEY-----" 
+        got.body.should.include "-----BEGIN "
+        got.body.should.include "-----END "
+        got.body.should.include " PUBLIC KEY-----" 
+        got.body.should.not.include " PRIVATE KEY-----" 
 
         got = get('/crypt/mine/public')
         got.status.should == 200
         got.content_type.should == "text/plain"
         got.body.should.not == "[]"
-        got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
-        got.body.should.include "-----END RSA PUBLIC KEY-----" 
-        got.body.should.not.include "-----BEGIN RSA PRIVATE KEY-----" 
-        got.body.should.not.include "-----END RSA PRIVATE KEY-----" 
+        got.body.should.include "-----BEGIN "
+        got.body.should.include "-----END "
+        got.body.should.include " PUBLIC KEY-----" 
+        got.body.should.not.include " PRIVATE KEY-----" 
 
         got = get('/crypt/mine/private')
         got.status.should == 401
@@ -150,19 +151,19 @@ describe AuthController do
         got.status.should == 200
         got.content_type.should == "text/plain"
         got.body.should.not == "[]"
-        got.body.should.include "-----BEGIN RSA PUBLIC KEY-----" 
-        got.body.should.include "-----END RSA PUBLIC KEY-----" 
-        got.body.should.include "-----BEGIN RSA PRIVATE KEY-----" 
-        got.body.should.include "-----END RSA PRIVATE KEY-----" 
+        got.body.should.include "-----BEGIN "
+        got.body.should.include "-----END "
+        got.body.should.include " PUBLIC KEY-----" 
+        got.body.should.include " PRIVATE KEY-----" 
 
         got = raw_mock_request(:get, '/crypt/mine/private', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
         got.status.should == 200
         got.content_type.should == "text/plain"
         got.body.should.not == "[]"
-        got.body.should.not.include "-----BEGIN RSA PUBLIC KEY-----" 
-        got.body.should.not.include "-----END RSA PUBLIC KEY-----" 
-        got.body.should.include "-----BEGIN RSA PRIVATE KEY-----" 
-        got.body.should.include "-----END RSA PRIVATE KEY-----" 
+        got.body.should.include "-----BEGIN "
+        got.body.should.include "-----END "
+        got.body.should.not.include " PUBLIC KEY-----" 
+        got.body.should.include " PRIVATE KEY-----" 
     end
 
     it 'should only update or generate new keys for an owned environment when requested by the owner' do

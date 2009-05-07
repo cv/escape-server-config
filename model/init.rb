@@ -14,8 +14,6 @@
 
 # Here goes your database connection and options:
 
-require 'rubygems'
-gem 'sequel', '=2.11.0'
 require 'sequel'
 require 'logger'
 
@@ -23,7 +21,7 @@ require 'logger'
 DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
 
 # MySQL - requires ruby mysql client
-#DB = Sequel.mysql('escape', :user => 'root', :password => '', :host => 'localhost')
+#DB = Sequel.mysql('escape', :user => 'escape', :password => 'escape', :host => 'localhost')
 
 # Postgres - requires ruby postgres client
 # NOTE: There's a bug somewhere with key/value stuff here. Don't use
@@ -32,6 +30,10 @@ DB = Sequel.connect("sqlite:///#{__DIR__}/../escape.db")
 # Oracle - requires ruby-oci8 gem
 # NOTE: Currently broken due to auto increment issues in Sequel 2.10.0
 #DB = Sequel.connect('oracle://escape:escape@localhost/XE')
+
+# JDBC for JRuby
+#DB = Sequel.connect("jdbc:mysql://localhost/escape?user=escape&password=escape")
+#DB = Sequel.connect("jdbc:sqlite:escape.db")
 
 # Uncomment line below to turn on SQL debugging
 #DB.loggers << Logger.new($stdout)

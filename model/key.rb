@@ -13,6 +13,8 @@
 #   limitations under the License.
 
 class Key < Sequel::Model(:keys)
+    plugin :schema
+
     many_to_one :app, :class => :App
     one_to_many :values, :class => :Value
 

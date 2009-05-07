@@ -13,6 +13,10 @@
 #   limitations under the License.
 
 class App < Sequel::Model(:apps)
+    plugin :validation_class_methods
+    plugin :schema
+    plugin :hook_class_methods
+
     many_to_many :environments, :class => :Environment
     one_to_many :keys, :class => :Key
 

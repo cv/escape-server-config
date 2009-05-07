@@ -13,17 +13,25 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-require 'rubygems'
-gem 'ramaze', '>=2009.01'
+# Add bundled vendor libs to the load path
+p " - Before:"
+p $LOAD_PATH
+
+vendor = File.expand_path(File.dirname(__FILE__)) + "/vendor"
+Dir.glob(vendor + "/**/lib") do |lib|
+    $LOAD_PATH.unshift(lib)
+end
+
+p " - After:"
+p $LOAD_PATH
+
 require 'ramaze'
-gem 'mongrel', '>=1.1.5'
-require 'mongrel'
 
 # Add directory start.rb is in to the load path, so you can run the app from
 # any other working path
 $LOAD_PATH.unshift(__DIR__)
 
-EscapeVersion = 0.2
+EscapeVersion = 0.3
 
 # Initialize controllers and models
 require 'model/init'

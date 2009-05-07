@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
+require 'init'
 require 'ramaze'
 require 'ramaze/spec/helper'
 require 'base64'

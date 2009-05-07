@@ -13,6 +13,9 @@
 #   limitations under the License.
 
 class Owner < Sequel::Model(:owners)
+    plugin :validation_class_methods
+    plugin :schema
+
     one_to_many :environments, :class => :Environment
 
     set_schema do

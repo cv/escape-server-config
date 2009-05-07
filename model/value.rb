@@ -13,6 +13,8 @@
 #   limitations under the License.
 
 class Value < Sequel::Model(:values)
+    plugin :schema
+
     many_to_one :key, :class => :Key
     many_to_one :environment, :class => :Environment
 

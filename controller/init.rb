@@ -30,7 +30,7 @@ class EscController < Ramaze::Controller
             response.status = 404
             return "Environment '#{env}' does not exist."
         elsif pair == "pair"
-            key = OpenSSL::PKey::RSA.generate(512)
+            key = OpenSSL::PKey::RSA.generate(256)
             public_key = key.public_key.to_pem
             private_key = key.to_pem 
             myenv.update(:public_key => public_key, :private_key => private_key)
