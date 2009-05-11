@@ -16,7 +16,7 @@
 # Add bundled vendor libs to the load path
 vendor = File.expand_path(File.dirname(__FILE__) + "/../vendor")
 Dir.glob(vendor + "/**/lib") do |lib|
-    $LOAD_PATH.push(lib)
+    $LOAD_PATH.unshift(lib)
 end
 
 require 'ramaze'

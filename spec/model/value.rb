@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'ramaze'
-require 'ramaze/spec/helper'
-
-require __DIR__('../helper/db_helper')
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__) + "/.."))
+require 'init'
 
 describe Value do
   behaves_like 'db_helper'
