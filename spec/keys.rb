@@ -351,6 +351,25 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.headers["X-Encrypted"].should == '["mykey"]'
     end
 
+    it 'should not encrypt values in the default environment' do
+        got = put('/environments/default/myapp')
+        got.status.should == 201
+
+        got = put('/environments/default/myapp/mykey', :input => "data")
+        got.status.should == 201
+
+        got = get('/environments/default/myapp/mykey')
+        got.status.should == 200
+        got.body.should == "data"
+
+        got = put('/environments/default/myapp/mykey', :input => "secretdata", :encrypt => "true")
+        got.status.should == 412
+        
+        got = get('/environments/default/myapp/mykey')
+        got.status.should == 200
+        got.body.should == "data"
+    end
+
     it 'should play nice when trying to delete a key from an env that has not explicit value set' do
         got = put('/environments/deleteenv')
         got.status.should == 201

@@ -289,6 +289,7 @@ class EnvironmentsController < EscController
 
         value = request.body.read
         if request.env['QUERY_STRING'] =~ /encrypt/
+            respond("Can't encrypt data in the default environment", 412) if @env == "default"
             encrypted = true
             # Do some encryption
             public_key = OpenSSL::PKey::RSA.new(@myEnv.public_key)
