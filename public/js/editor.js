@@ -25,7 +25,7 @@ var EscEditor = function() {
 			return keyValues;
 		},
 
-		createTableForKeyValues : function(keyValues) {
+		createTableForKeyValues : function(keyValues, environment) {
 			var table = '<table class="keyvalue" id="key_value_table">';
         	table += ('<tr class="keyvalueheader"><th>Key</th><th>Value</th><th>&nbsp;</th><th>&nbsp;</th></tr>');
 			rowcolour = 1
@@ -46,7 +46,7 @@ var EscEditor = function() {
 				}
             	table += ("</td>");
 				table += ("<td class='edittablebutton'>");
-            	if ( !item.isEncrypted && item.isOverridden) {
+            	if (!item.isEncrypted && item.isOverridden && (environment != "default")) {
             		table += ("<img class='keyencrypt' src='/images/encrypt.png'/></td>");
 				}	
             	table += ("</td>");
@@ -144,7 +144,7 @@ var EscEditor = function() {
 							jsonParse(XMLHttpRequest.getResponseHeader("X-Override-Values")), 
 							jsonParse(XMLHttpRequest.getResponseHeader("X-Default-Values")));
                     	$('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
-                    	var table = EscEditor.createTableForKeyValues(keyValues);
+                    	var table = EscEditor.createTableForKeyValues(keyValues, env);
 						$('#editor').append(table);
                     	$('#key_env_name').val(env);
                     	$('#key_app_name').val(app);
