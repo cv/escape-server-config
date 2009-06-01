@@ -251,7 +251,7 @@ $(document).ready(function() {
     $('.appdelete').live("click", function() {
         var thisEnv = $(this).parent().parent().siblings("span").text();
         var thisApp = $(this).parent().text();
-		var confirmation = confirm('Are you sure you want to delete ' + thisApp + '?');
+		var confirmation = confirm("Are you sure you want to delete application '" + thisApp + "' from environment '" + thisEnv + "'?");
 
         if ((confirmation) && (thisApp != null) && (thisApp != "")) {
 			// Delete the app
@@ -273,7 +273,7 @@ $(document).ready(function() {
     // Click on an env delete button
     $('.envdelete').live("click", function() {
         var thisEnv = $(this).siblings("span").text();
-		var confirmation = confirm('Are you sure you want to delete ' + thisEnv + '?');
+		var confirmation = confirm("Are you sure you want to delete environment '" + thisEnv + "'?");
         if ( (confirmation) && (thisEnv != null) && (thisEnv!= "")) {
 			// Delete the env
 			$.ajax({

@@ -19,32 +19,46 @@ require 'md5'
 class EscController < Ramaze::Controller
     private
 
-    def createCryptoKeys(env, pair)
+    # Get instance info
+    def getEnv(failOnError = true)
+        @myEnv = Environment[:name => @env]
+        respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and failOnError
+        @envId = @myEnv[:id] unless @myEnv.nil?
+        @defaultId = Environment[:name => "default"][:id]
+    end
+
+    def getApp(failOnError = true)
+        @myApp = App[:name => @app]
+        respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and failOnError
+        @appId = @myApp[:id] unless @myApp.nil?
+    end
+
+    def getKey(failOnError = true)
+        @myKey = Key[:name => @key, :app_id => @appId]
+        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
+        @keyId = @myKey[:id] unless @myKey.nil?
+    end
+
+    def createCryptoKeys
         # Create a keypair
-        if env == "default"
-            response.status = 401
-            return "Default environment doesn't have encryption"
+        if @env == "default"
+            respond("Default environment doesn't have encryption", 401)
         end
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        elsif pair == "pair"
+
+        if @pair == "pair"
             key = OpenSSL::PKey::RSA.generate(256)
             public_key = key.public_key.to_pem
             private_key = key.to_pem 
-            myenv.update(:public_key => public_key, :private_key => private_key)
+            @myEnv.update(:public_key => public_key, :private_key => private_key)
             response.status = 201
             response.headers["Content-Type"] = "text/plain" 
             return public_key + "\n" + private_key
         else
-            response.status = 403
-            return "Can only create keys in pairs"
+            respond("Can only create keys in pairs", 403)
         end
     end
-  
 
-    def check_auth(id = nil, realm = "")
+    def checkAuth(id = nil, realm = "")
         if id == "nobody"
             return id
         end
@@ -61,6 +75,18 @@ class EscController < Ramaze::Controller
         end
 
         respond 'Unauthorized', 401
+    end
+
+    def getEnvAuth
+        checkAuth(nil, "Environment #{@env}")
+    end
+
+    def checkEnvAuth
+        checkAuth(@myEnv.owner.name, "Environment #{@env}")
+    end
+
+    def checkUserAuth 
+        checkAuth(@name, "User #{@name}")
     end
 end
 

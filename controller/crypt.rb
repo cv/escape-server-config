@@ -19,147 +19,96 @@ class CryptController < EscController
     map('/crypt')
 
     def index(env = nil, puborpriv = nil)
-        # Sanity check what we've got first
-        if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            response.status = 403
-            return "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -"
+        if env.nil?
+            respond("Must supply and environment", 400)
         end
 
-        if puborpriv && puborpriv != "public" && puborpriv != "private"
-            response.status = 403
-            return "Must define keytype as either public or private"
+        # Sanity check what we've got first
+        if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
+            respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
+
+        if puborpriv && (puborpriv != "public") && (puborpriv != "private")
+            respond("Must define keytype as either public or private", 403)
+        end
+
+        puborpriv = "pair" if puborpriv.nil?
+        @pair = puborpriv
+
+        @env = env
 
         # Getting...
         if request.get?
-            # Undefined
-            if env.nil?
-                response.status = 400
-            # Show both keys in specified environment
-            elsif puborpriv.nil?
-                showCryptoKeys(env, "pair")
-            # Show public or private key for environment
-            else 
-                showCryptoKeys(env, puborpriv)
-            end
-
-        # Creating...
-        elsif request.put?
-            # Undefined
-            if env.nil?
-                response.status = 400
-            # You're creating a new keypair
-            elsif puborpriv.nil?
-               # createCryptoKeys(env,"pair")
-               response.status = 403
-               return "Can't create keypars through the API. This is done when an environment is created."
-            # You're doing something silly
-            else             
-                response.status = 403
-            end
-            
+            showCryptoKeys
         # Updating...
         elsif request.post?
-            # Undefined
-            if env.nil?
-                response.status = 400
-            # You're updating a keypair
-            elsif puborpriv.nil?
-                keys = request.body.read
-                updateCryptoKeys(env, "pair", keys)
-            # You're trying to update a single key. Naughty!
-            else 
-                response.status = 403
-            end       
-
+            @keys = request.body.read
+            updateCryptoKeys
         # Deleting...
         elsif request.delete?
-            # Undefined
-            if env.nil?
-                response.status = 404
-            # You're deleting a keypair
-            elsif puborpriv.nil?
-                deleteCryptoKeys(env,"pair")
-            # You're deleting a crypto key
-            else                         
-                deleteCryptoKeys(env, puborpriv)
-            end
+            deleteCryptoKeys
+        else
+            respond("Unsupported method", 405)
         end
     end
 
     private
     
-    def showCryptoKeys(env, pair)
+    def showCryptoKeys
         # Show keys in an environment
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
+        getEnv
+
+        response.status = 200
+        response.headers["Content-Type"] = "text/plain"   
+
+        if (@pair == "pair") and (@myEnv.owner.name == "nobody")
+            return "#{@myEnv.public_key}" + "\n" +  "#{@myEnv.private_key}"
+        elsif (@pair == "pair") and request.env['HTTP_AUTHORIZATION']
+            checkEnvAuth
+            return "#{@myEnv.public_key}" + "\n" +  "#{@myEnv.private_key}"
+        elsif @pair == "private"
+            checkEnvAuth
+            return "#{@myEnv.private_key}"
+        elsif (@pair == "public") or (@pair == "pair")
+            return "#{@myEnv.public_key}"
         else
+            respond("Crypto keys can only be public or private or in a pair", 403)
+        end
+    end
+    
+    def deleteCryptoKeys
+        if @env == "default"
+            respond("Can't delete keys from default environment.", 403)
+        else
+            getEnv
+            checkEnvAuth
             response.status = 200
-            response.headers["Content-Type"] = "text/plain"   
-            if (pair == "pair") and (myenv.owner.name == "nobody")
-                return "#{myenv.public_key}" + "\n" +  "#{myenv.private_key}"
-            elsif (pair == "pair") and request.env['HTTP_AUTHORIZATION']
-                check_auth(myenv.owner.name, env)
-                return "#{myenv.public_key}" + "\n" +  "#{myenv.private_key}"
-            elsif pair == "private"
-                check_auth(myenv.owner.name, env)
-                return "#{myenv.private_key}"
-            elsif (pair == "public") or (pair == "pair")
-                return "#{myenv.public_key}"
+            if @pair == "pair"
+                @myEnv.update(:public_key => '', :private_key => '')
+            elsif @pair == "private"
+                @myEnv.update(:private_key => nil)
+            elsif @pair == "public"
+                @myEnv.update(:public_key => nil)
             else
-                response.status = 403
-                return "Crypto keys can only be public or private or in a pair"
+                respond("Crypto keys can only be public or private or in a pair", 403)
             end
         end
     end
     
-    def deleteCryptoKeys(env, pair)
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        elsif env == "default"
-            response.status = 403
-            return "Can't delete keys from default environment."
+    def updateCryptoKeys
+        if @env == "default"
+            respond("Can't put keys into default environment.", 403)
+        elsif @pair != "pair"
+            respond("Only update keys in a pair", 403)
         else
-            check_auth(myenv.owner.name, env)
-            response.status = 200
-            if pair == "pair"
-                myenv.update(:public_key => '', :private_key => '')
-                return               
-            elsif pair == "private"
-                myenv.update(:private_key => nil)
-                return
-            elsif pair == "public"
-                myenv.update(:public_key => nil)
-                return
-            else
-                response.status = 403
-                return "Crypto keys can only be public or private or in a pair"
-            end
-        end
-    end
-    
-    def updateCryptoKeys(env, pair, keys)
-        myenv = Environment[:name => env]
-        if myenv.nil?
-            response.status = 404
-            return "Environment '#{env}' does not exist."
-        elsif env == "default"
-            response.status = 403
-            return "Can't put keys into default environment."
-        elsif pair != "pair"
-            response.status = 403
-            return "Only update keys in a pair"
-        else
-            check_auth(myenv.owner.name, env)
-            if keys && keys != ''
+            getEnv
+            checkEnvAuth
+
+            if @keys && @keys != ''
                 # Updating with provided values
-                /(-----BEGIN RSA PUBLIC KEY-----.*-----END RSA PUBLIC KEY-----)/m.match(keys)
+                /(-----BEGIN RSA PUBLIC KEY-----.*-----END RSA PUBLIC KEY-----)/m.match(@keys)
                 public_string = $1
-                /(-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----)/m.match(keys)
+                /(-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----)/m.match(@keys)
                 private_string = $1
                 if public_string && private_string
                     message = "Test encryption"
@@ -168,21 +117,18 @@ class CryptController < EscController
                     encrypted_message = Base64.encode64(public_key.public_encrypt(message))
                     decrypted_message = private_key.private_decrypt(Base64.decode64(encrypted_message))
                     if message == decrypted_message
-                        myenv.update(:public_key => public_key.to_pem, :private_key => private_key.to_pem)
+                        @myEnv.update(:public_key => public_key.to_pem, :private_key => private_key.to_pem)
                         response.status = 201
-                        return 
                     else
-                        response.status = 403
-                        return "Keys are not a pair"
+                        respond("Keys are not a pair", 406)
                     end
                 else
                     response.status = 501
                 end
             else
                 # Creating new keys
-                createCryptoKeys(env, pair)
+                createCryptoKeys
                 response.status = 201
-                return               
             end                    
         end
     end

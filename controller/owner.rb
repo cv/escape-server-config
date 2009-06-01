@@ -43,15 +43,6 @@ class OwnerController < EscController
 
     private
 
-    def getEnv
-        @myEnv = Environment[:name => @env]
-        
-        if @myEnv.nil?
-            respond("Environment '#{@env}' does not exist", 404)
-        end
-
-    end
-
     def getOwner
         getEnv
 
@@ -69,9 +60,10 @@ class OwnerController < EscController
         getEnv
 
         if @myEnv.owner_id == 1
-            auth = check_auth(nil, "Environment #{@env}")
+            #auth = check_auth(nil, "Environment #{@env}")
+            auth = getEnvAuth
         else
-            auth = check_auth(@myEnv.owner.name, "Environment #{@env}")
+            auth = checkEnvAuth
         end
 
         owner = Owner[:name => auth]
@@ -89,7 +81,7 @@ class OwnerController < EscController
         if @myEnv.owner_id == 1
             respond("Environment #{@env} is not owned by anyone", 200)
         else
-            auth = check_auth(@myEnv.owner.name, "Environment #{@env}")
+            auth = checkEnvAuth
         end
 
         @myEnv.owner = Owner[:name => "nobody"]

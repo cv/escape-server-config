@@ -99,25 +99,6 @@ class EnvironmentsController < EscController
 
     private
 
-    def getEnv(failOnError = true)
-        @myEnv = Environment[:name => @env]
-        respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and failOnError
-        @envId = @myEnv[:id] unless @myEnv.nil?
-        @defaultId = Environment[:name => "default"][:id]
-    end
-
-    def getApp(failOnError = true)
-        @myApp = App[:name => @app]
-        respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and failOnError
-        @appId = @myApp[:id] unless @myApp.nil?
-    end
-
-    def getKey(failOnError = true)
-        @myKey = Key[:name => @key, :app_id => @appId]
-        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
-        @keyId = @myKey[:id] unless @myKey.nil?
-    end
-
     #
     # Deletion
     #
@@ -125,7 +106,7 @@ class EnvironmentsController < EscController
     def deleteEnv
         respond("Not allowed to delete default environment!", 403) if @env == "default"
         getEnv
-        check_auth(@myEnv.owner.name, "Environment #{@env}")
+        checkEnvAuth
         @myEnv.delete
         respond("Environment '#{@env}' deleted.", 200)
     end
@@ -134,12 +115,15 @@ class EnvironmentsController < EscController
         getApp
 
         if @env == "default"
-            # TODO: What if this app has values in other environments???
-            @myApp.delete
-            respond("Applicaton '#{@app}' deleted.", 200)
+            if @myApp.environments.size == 1 
+                @myApp.delete
+                respond("Applicaton '#{@app}' deleted.", 200)
+            else
+                respond("Applicaton '#{@app}' is used in other environments.", 412)
+            end
         else         
             getEnv
-            check_auth(@myEnv.owner.name, "Environment #{@env}")
+            checkEnvAuth
             @myApp.remove_environment(@myEnv)
             respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
         end
@@ -167,7 +151,7 @@ class EnvironmentsController < EscController
                 respond("Key #{@key} can't be deleted. It has non default values set.", 403)
             end
         else         
-            check_auth(@myEnv.owner.name, "Environment #{@env}")
+            checkEnvAuth
             myValue = Value[:key_id => @keyId, :environment_id => @envId]
             if myValue.nil?
                 respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
@@ -279,13 +263,14 @@ class EnvironmentsController < EscController
         respond("Environment '#{@env}' already exists.", 200) if Environment[:name => @env]
 
         @myEnv = Environment.create(:name => @env)
-        createCryptoKeys(@env, "pair")      
+        @pair = "pair"
+        createCryptoKeys
         respond("Environment created.", 201)
     end
 
     def createApp
         getEnv
-        check_auth(@myEnv.owner.name, "Environment #{@env}")
+        checkEnvAuth
         getApp(false)
         respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @myEnv
 
@@ -299,7 +284,7 @@ class EnvironmentsController < EscController
 
     def setValue
         getEnv
-        check_auth(@myEnv.owner.name, "Environment #{@env}")
+        checkEnvAuth
         getApp
 
         value = request.body.read
@@ -331,7 +316,8 @@ class EnvironmentsController < EscController
 
         # Create new env
         @myEnv = Environment.create(:name => @env)
-        createCryptoKeys(@env, "pair")      
+        @pair = "pair"
+        createCryptoKeys
 
         srcEnvId = srcEnv[:id]
         destEnvId = @myEnv[:id]
