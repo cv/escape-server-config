@@ -46,7 +46,7 @@ class EscController < Ramaze::Controller
         end
 
         if @pair == "pair"
-            key = OpenSSL::PKey::RSA.generate(256)
+            key = OpenSSL::PKey::RSA.generate(512)
             public_key = key.public_key.to_pem
             private_key = key.to_pem 
             @myEnv.update(:public_key => public_key, :private_key => private_key)
