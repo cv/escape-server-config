@@ -1,7 +1,9 @@
 
 require 'rubygems'
+
+gem 'ramaze', '=2009.06.12'
 require 'ramaze'
-require 'ramaze/spec/helper'
+require 'ramaze/spec'
 
 require __DIR__('../../start')
 
@@ -26,6 +28,6 @@ module DBHelper
 
 end
 
-shared "db_helper" do
+shared :db_helper do
     extend DBHelper
 end

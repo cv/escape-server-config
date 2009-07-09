@@ -112,10 +112,16 @@ class CryptController < EscController
                 private_string = $1
                 if public_string && private_string
                     message = "Test encryption"
-                    public_key = OpenSSL::PKey::RSA.new(public_string)
-                    private_key = OpenSSL::PKey::RSA.new(private_string)
-                    encrypted_message = Base64.encode64(public_key.public_encrypt(message))
-                    decrypted_message = private_key.private_decrypt(Base64.decode64(encrypted_message))
+
+                    begin
+                        public_key = OpenSSL::PKey::RSA.new(public_string)
+                        private_key = OpenSSL::PKey::RSA.new(private_string)
+                        encrypted_message = Base64.encode64(public_key.public_encrypt(message))
+                        decrypted_message = private_key.private_decrypt(Base64.decode64(encrypted_message))
+                    rescue
+                        respond("Error in keys", 406)
+                    end
+
                     if message == decrypted_message
                         @myEnv.update(:public_key => public_key.to_pem, :private_key => private_key.to_pem)
                         response.status = 201

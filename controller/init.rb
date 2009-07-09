@@ -12,6 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+require 'rubygems'
+
+gem 'ramaze', '=2009.06.12'
+require 'ramaze'
+
 require 'openssl'
 require 'base64'
 require 'md5'

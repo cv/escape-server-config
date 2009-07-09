@@ -13,14 +13,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Add bundled vendor libs to the load path
-vendor = File.expand_path(File.dirname(__FILE__) + "/../vendor")
-Dir.glob(vendor + "/**/lib") do |lib|
-    $LOAD_PATH.unshift(lib)
-end
+require 'rubygems'
 
+gem 'ramaze', '=2009.06.12'
 require 'ramaze'
-require 'ramaze/spec/helper'
+require 'ramaze/spec'
 
 require __DIR__('helper/db_helper')
 require __DIR__('../start')

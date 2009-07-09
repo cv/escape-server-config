@@ -13,16 +13,15 @@ First off - this a Ruby app. Dev and tested with Ruby 1.8 on OSX.
 Required ruby gems:
     sqlite (or mysql or oracle or postgres)
 	openssl
-
-Bundled ruby gems:
-    ramaze 
-    rack 
-    sequel
+    ramaze = 2009.06.12
+    rack >= 1.0.0
+    sequel = 3.2.0
     json
     mongrel
 	
 Optional ruby gems:
 
+    rack-test
 	Selenium
 	selenium-client
     

@@ -4,7 +4,7 @@ $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__) + "/.."))
 require 'init'
 
 describe Value do
-  behaves_like 'db_helper'
+  behaves_like :db_helper
   
   before do
       reset_db

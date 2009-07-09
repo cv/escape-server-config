@@ -13,6 +13,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+require 'rubygems'
+
+gem 'ramaze', '=2009.06.12'
+require 'ramaze'
+
 #
 # Configuration Area Start
 #
@@ -39,17 +44,8 @@ $listenPort = 7000
 $accessLog = "access.log"
 
 #
-# Configuration Area Start
+# Configuration Area End
 #
-
-
-# Add bundled vendor libs to the load path
-vendor = File.expand_path(File.dirname(__FILE__)) + "/vendor"
-Dir.glob(vendor + "/**/lib") do |lib|
-    $LOAD_PATH.unshift(lib)
-end
-
-require 'ramaze'
 
 # Add directory start.rb is in to the load path, so you can run the app from
 # any other working path

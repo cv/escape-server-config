@@ -4,9 +4,7 @@ $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
 
 describe MainController do
-    behaves_like 'http', 'xpath'
-    ramaze  :view_root => __DIR__('../view'),
-            :public_root => __DIR__('../public')
+    behaves_like :rack_test, :db_helper
 
     it 'should show start page' do
         got = get('/')

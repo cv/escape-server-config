@@ -22,7 +22,7 @@
 class MainController < EscController
     layout '/index'
     helper :xhtml
-    engine :Ezamar
+
   # the index action is called automatically when no other action is specified
   def index
     @title = "Esc Serves Config"

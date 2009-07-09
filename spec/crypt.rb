@@ -4,9 +4,7 @@ $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
 
 describe CryptController, 'Encryption bits' do
-    behaves_like 'http', 'db_helper'
-    ramaze  :view_root => __DIR__('../view'),
-            :public_root => __DIR__('../public')
+    behaves_like :rack_test, :db_helper
 
     before do
         reset_db
@@ -155,7 +153,7 @@ N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
 kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
 -----END RSA PRIVATE KEY-----"
 
-           got = post('/crypt/updatemykeys', :input => mykeypair)
+           got = post('/crypt/updatemykeys', mykeypair)
            got.status.should == 201
            
            got = get('/crypt/updatemykeys/public')
@@ -211,7 +209,7 @@ N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
 kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
 -----END RSA PRIVATE KEY-----"
 
-            got = post('/crypt/updatemykeys/', :input => mykeypair)
-            got.status.should == 500
+            got = post('/crypt/updatemykeys/', mykeypair)
+            got.status.should == 406
         end
 end

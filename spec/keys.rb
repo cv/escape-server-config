@@ -6,9 +6,7 @@ require 'openssl'
 require 'base64'
 
 describe EnvironmentsController, 'Key/Value bits' do
-    behaves_like 'http', 'db_helper'
-    ramaze  :view_root => __DIR__('../view'),
-            :public_root => __DIR__('../public')
+    behaves_like :rack_test, :db_helper
 
     before do
         reset_db
@@ -20,7 +18,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         value = "default.value"
-        got = put('/environments/default/appname/key', :input => value)
+        got = put('/environments/default/appname/key', value)
         got.status.should == 201
 
         got = get('/environments/default/appname/key')
@@ -37,7 +35,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
     
         value = "default.value"
-        got = put('/environments/newenv/appname/key', :input => value)
+        got = put('/environments/newenv/appname/key', value)
         got.status.should == 201
             
         got = get('/environments/default/appname/key')
@@ -66,7 +64,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         value = "default.value"
-        got = put('/environments/default/appname/key', :input => value)
+        got = put('/environments/default/appname/key', value)
         got.status.should == 201
         
         got = put('/environments/myenv')
@@ -85,7 +83,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         value = "default.value"
-        got = put('/environments/default/appname/key', :input => value)
+        got = put('/environments/default/appname/key', value)
         got.status.should == 201
 
         got = get('/environments/default/appname/key')
@@ -93,7 +91,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should == value
 
         newvalue = "new.value"
-        got = put('/environments/default/appname/key', :input => newvalue)
+        got = put('/environments/default/appname/key', newvalue)
         got.status.should == 200
 
         got = get('/environments/default/appname/key')
@@ -107,7 +105,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         value = "default.value"
-        got = put('/environments/default/appname/key', :input => value)
+        got = put('/environments/default/appname/key', value)
         got.status.should == 201
 
         got = get('/environments/default/appname/key')
@@ -121,7 +119,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         newvalue = "new.value"
-        got = put('/environments/myenv/appname/key', :input => newvalue)
+        got = put('/environments/myenv/appname/key', newvalue)
         got.status.should == 201
 
         got = get('/environments/myenv/appname/key')
@@ -143,7 +141,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         value = "default.value"
-        got = put('/environments/default/appname/key', :input => value)
+        got = put('/environments/default/appname/key', value)
         got.status.should == 201
 
         got = get('/environments/default/appname/key')
@@ -167,12 +165,12 @@ describe EnvironmentsController, 'Key/Value bits' do
 
         key1 = "key1"
         value1 = "value1"
-        got = put("/environments/default/appname/#{key1}", :input => value1)
+        got = put("/environments/default/appname/#{key1}", value1)
         got.status.should == 201
 
         key2 = "key2"
         value2 = "value2"
-        got = put("/environments/default/appname/#{key2}", :input => value2)
+        got = put("/environments/default/appname/#{key2}", value2)
         got.status.should == 201
 
         got = get('/environments/default/appname')
@@ -188,10 +186,10 @@ describe EnvironmentsController, 'Key/Value bits' do
 
         key1 = "key1"
         value1 = "value1"
-        got = put("/environments/default/appname/#{key1}", :input => value1)
+        got = put("/environments/default/appname/#{key1}", value1)
         got.status.should == 201
 
-        got = put("/environments/default/appname/#{key1}", :input => value1)
+        got = put("/environments/default/appname/#{key1}", value1)
         got.status.should == 200
 
         got = get('/environments/default/appname')
@@ -213,16 +211,16 @@ describe EnvironmentsController, 'Key/Value bits' do
 
         key1 = "key1"
         value1 = "value1"
-        got = put("/environments/default/appname/#{key1}", :input => value1)
+        got = put("/environments/default/appname/#{key1}", value1)
         got.status.should == 201
 
         key2 = "key2"
         value2 = "value2"
-        got = put("/environments/default/appname/#{key2}", :input => value2)
+        got = put("/environments/default/appname/#{key2}", value2)
         got.status.should == 201
 
         newvalue2 = "new.value2"
-        got = put("/environments/myenv/appname/#{key2}", :input => newvalue2)
+        got = put("/environments/myenv/appname/#{key2}", newvalue2)
         got.status.should == 201
 
         got = get('/environments/myenv/appname')
@@ -248,7 +246,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
         
         value = "default.value"
-        got = put('/environments/default/deletetest/mykey', :input => value)
+        got = put('/environments/default/deletetest/mykey', value)
         got.status.should == 201
 
         got = delete('/environments/default/deletetest/mykey')
@@ -267,11 +265,11 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 201
 
         value = "default.value"
-        got = put('/environments/default/deletetest/mykey', :input => value)
+        got = put('/environments/default/deletetest/mykey', value)
         got.status.should == 201
         
         value = "override.value"
-        got = put('/environments/deletekey/deletetest/mykey', :input => value)
+        got = put('/environments/deletekey/deletetest/mykey', value)
         got.status.should == 201
 
         got = delete('/environments/deletekey/deletetest/mykey')
@@ -293,11 +291,11 @@ describe EnvironmentsController, 'Key/Value bits' do
          got.status.should == 201
     
          value = "default.value"
-         got = put('/environments/default/deletetest/mykey', :input => value)
+         got = put('/environments/default/deletetest/mykey', value)
          got.status.should == 201
     
          value = "override.value"
-         got = put('/environments/deletekey/deletetest/mykey', :input => value)
+         got = put('/environments/deletekey/deletetest/mykey', value)
          got.status.should == 201
      
          got = delete('/environments/default/deletetest/mykey')
@@ -322,7 +320,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         priv_key = OpenSSL::PKey::RSA.new(got.body)
 
         value = "my.value"
-        got = put('/environments/encryptvalue/anapp/mykey', :input => value)
+        got = put('/environments/encryptvalue/anapp/mykey', value)
         got.status.should == 201
         
         got = get('/environments/encryptvalue/anapp/mykey')
@@ -330,7 +328,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should == value
         got.content_type.should == "text/plain"
         
-        got = put('/environments/encryptvalue/anapp/mykey', :input => value, :encrypt => "true")
+        got = put('/environments/encryptvalue/anapp/mykey?encrypt=true', value)
         got.status.should == 200
         
         got = get('/environments/encryptvalue/anapp/mykey')
@@ -355,14 +353,14 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/default/myapp')
         got.status.should == 201
 
-        got = put('/environments/default/myapp/mykey', :input => "data")
+        got = put('/environments/default/myapp/mykey', "data")
         got.status.should == 201
 
         got = get('/environments/default/myapp/mykey')
         got.status.should == 200
         got.body.should == "data"
 
-        got = put('/environments/default/myapp/mykey', :input => "secretdata", :encrypt => "true")
+        got = put('/environments/default/myapp/mykey?encrypt', "secretdata")
         got.status.should == 412
         
         got = get('/environments/default/myapp/mykey')
@@ -377,7 +375,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/deleteenv/deletetest')
         got.status.should == 201
    
-        got = put('/environments/default/deletetest/mykey', :input => "default.value")
+        got = put('/environments/default/deletetest/mykey', "default.value")
         got.status.should == 201
    
         got = delete('/environments/deleteenv/deletetest/mykey')
@@ -395,7 +393,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/myenv/myapp')
         got.status.should == 201
    
-        got = put('/environments/default/myapp/mykey', :input => "default.value")
+        got = put('/environments/default/myapp/mykey', "default.value")
         got.status.should == 201
 
         got = get('/environments/myenv/myapp/mykey')
@@ -403,7 +401,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should == "default.value"
         got.headers["X-Value-Type"].should == "default"
 
-        got = put('/environments/myenv/myapp/mykey', :input => "override.value")
+        got = put('/environments/myenv/myapp/mykey', "override.value")
         got.status.should == 201
 
         got = get('/environments/myenv/myapp/mykey')
@@ -419,10 +417,10 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/myenv/myapp')
         got.status.should == 201
    
-        got = put('/environments/default/myapp/default.key', :input => "default.value")
+        got = put('/environments/default/myapp/default.key', "default.value")
         got.status.should == 201
 
-        got = put('/environments/myenv/myapp/override.key', :input => "override.value")
+        got = put('/environments/myenv/myapp/override.key', "override.value")
         got.status.should == 201
 
         got = get('/environments/myenv/myapp')

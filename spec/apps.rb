@@ -4,9 +4,7 @@ $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
 
 describe EnvironmentsController, 'Application bits' do
-    behaves_like 'http', 'db_helper'
-    ramaze  :view_root => __DIR__('../view'),
-            :public_root => __DIR__('../public')
+    behaves_like :rack_test, :db_helper
 
     before do
         reset_db
