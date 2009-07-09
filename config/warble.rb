@@ -11,7 +11,7 @@ Warbler::Config.new do |config|
 
   # Additional files/directories to include, above those in config.dirs
   # config.includes = FileList["db"]
-  config.includes = FileList["start.rb"]
+  config.includes = FileList["app.rb"]
 
   # Additional files/directories to exclude
   # config.excludes = FileList["lib/tasks/*"]
@@ -21,6 +21,7 @@ Warbler::Config.new do |config|
   # JRuby and JRuby-Rack are pre-loaded in this list.  Be sure to include your
   # own versions if you directly set the value
   # config.java_libs += FileList["lib/java/*.jar"]
+  #config.java_libs += FileList["lib/mysql-connector-java-5.0.4-bin.jar"]
 
   # Loose Java classes and miscellaneous files to be placed in WEB-INF/classes.
   # config.java_classes = FileList["target/classes/**.*"]
@@ -51,6 +52,7 @@ Warbler::Config.new do |config|
   config.gems << Gem::Dependency.new("ramaze", "= 2009.06.12")
   config.gems << Gem::Dependency.new("sequel", "= 3.2.0")
   config.gems << "json"
+  config.gems << "jruby-openssl"
 
   # Include gem dependencies not mentioned specifically
   config.gem_dependencies = true
@@ -75,7 +77,7 @@ Warbler::Config.new do |config|
   # config.webxml.rails.env = ENV['RAILS_ENV'] || 'production'
 
   # Application booter to use, one of :rack, :rails, or :merb. (Default :rails)
-  # config.webxml.booter = :rails
+  config.webxml.booter = :rack
 
   # When using the :rack booter, "Rackup" script to use.
   # The script is evaluated in a Rack::Builder to load the application.
