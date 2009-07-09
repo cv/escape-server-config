@@ -19,9 +19,9 @@ Required ruby gems:
     json
     mongrel
 	
-Optional ruby gems:
-
+Optional ruby gems for testing:
     rack-test
+    bacon
 	Selenium
 	selenium-client
     

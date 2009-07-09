@@ -103,27 +103,27 @@ describe EnvironmentsController, 'Environment bits' do
         got.status.should == 403
     end
 
-# TODO: Fix test
-#    it 'should copy an environment' do
-#        got = put('/environments/copyme')
-#        got.status.should == 201
-#         
-#        got = raw_mock_request(:post, '/environments/mycopy', 'HTTP_CONTENT_LOCATION' => "copyme")
-#        got.status.should == 201
-#        
-#        got = get('/environments/mycopy')
-#        got.status.should == 200 
-#    end
+    it 'should copy an environment' do
+        got = put('/environments/copyme')
+        got.status.should == 201
+         
+        header('HTTP_CONTENT_LOCATION', "copyme")
+        got = post('/environments/mycopy')
+        got.status.should == 201
+        
+        got = get('/environments/mycopy')
+        got.status.should == 200 
+    end
 
-# TODO: Fix test
-#    it 'should throw a 409 error if trying to copy to an environment that already exists' do
-#        got = put('/environments/copyme')
-#        got.status.should == 201
-#         
-#        got = put('/environments/mycopy')
-#        got.status.should == 201
-#         
-#        got = raw_mock_request(:post, '/environments/mycopy', 'HTTP_CONTENT_LOCATION' => "copyme")
-#        got.status.should == 409
-#    end
+    it 'should throw a 409 error if trying to copy to an environment that already exists' do
+        got = put('/environments/copyme')
+        got.status.should == 201
+         
+        got = put('/environments/mycopy')
+        got.status.should == 201
+         
+        header('HTTP_CONTENT_LOCATION', "copyme")
+        got = post('/environments/mycopy')
+        got.status.should == 409
+    end
 end

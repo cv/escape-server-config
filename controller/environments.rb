@@ -307,7 +307,7 @@ class EnvironmentsController < EscController
     end
     
     def copyEnv
-        respond("Missing Location header. Can't copy environment", 406) unless request.env['HTTP_CONTENT_LOCATION']
+        respond("Missing Content-Location header. Can't copy environment", 406) unless request.env['HTTP_CONTENT_LOCATION']
 
         srcEnv = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
         respond("Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404) if srcEnv.nil?

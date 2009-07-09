@@ -83,49 +83,52 @@ describe UserController do
         got.status.should == 401
     end
 
-# TODO: Fix test
-#    it 'should not be able to change user details unless authenticated as that user' do
-#        got = post('/user/somebody', {:email => "email", :password => "password"})
-#        got.status.should == 201
-#
-#        got = post('/user/me', {:email => "me", :password => "me"})
-#        got.status.should == 201
-#
-#        got = post('/user/somebody', {:password => "newpassword"})
-#        got.status.should == 401
-#
-#        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me")})
-#        got.status.should == 401
-#
-#        got = raw_mock_request(:post, '/user/somebody?password=newpassword', {'HTTP_AUTHORIZATION' => encode_credentials("somebody", "password")})
-#        got.status.should == 200
-#
-#        Owner[:name => "somebody"].password.should == MD5.hexdigest("newpassword")
-#
-#        got = raw_mock_request(:post, '/user/somebody?email=newemail', {'HTTP_AUTHORIZATION' => encode_credentials("somebody", "newpassword")})
-#        got.status.should == 200
-#
-#        Owner[:name => "somebody"].email.should == "newemail"
-#    end
+    it 'should not be able to change user details unless authenticated as that user' do
+        got = post('/user/somebody', {:email => "email", :password => "password"})
+        got.status.should == 201
 
-# TODO: Fix test
-#    it 'should be able to delete a user when authenticated as that user' do
-#        got = post('/user/somebody', {:email => "email", :password => "password"})
-#        got.status.should == 201
-#
-#        got = post('/user/me', {:email => "me", :password => "me"})
-#        got.status.should == 201
-#
-#        got = delete('/user/somebody')
-#        got.status.should == 401
-#
-#        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => encode_credentials("me", "me")})
-#        got.status.should == 401
-#
-#        got = raw_mock_request(:delete, '/user/somebody', {'HTTP_AUTHORIZATION' => encode_credentials("somebody", "password")})
-#        got.status.should == 200
-#
-#        got = get('/user/somebody')
-#        got.status.should == 404
-#    end
+        got = post('/user/me', {:email => "me", :password => "me"})
+        got.status.should == 201
+
+        got = post('/user/somebody', {:password => "newpassword"})
+        got.status.should == 401
+
+        authorize("me", "me")
+        got = post('/user/somebody?password=newpassword')
+        got.status.should == 401
+
+        authorize("somebody", "password")
+        got = post('/user/somebody?password=newpassword')
+        got.status.should == 200
+
+        Owner[:name => "somebody"].password.should == MD5.hexdigest("newpassword")
+
+        authorize("somebody", "newpassword")
+        got = post('/user/somebody?email=newemail')
+        got.status.should == 200
+
+        Owner[:name => "somebody"].email.should == "newemail"
+    end
+
+    it 'should be able to delete a user when authenticated as that user' do
+        got = post('/user/somebody', {:email => "email", :password => "password"})
+        got.status.should == 201
+
+        got = post('/user/me', {:email => "me", :password => "me"})
+        got.status.should == 201
+
+        got = delete('/user/somebody')
+        got.status.should == 401
+
+        authorize("me", "me")
+        got = delete('/user/somebody')
+        got.status.should == 401
+
+        authorize("somebody", "password")
+        got = delete('/user/somebody')
+        got.status.should == 200
+
+        got = get('/user/somebody')
+        got.status.should == 404
+    end
 end

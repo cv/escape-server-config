@@ -41,7 +41,7 @@ $listenPort = 7000
 
 # $accessLog: Path to the file where we need to log access to
 #
-$accessLog = "access.log"
+#$accessLog = "access.log"
 
 #
 # Configuration Area End
@@ -57,8 +57,8 @@ EscapeVersion = 0.3
 require 'model/init'
 require 'controller/init'
 
-log = Logger.new($accessLog)
-Rack::CommonLogger.new(Ramaze::Log, log)
+#log = Logger.new($accessLog)
+#Rack::CommonLogger.new(Ramaze::Log, log)
 
 Ramaze.start :adapter => :mongrel, :port => $listenPort
 

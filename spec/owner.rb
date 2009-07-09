@@ -36,41 +36,43 @@ describe OwnerController do
         got.status.should == 404
     end
 
-# TODO: Fix test
-#    it 'should set the owner of an environment to specified user on POST /owner/environment, and give it up on delete' do
-#        me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
-#        env = Environment.create(:name => "myenv")
-#
-#        got = post('/owner/myenv')
-#        got.status.should == 401
-#
-#        got = raw_mock_request(:post, '/owner/myenv', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
-#        got.status.should == 200
-#
-#        got = get('/owner/myenv')
-#        got.status.should == 200
-#        got.body.should == "me"
-#        got.content_type.should == "text/plain"
-#
-#        got = delete('/owner/myenv')
-#        got.status.should == 401
-#
-#        got = raw_mock_request(:delete, '/owner/myenv', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
-#        got.status.should == 200
-#
-#        got = get('/owner/myenv')
-#        got.status.should == 200
-#        got.body.should == "nobody"
-#        got.content_type.should == "text/plain"
-#    end
+    it 'should set the owner of an environment to specified user on POST /owner/environment, and give it up on delete' do
+        me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
+        env = Environment.create(:name => "myenv")
 
-# TODO: Fix test
-#    it 'should not be able to change the owner of the default environment' do
-#        me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
-#
-#        got = raw_mock_request(:post, '/owner/default', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
-#        got.status.should == 403
-#    end
+        got = post('/owner/myenv')
+        got.status.should == 401
+
+        authorize("me", "me")
+        got = post('/owner/myenv')
+        got.status.should == 200
+
+        got = get('/owner/myenv')
+        got.status.should == 200
+        got.body.should == "me"
+        got.content_type.should == "text/plain"
+
+        authorize("you", "you")
+        got = delete('/owner/myenv')
+        got.status.should == 401
+
+        authorize("me", "me")
+        got = delete('/owner/myenv')
+        got.status.should == 200
+
+        got = get('/owner/myenv')
+        got.status.should == 200
+        got.body.should == "nobody"
+        got.content_type.should == "text/plain"
+    end
+
+    it 'should not be able to change the owner of the default environment' do
+        me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
+
+        authorize("me", "me")
+        got = post('/owner/default')
+        got.status.should == 403
+    end
 
     it 'should make new environments be owned by nobody' do
         env = Environment.create(:name => "myenv")

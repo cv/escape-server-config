@@ -17,7 +17,7 @@ require 'rubygems'
 
 gem 'ramaze', '=2009.06.12'
 require 'ramaze'
-require 'ramaze/spec'
+require 'ramaze/spec/bacon'
 
 require __DIR__('helper/db_helper')
 require __DIR__('../start')
