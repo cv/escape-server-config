@@ -18,6 +18,11 @@ require 'rubygems'
 gem 'ramaze', '=2009.06.12'
 require 'ramaze'
 
+# This is an ugly hack to get things working under Jetty/Tomcat.
+# It works around a bug in jruby
+# I got the workaround from http://markmail.org/message/rn6hmt6nguzopypk?q=%22undefined+method+%60exclusive%27+for+Thread:Class%22
+require 'thread'
+
 #
 # Configuration Area Start
 #

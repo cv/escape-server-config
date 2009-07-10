@@ -11,7 +11,7 @@ Warbler::Config.new do |config|
 
   # Additional files/directories to include, above those in config.dirs
   # config.includes = FileList["db"]
-  config.includes = FileList["app.rb"]
+  config.includes = FileList["app.rb", "thread.rb"]
 
   # Additional files/directories to exclude
   # config.excludes = FileList["lib/tasks/*"]
@@ -51,7 +51,7 @@ Warbler::Config.new do |config|
   # config.gems << Gem::Dependency.new("merb-core", "= 0.9.3")
   config.gems << Gem::Dependency.new("ramaze", "= 2009.06.12")
   config.gems << Gem::Dependency.new("sequel", "= 3.2.0")
-  config.gems << "json"
+  config.gems << "json_pure"
   config.gems << "jruby-openssl"
 
   # Include gem dependencies not mentioned specifically
