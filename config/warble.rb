@@ -23,6 +23,10 @@ Warbler::Config.new do |config|
   # config.java_libs += FileList["lib/java/*.jar"]
   #config.java_libs += FileList["lib/mysql-connector-java-5.0.4-bin.jar"]
 
+  # Don't load the default warbler bundled jruby-complete and jruby-rack
+  # use ours instead
+  config.java_libs = FileList["lib/*.jar"]
+
   # Loose Java classes and miscellaneous files to be placed in WEB-INF/classes.
   # config.java_classes = FileList["target/classes/**.*"]
 
