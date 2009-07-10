@@ -11,19 +11,19 @@ For more information please go to http://code.google.com/p/escservesconfig/
 First off - this a Ruby app. Dev and tested with Ruby 1.8 on OSX.
 
 Required ruby gems:
-    sqlite (or mysql or oracle or postgres)
+	sqlite (or mysql or oracle or postgres)
 	openssl
-    ramaze = 2009.06.12
-    rack >= 1.0.0
-    sequel = 3.2.0
-    json
-	
+	ramaze = 2009.06.12
+	rack >= 1.0.0
+	sequel = 3.2.0
+	json
+
 Optional ruby gems for testing:
-    rack-test
-    bacon
+	rack-test
+	bacon
 	Selenium
 	selenium-client
-    
+
 If you have ramaze in your path, you can start the server with 'ramaze start'. If not, './start.rb' will work.
 
 Once the server is up, connect on port 7000 with your favourite browser
