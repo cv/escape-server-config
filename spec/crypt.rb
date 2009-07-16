@@ -3,6 +3,8 @@
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
 
+require 'openssl'
+
 describe CryptController, 'Encryption bits' do
     behaves_like :rack_test, :db_helper
 
@@ -133,83 +135,55 @@ describe CryptController, 'Encryption bits' do
         new_pub.body.should.not.equal? new_priv.body
     end
        
-       it 'should upload new keypair for an existing environment' do
-           got = put('/environments/updatemykeys')
-           got.status.should == 201
-           
-           mykeypair = "
------BEGIN RSA PUBLIC KEY-----
-MEgCQQCsEJqRpZbUL8jDKuz8O651LDSI50/7nE5EzI+1IussWGpDgrm5mNtEJay
-KEZqWGC3Xv+7YOiW+naT3Uuwpv8uzAgMBAAE=
------END RSA PUBLIC KEY-----
+    it 'should upload new keypair for an existing environment' do
+        got = put('/environments/updatemykeys')
+        got.status.should == 201
 
------BEGIN RSA PRIVATE KEY-----
-MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY
-20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe
-4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU
-6QIhANJlI/W8w0CpwO0r0rYm7PUvB2EirNluzSu1peANJme1AiEA0VyDPnoCWQ5T
-6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI
-N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
-kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
------END RSA PRIVATE KEY-----"
+        old_key = OpenSSL::PKey::RSA.new(get('/crypt/updatemykeys/private').body)
 
-           got = post('/crypt/updatemykeys', mykeypair)
-           got.status.should == 201
-           
-           got = get('/crypt/updatemykeys/public')
-           got.status.should == 200
-           got.body.should.include "-----BEGIN "
-           got.body.should.include " PUBLIC KEY-----"
-           got.body.should.include "MEgCQQCsEJqRpZbUL8jDKuz8O651LDSI50/7nE5EzI+1IussWGpDgrm5mNtEJayK"
-           got.body.should.include "EZqWGC3Xv+7YOiW+naT3Uuwpv8uzAgMBAAE="
-           got.body.should.include "-----END "
-           got.body.should.not.include " PRIVATE KEY-----"
-           got.body.should.not.include "MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY"
-           got.body.should.not.include "20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe"
-           got.body.should.not.include "4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU"
-           got.body.should.not.include "6QIhANJlI/W8w0CpwO0r0rYm7PUvB2EirNluzSu1peANJme1AiEA0VyDPnoCWQ5T"
-           got.body.should.not.include "6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI"
-           got.body.should.not.include "N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk"
-           got.body.should.not.include "kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X"
-           
-           got = get('/crypt/updatemykeys/private')
-           got.status.should == 200
-           got.body.should.not.include " PUBLIC KEY-----"
-           got.body.should.not.include "MEgCQQCsEJqRpZbUL8jDKuz8O651LDSI50/7nE5EzI+1IussWGpDgrm5mNtEJay"
-           got.body.should.not.include "KEZqWGC3Xv+7YOiW+naT3Uuwpv8uzAgMBAAE="
-           got.body.should.include "-----BEGIN "
-           got.body.should.include " PRIVATE KEY-----"
-           got.body.should.include "MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY"
-           got.body.should.include "20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe"
-           got.body.should.include "4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU"
-           got.body.should.include "6QIhANJlI/W8w0CpwO0r0rYm7PUvB2EirNluzSu1peANJme1AiEA0VyDPnoCWQ5T"
-           got.body.should.include "6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI"
-           got.body.should.include "N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk"
-           got.body.should.include "kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X"
-           got.body.should.include "-----END "
-       end
+        new_key = OpenSSL::PKey::RSA.generate(512)
 
-       it 'should reject broken keypair' do
-           got = put('/environments/updatemykeys')
-           got.status.should == 201
+        got = post('/crypt/updatemykeys', new_key.to_pem)
+        got.status.should == 201
 
-           mykeypair = "
------BEGIN RSA PUBLIC KEY-----
-MEgCQQClNadbDEn4rTUOecvLRwpT4HzYbvCJ3Cvt5zEj0WbAzBRdQ9uHyOSMENSw
-+TScQLPOid9vFjgB/K/4FiE4OJEHAgMBAAE=
------END RSA PUBLIC KEY-----
+        got = get('/crypt/updatemykeys/public')
+        got.status.should == 200
+        got.body.should == new_key.public_key.to_pem.strip!
+        got.body.should.not == old_key.public_key.to_pem.strip!
 
------BEGIN RSA PRIVATE KEY-----
-MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY
-20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe
-4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU
-6QIhANJlI/W8w0CpwO0r0rYm7PUvB2EirNluzSu1peANJme1AiEA0VyDPnoCWQ5T
-6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI
-N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
-kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
------END RSA PRIVATE KEY-----"
+        got = get('/crypt/updatemykeys/private')
+        got.status.should == 200
+        got.body.should == new_key.to_pem.strip!
+        got.body.should.not == old_key.to_pem.strip!
+    end
 
-            got = post('/crypt/updatemykeys/', mykeypair)
-            got.status.should == 406
-        end
+    it 'should generate a new keypair on demand if one is not supplied' do
+        got = put('/environments/updatemykeys')
+        got.status.should == 201
+
+        old_key = OpenSSL::PKey::RSA.new(get('/crypt/updatemykeys/private').body)
+
+        got = post('/crypt/updatemykeys')
+        got.status.should == 201
+
+        got = get('/crypt/updatemykeys/public')
+        got.status.should == 200
+        got.body.should.not == old_key.public_key.to_pem.strip!
+
+        got = get('/crypt/updatemykeys/private')
+        got.status.should == 200
+        got.body.should.not == old_key.to_pem.strip!
+    end
+
+    it 'should reject invalid key' do
+        got = put('/environments/updatemykeys')
+        got.status.should == 201
+
+        old_key = OpenSSL::PKey::RSA.new(get('/crypt/updatemykeys/private').body)
+
+        new_key = "Sheep"
+
+        got = post('/crypt/updatemykeys/', new_key)
+        got.status.should == 406
+    end
 end

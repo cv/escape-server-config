@@ -42,7 +42,7 @@ class CryptController < EscController
             showCryptoKeys
         # Updating...
         elsif request.post?
-            @keys = request.body.read
+            @key = request.body.read
             updateCryptoKeys
         # Deleting...
         elsif request.delete?
@@ -82,55 +82,28 @@ class CryptController < EscController
         else
             getEnv
             checkEnvAuth
+            @myEnv.update(:private_key => nil, :public_key => nil)
             response.status = 200
-            if @pair == "pair"
-                @myEnv.update(:public_key => '', :private_key => '')
-            elsif @pair == "private"
-                @myEnv.update(:private_key => nil)
-            elsif @pair == "public"
-                @myEnv.update(:public_key => nil)
-            else
-                respond("Crypto keys can only be public or private or in a pair", 403)
-            end
         end
     end
     
     def updateCryptoKeys
         if @env == "default"
             respond("Can't put keys into default environment.", 403)
-        elsif @pair != "pair"
-            respond("Only update keys in a pair", 403)
         else
             getEnv
             checkEnvAuth
 
-            if @keys && @keys != ''
+            if @key && @key != ''
                 # Updating with provided values
-                /(-----BEGIN RSA PUBLIC KEY-----.*-----END RSA PUBLIC KEY-----)/m.match(@keys)
-                public_string = $1
-                /(-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----)/m.match(@keys)
-                private_string = $1
-                if public_string && private_string
-                    message = "Test encryption"
-
-                    begin
-                        public_key = OpenSSL::PKey::RSA.new(public_string)
-                        private_key = OpenSSL::PKey::RSA.new(private_string)
-                        encrypted_message = Base64.encode64(public_key.public_encrypt(message))
-                        decrypted_message = private_key.private_decrypt(Base64.decode64(encrypted_message))
-                    rescue
-                        respond("Error in keys", 406)
-                    end
-
-                    if message == decrypted_message
-                        @myEnv.update(:public_key => public_key.to_pem, :private_key => private_key.to_pem)
-                        response.status = 201
-                    else
-                        respond("Keys are not a pair", 406)
-                    end
-                else
-                    response.status = 501
+                begin
+                    new_private_key = OpenSSL::PKey::RSA.new(@key)
+                rescue
+                    respond("Error in key", 406)
                 end
+
+                @myEnv.update(:private_key => new_private_key.to_pem, :public_key => new_private_key.public_key.to_pem)
+                respond("Updated key", 201)
             else
                 # Creating new keys
                 createCryptoKeys

@@ -24,8 +24,8 @@ class Environment < Sequel::Model(:environments)
     set_schema do
         primary_key :id, :null => false
         String :name
-        column :public_key, File
-        column :private_key, File
+        String :public_key, :size => 2048
+        String :private_key, :size => 2048
 
         foreign_key :owner_id, :table => :owners, :type => Integer
     end

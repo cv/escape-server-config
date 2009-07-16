@@ -50,17 +50,13 @@ class EscController < Ramaze::Controller
             respond("Default environment doesn't have encryption", 401)
         end
 
-        if @pair == "pair"
-            key = OpenSSL::PKey::RSA.generate(512)
-            public_key = key.public_key.to_pem
-            private_key = key.to_pem 
-            @myEnv.update(:public_key => public_key, :private_key => private_key)
-            response.status = 201
-            response.headers["Content-Type"] = "text/plain" 
-            return public_key + "\n" + private_key
-        else
-            respond("Can only create keys in pairs", 403)
-        end
+        key = OpenSSL::PKey::RSA.generate(512)
+        private_key = key.to_pem 
+        public_key = key.public_key.to_pem
+        @myEnv.update(:private_key => private_key, :public_key => public_key)
+        response.status = 201
+        response.headers["Content-Type"] = "text/plain" 
+        return public_key + "\n" + private_key
     end
 
     def checkAuth(id = nil, realm = "")
