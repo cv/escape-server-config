@@ -27,6 +27,8 @@ require 'socket'
 CLEAN.include('escape.db')
 CLEAN.include('dist')
 CLEAN.include('reports')
+CLEAN.include('*.war')
+CLEAN.include('tmp')
 
 task :default => [:test]
 

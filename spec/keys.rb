@@ -431,4 +431,27 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.headers["X-Override-Values"].should == '["override.key"]'
         got.headers["X-Encrypted"].should == '[]'
     end
+
+    it 'should set the Last-Modified header to the time an entry was last modified' do
+        got = put('/environments/myenv')
+        got.status.should == 201
+   
+        got = put('/environments/myenv/myapp')
+        got.status.should == 201
+   
+        got = put('/environments/default/myapp/default.key', "default.value")
+        created = Time.now.httpdate
+        got.status.should == 201
+
+        got = get('/environments/default/myapp/default.key')
+        got.headers["Last-Modified"].should == created
+
+        got = put('/environments/default/myapp/default.key', "updated.value")
+        updated = Time.now.httpdate
+        got.status.should == 200
+
+        got = get('/environments/default/myapp/default.key')
+        got.headers["Last-Modified"].should == updated
+        got.headers["Last-Modified"].should != created
+    end
 end

@@ -14,6 +14,7 @@
 
 require 'json'
 require 'openssl'
+require 'time'
 
 class EnvironmentsController < EscController
     map('/environments')
@@ -252,6 +253,7 @@ class EnvironmentsController < EscController
             response.headers["Content-Type"] = "text/plain"
         end
 
+        response.headers["Last-Modified"] = value[:modified].httpdate
         return value[:value]
     end
 

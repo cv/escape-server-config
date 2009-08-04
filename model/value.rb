@@ -12,8 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+require 'time'
+
 class Value < Sequel::Model(:values)
     plugin :schema
+    plugin :hook_class_methods
 
     many_to_one :key, :class => :Key
     many_to_one :environment, :class => :Environment
@@ -22,13 +25,23 @@ class Value < Sequel::Model(:values)
         primary_key :id, :null => false
         String :value
         Boolean :is_encrypted
+        DateTime :modified
         
         foreign_key :key_id, :table => :keys, :type => Integer
         foreign_key :environment_id, :table => :environments, :type => Integer
     end
     
+    before_save {
+        self.modified = Time.now
+    }
+
+
     def default?
-      self[:environment_id] == Environment.default[:id]
+        self[:environment_id] == Environment.default[:id]
+    end
+
+    def last_modified
+        self[:modified].httpdate
     end
     
 end
