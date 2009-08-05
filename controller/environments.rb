@@ -220,7 +220,7 @@ class EnvironmentsController < EscController
             response.headers["X-Default-Values"] = defaults.sort.to_json
             response.headers["X-Override-Values"] = overrides.sort.to_json
             response.headers["X-Encrypted"] = encrypted.sort.to_json
-            response.headers["Last-Modified"] = modified.max.httpdate
+            response.headers["Last-Modified"] = modified.max.httpdate unless modified.empty?
 
             return pairs.sort
         else
