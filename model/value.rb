@@ -31,19 +31,14 @@ class Value < Sequel::Model(:values)
         foreign_key :environment_id, :table => :environments, :type => Integer
     end
     
-    before_save {
+    def before_save
+        return false if super == false
         self.modified = Time.now
-    }
-
+    end
 
     def default?
         self[:environment_id] == Environment.default[:id]
     end
-
-    def last_modified
-        self[:modified].httpdate
-    end
-    
 end
 
 EscData.init_model(Value)

@@ -200,6 +200,7 @@ class EnvironmentsController < EscController
             defaults = Array.new
             overrides = Array.new
             encrypted = Array.new
+            modified = Array.new
             @myApp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => @envId]
 
@@ -212,12 +213,15 @@ class EnvironmentsController < EscController
                 
                 encrypted.push(key[:name]) if value[:is_encrypted]
                 pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
+                modified.push(value[:modified])
             end
 
             response.headers["Content-Type"] = "text/plain"
             response.headers["X-Default-Values"] = defaults.sort.to_json
             response.headers["X-Override-Values"] = overrides.sort.to_json
             response.headers["X-Encrypted"] = encrypted.sort.to_json
+            response.headers["Last-Modified"] = modified.max.httpdate
+
             return pairs.sort
         else
             respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)

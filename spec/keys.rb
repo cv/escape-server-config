@@ -433,25 +433,31 @@ describe EnvironmentsController, 'Key/Value bits' do
     end
 
     it 'should set the Last-Modified header to the time an entry was last modified' do
-        got = put('/environments/myenv')
+        got = put('/environments/default/myapp')
         got.status.should == 201
    
-        got = put('/environments/myenv/myapp')
-        got.status.should == 201
-   
-        got = put('/environments/default/myapp/default.key', "default.value")
-        created = Time.now.httpdate
+        got = put('/environments/default/myapp/mykey', "value")
         got.status.should == 201
 
-        got = get('/environments/default/myapp/default.key')
+        created = Value[:key_id => 1, :environment_id => 1][:modified].httpdate
+
+        got = get('/environments/default/myapp/mykey')
+        got.status.should == 200
         got.headers["Last-Modified"].should == created
 
-        got = put('/environments/default/myapp/default.key', "updated.value")
-        updated = Time.now.httpdate
+        sleep 1
+
+        got = put('/environments/default/myapp/mykey', "updated.value")
         got.status.should == 200
 
-        got = get('/environments/default/myapp/default.key')
+        updated = Value[:key_id => 1, :environment_id => 1][:modified].httpdate
+
+        got = get('/environments/default/myapp/mykey')
+        got.status.should == 200
         got.headers["Last-Modified"].should == updated
-        got.headers["Last-Modified"].should != created
+
+        got = get('/environments/default/myapp')
+        got.status.should == 200
+        got.headers["Last-Modified"].should == updated
     end
 end
