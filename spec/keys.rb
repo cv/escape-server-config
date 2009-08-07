@@ -460,4 +460,35 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.status.should == 200
         got.headers["Last-Modified"].should == updated
     end
+
+#    it 'should support the If-Modified-Since header in the request' do
+#        got = put('/environments/default/myapp')
+#        got.status.should == 201
+#   
+#        got = put('/environments/default/myapp/mykey', "value")
+#        got.status.should == 201
+#
+#        created = Value[:key_id => 1, :environment_id => 1][:modified]
+#        
+#        header('If-Modified-Since', created.httpdate)
+#        got = get('/environments/default/myapp/mykey')
+#        got.status.should == 304
+#
+#        got = get('/environments/default/myapp')
+#        got.status.should == 304
+#
+#        header('If-Modified-Since', (created + 1000).httpdate)
+#        got = get('/environments/default/myapp/mykey')
+#        got.status.should == 304
+#
+#        got = get('/environments/default/myapp')
+#        got.status.should == 304
+#
+#        header('If-Modified-Since', (created - 1000).httpdate)
+#        got = get('/environments/default/myapp/mykey')
+#        got.status.should == 200
+#
+#        got = get('/environments/default/myapp')
+#        got.status.should == 200
+#    end
 end

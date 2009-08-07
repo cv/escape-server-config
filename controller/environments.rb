@@ -168,6 +168,17 @@ class EnvironmentsController < EscController
     # Getters
     #
 
+    def checkLastModified(modified) 
+        return false unless request.env['HTTP_IF_MODIFIED_SINCE']
+
+        if (modified <= Time.parse(request.env['HTTP_IF_MODIFIED_SINCE']))
+            response.status = 304
+            return true
+        end
+
+        return false
+    end
+
     def listEnvs
         envs = Array.new
         Environment.all.each do |env|
@@ -216,6 +227,8 @@ class EnvironmentsController < EscController
                 modified.push(value[:modified])
             end
 
+            #return nil if checkLastModified(modified.max)
+
             response.headers["Content-Type"] = "text/plain"
             response.headers["X-Default-Values"] = defaults.sort.to_json
             response.headers["X-Override-Values"] = overrides.sort.to_json
@@ -227,7 +240,6 @@ class EnvironmentsController < EscController
             respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
         end
     end
-
 
     def getValue
         getEnv
@@ -249,6 +261,8 @@ class EnvironmentsController < EscController
                 response.headers["X-Value-Type"] = "override"
             end
         end
+
+        #checkLastModified(value[:modified])
 
         if value[:is_encrypted]
             response.headers["Content-Type"] = "application/octet-stream"
