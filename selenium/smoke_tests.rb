@@ -83,7 +83,7 @@ describe "ESCAPE Management Interface" do
         # Check that we see the default value in zoo
         page.get_text('//table[@id="key_value_table"]//tbody//tr//td[@id="default.key"]').should == "rubber"
     end
-    
+
     it "should get error when adding a key that exists" do
         page.open("/")
         # Click on default env

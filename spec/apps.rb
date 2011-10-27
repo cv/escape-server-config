@@ -93,7 +93,7 @@ describe EnvironmentsController, 'Application bits' do
         got = get('/environments/default')
         got.status.should == 200
         got.body.should == '["appname"]'
-        
+
         got = put('/environments/default/appname')
         got.status.should == 201
 
@@ -112,7 +112,7 @@ describe EnvironmentsController, 'Application bits' do
         got = get('/environments/myenv')
         got.status.should == 200
         got.body.should == '["appname"]'
-        
+
         got = put('/environments/myenv/appname')
         got.status.should == 201
 
@@ -124,21 +124,21 @@ describe EnvironmentsController, 'Application bits' do
     it 'should only accept \A[.a-zA-Z0-9_-]+\Z as environment name' do
         got = put('/environments/default/spaced%20out%20name')
         got.status.should == 403
-        
+
         got = put('/environments/default/Legal-app_name')
         got.status.should == 201
 
         got = put('/environments/default/still.legal')
         got.status.should == 201
     end
-        
+
     it 'should delete an existing application from an environment' do
         got = put('/environments/myenv')
         got.status.should == 201
         got = get('/environments/myenv')
         got.status.should == 200
         got.body.should == '[]'
-      
+
         got = put('/environments/myenv/myapp')
         got.status.should == 201
         got = get('/environments/myenv')
@@ -159,14 +159,14 @@ describe EnvironmentsController, 'Application bits' do
         got = get('/environments/myenv/myapp')
         got.status.should == 404
     end
-    
+
     it 'should not cascade delete an application from default' do
         got = put('/environments/myenv')
         got.status.should == 201
-      
+
         got = put('/environments/myenv/myapp')
         got.status.should == 201
-      
+
         got = get('/environments/myenv/myapp')
         got.status.should == 200
 
@@ -175,13 +175,13 @@ describe EnvironmentsController, 'Application bits' do
 
         got = delete('/environments/myenv/myapp')
         got.status.should == 200
-        
+
         got = delete('/environments/default/myapp')
         got.status.should == 200
 
         got = get('/environments/myenv/myapp')
         got.status.should == 404
-        
+
         got = get('/environments/default/myapp')
         got.status.should == 404
     end

@@ -53,13 +53,13 @@ class CryptController < EscController
     end
 
     private
-    
+
     def showCryptoKeys
         # Show keys in an environment
         getEnv
 
         response.status = 200
-        response.headers["Content-Type"] = "text/plain"   
+        response.headers["Content-Type"] = "text/plain"
 
         if (@pair == "pair") and (@myEnv.owner.name == "nobody")
             return "#{@myEnv.public_key}" + "\n" +  "#{@myEnv.private_key}"
@@ -75,7 +75,7 @@ class CryptController < EscController
             respond("Crypto keys can only be public or private or in a pair", 403)
         end
     end
-    
+
     def deleteCryptoKeys
         if @env == "default"
             respond("Can't delete keys from default environment.", 403)
@@ -86,7 +86,7 @@ class CryptController < EscController
             response.status = 200
         end
     end
-    
+
     def updateCryptoKeys
         if @env == "default"
             respond("Can't put keys into default environment.", 403)
@@ -108,8 +108,8 @@ class CryptController < EscController
                 # Creating new keys
                 createCryptoKeys
                 response.status = 201
-            end                    
+            end
         end
     end
-    
+
 end

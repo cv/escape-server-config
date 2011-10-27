@@ -30,7 +30,7 @@ require 'etc'
 # Configuration Area Start
 #
 
-home = Etc.getpwuid.dir 
+home = Etc.getpwuid.dir
 
 # Configuration is loaded from ~/.escape/config
 # If the file is not there we'll simply create it and make SQLite the db
@@ -57,7 +57,7 @@ begin
 rescue
     # We're not in JRuby
     $connectionString = cfg["database"]
-    # 
+    #
     # SQLite
     #$connectionString = "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db"
     # MySQL

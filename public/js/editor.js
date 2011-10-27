@@ -4,7 +4,7 @@ var EscEditor = function() {
 		encode : function(stringToEncode) {
 			return stringToEncode.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/, "&apos;");
 		},
-		
+
 		KeyValue : function (key, value, isEncrypted, isOverridden, isDefault) {
 			this.key = key;
 			this.keyValue = value;
@@ -21,7 +21,7 @@ var EscEditor = function() {
 		        var value = item.slice(item.indexOf("=") + 1);
 			    keyValues.push(new EscEditor.KeyValue(key, value, $.inArray(key, encryptedKeys) > -1, $.inArray(key, overriddenKeys) > -1, $.inArray(key, defaultKeys) > -1));
 			});
-			
+
 			return keyValues;
 		},
 
@@ -35,7 +35,7 @@ var EscEditor = function() {
 				} else {
 					rowcolour = 1
 				}
-			
+
             	table += ('<tr class="tr-' + rowcolour + '">');
             	table += ("<th>" + item.key + "</th>");
             	table += ("<td id='" + item.key + "' class='keyeditbox'>" + EscEditor.encode(item.keyValue) + "</td>");
@@ -48,13 +48,13 @@ var EscEditor = function() {
 				table += ("<td class='edittablebutton'>");
             	if (!item.isEncrypted && item.isOverridden && (environment != "default")) {
             		table += ("<img class='keyencrypt' src='/images/encrypt.png'/></td>");
-				}	
+				}
             	table += ("</td>");
         	});
         	table += "</table>";
 			return table;
 		},
-		
+
         validateName : function(name, envName, appName) {
             return true;
         },
@@ -109,7 +109,7 @@ var EscEditor = function() {
 				},
 			});
 
-            if (env != "default") { 
+            if (env != "default") {
 			    $('#editor').append("<div id='pub_key'></div>");
 			    $('#editor').append("<div id='priv_key'></div>");
                 $('#editor').append("<input type='button' class='own' value='Take Ownership' onClick='EscEditor.takeOwnership(\"" + env + "\");'/>");
@@ -130,9 +130,9 @@ var EscEditor = function() {
 			    });
             }
 		},
-        
+
         editPropertiesFor : function(env, app) {
-            $('#editor').empty(); 
+            $('#editor').empty();
 
             $.ajax({
                 type: "GET",
@@ -141,7 +141,7 @@ var EscEditor = function() {
 			       if ( textStatus == "success" ) {
 						var keyValues = EscEditor.createKeyValues(XMLHttpRequest.responseText,
 							jsonParse(XMLHttpRequest.getResponseHeader("X-Encrypted")),
-							jsonParse(XMLHttpRequest.getResponseHeader("X-Override-Values")), 
+							jsonParse(XMLHttpRequest.getResponseHeader("X-Override-Values")),
 							jsonParse(XMLHttpRequest.getResponseHeader("X-Default-Values")));
                     	$('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
                     	var table = EscEditor.createTableForKeyValues(keyValues, env);
@@ -160,7 +160,7 @@ var EscEditor = function() {
 				                	url: "/environments/" + env + "/" + app + "/" + thisKey,
 				                	data: {},
 				                	success: function(data, textStatus) {
-										$('#editor').empty(); 
+										$('#editor').empty();
 				                    	EscSidebar.showEditor(env, app);
 				                	},
 				                	error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -181,7 +181,7 @@ var EscEditor = function() {
 					                url: "/environments/" + env + "/" + app + "/" + thisKey + "?encrypt",
 					                data: thisValue,
 					                success: function(data, textStatus) {
-										$('#editor').empty(); 
+										$('#editor').empty();
 					                    EscSidebar.showEditor(env, app);
 					                },
 					                error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -190,7 +190,7 @@ var EscEditor = function() {
 					            })
 					        };
 					    });
-						
+
                     	$.uiTableEdit($('#key_value_table'), {
                         	find: ".keyeditbox",
                         	editDone: function(newText, oldText, e, td) {
@@ -201,7 +201,7 @@ var EscEditor = function() {
                                 	url: "/environments/" + env + "/" + app + "/" + key,
                                 	data: value,
                                 	complete: function(XMLHttpRequest, textStatus) {
-                                    	$('#app_list').change();  
+                                    	$('#app_list').change();
                                 	},
                             	});
                         	},
@@ -233,7 +233,7 @@ var EscEditor = function() {
                 validated = false;
             };
 
-            if ((userPass1 == null) || (userPass1 == "")) { 
+            if ((userPass1 == null) || (userPass1 == "")) {
                 $('#new_user_errors').append("<font color='red'>Blank passwords not allowed</font><br/>");
                 validated = false;
             };
@@ -310,7 +310,7 @@ $(document).ready(function() {
 					if ( data.search(newName + '=') > -1) {
 						alert(newName + ' exists!');
 					} else {
-						EscEditor.addKey(newName, envName, appName);	
+						EscEditor.addKey(newName, envName, appName);
 					}
 				},
 			});
@@ -324,7 +324,7 @@ $(document).ready(function() {
     });
 
     $(".edit_user").live("click", function() {
-        $.getJSON("/user/" + $(this).text(), 
+        $.getJSON("/user/" + $(this).text(),
             function(data) {
                 $('#new_user_name').val(data.name);
                 $('#new_user_email').val(data.email);

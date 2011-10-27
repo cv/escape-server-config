@@ -17,6 +17,6 @@ describe MainController do
         got = get('/environments')
         got.status.should == 200
     end
-    
+
 end
 

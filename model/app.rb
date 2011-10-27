@@ -30,7 +30,7 @@ class App < Sequel::Model(:apps)
     after_create do |app|
         app.add_environment(Environment[:name => 'default'])
     end
-    
+
     def get_key_value(key, env)
       return nil if key.nil?
       value = Value[:key_id => key[:id], :environment_id => env[:id]]
@@ -39,7 +39,7 @@ class App < Sequel::Model(:apps)
       end
       value
     end
-    
+
     def set_key_value(key, env, value, encrypted)
        myKey = Key[:name => key, :app_id => self[:id]]
         # New one, let's create
@@ -50,7 +50,7 @@ class App < Sequel::Model(:apps)
             Value.create(:key_id => myKey[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
             true
         # We're updating the config
-        else           
+        else
             myValue = Value[:key_id => myKey[:id], :environment_id => env[:id]]
             if myValue.nil? # New value...
                 Value.create(:key_id => myKey[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)

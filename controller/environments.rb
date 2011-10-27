@@ -49,7 +49,7 @@ class EnvironmentsController < EscController
             elsif key.nil?
                 listKeys
             # We're getting value for specific key
-            else 
+            else
                 getValue
             end
 
@@ -92,7 +92,7 @@ class EnvironmentsController < EscController
             elsif key.nil?
                 deleteApp
             # You're deleting a key
-            else             
+            else
                 deleteKey
             end
         end
@@ -116,13 +116,13 @@ class EnvironmentsController < EscController
         getApp
 
         if @env == "default"
-            if @myApp.environments.size == 1 
+            if @myApp.environments.size == 1
                 @myApp.delete
                 respond("Applicaton '#{@app}' deleted.", 200)
             else
                 respond("Applicaton '#{@app}' is used in other environments.", 412)
             end
-        else         
+        else
             getEnv
             checkEnvAuth
             @myApp.remove_environment(@myEnv)
@@ -144,14 +144,14 @@ class EnvironmentsController < EscController
                     break
                 end
             end
-            
+
             if not set
                 @myKey.delete
                 respond("Key '#{@key}' deleted from application '#{@app}'.", 200)
             else
                 respond("Key #{@key} can't be deleted. It has non default values set.", 403)
             end
-        else         
+        else
             checkEnvAuth
             myValue = Value[:key_id => @keyId, :environment_id => @envId]
             if myValue.nil?
@@ -161,14 +161,14 @@ class EnvironmentsController < EscController
                 respond("Key '#{@key}' deleted from the '#{@env}' environment.", 200)
             end
         end
-        
+
     end
 
     #
     # Getters
     #
 
-    def checkLastModified(modified) 
+    def checkLastModified(modified)
         return false unless request.env['HTTP_IF_MODIFIED_SINCE']
 
         if (modified <= Time.parse(request.env['HTTP_IF_MODIFIED_SINCE']))
@@ -200,7 +200,7 @@ class EnvironmentsController < EscController
         response.headers["Content-Type"] = "application/json"
         return apps.sort.to_json
     end
-    
+
     def listKeys
         # List keys and values for app in environment
         getEnv
@@ -221,7 +221,7 @@ class EnvironmentsController < EscController
                 else
                     overrides.push(key[:name])
                 end
-                
+
                 encrypted.push(key[:name]) if value[:is_encrypted]
                 pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
                 modified.push(value[:modified])
@@ -325,7 +325,7 @@ class EnvironmentsController < EscController
           respond("Updated key '#{@key}", 200)
         end
     end
-    
+
     def copyEnv
         respond("Missing Content-Location header. Can't copy environment", 406) unless request.env['HTTP_CONTENT_LOCATION']
 
@@ -352,5 +352,5 @@ class EnvironmentsController < EscController
             end
         end
     end
-end    
+end
 

@@ -26,11 +26,11 @@ class Value < Sequel::Model(:values)
         String :value
         Boolean :is_encrypted
         DateTime :modified
-        
+
         foreign_key :key_id, :table => :keys, :type => Integer
         foreign_key :environment_id, :table => :environments, :type => Integer
     end
-    
+
     def before_save
         return false if super == false
         self.modified = Time.now

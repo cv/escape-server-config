@@ -35,7 +35,7 @@ class Environment < Sequel::Model(:environments)
     before_create do |env|
         env.owner_id = 1
     end
-    
+
     def self.default
       Environment[:name => "default"]
     end

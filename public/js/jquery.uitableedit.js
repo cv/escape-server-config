@@ -9,7 +9,7 @@
  *   pressing escape returns the cell text to its orignal text
  *
  * documentation at http://gregweber.info/projects/uitableedit
- * 
+ *
  * var t = $('table')
  * $.uiTableEdit( t ) // returns t
  *

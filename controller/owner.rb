@@ -48,7 +48,7 @@ class OwnerController < EscController
 
         owner = Owner[:id => @myEnv.owner_id]
 
-        response.headers["Content-Type"] = "text/plain"   
+        response.headers["Content-Type"] = "text/plain"
         return owner.name
     end
 
@@ -88,5 +88,5 @@ class OwnerController < EscController
         @myEnv.save
         return "Owner of environment #{@env} is now nobody"
     end
-    
+
 end

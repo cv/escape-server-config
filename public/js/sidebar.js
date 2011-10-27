@@ -207,10 +207,10 @@ $(document).ready(function() {
         EscSidebar.loadEnvironments();
     })
 
-    // Expand All 
+    // Expand All
     $('.expand').live("click", function() { EscSidebar.expandAll() });
 
-    // Contract All 
+    // Contract All
     $('.contract').live("click", function() { EscSidebar.contractAll() });
 
     // User Management

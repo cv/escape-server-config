@@ -1,6 +1,6 @@
 /*
  * QUnit - jQuery unit testrunner
- * 
+ *
  * http://docs.jquery.com/QUnit
  *
  * Copyright (c) 2008 John Resig, Jörn Zaefferer
@@ -47,7 +47,7 @@ var equiv = function () {
         // consider: typeof [] === object
         } else if (o instanceof Array) {
             return "array";
-        
+
         // consider: typeof new Date() === object
         } else if (o instanceof Date) {
             return "date";
@@ -203,7 +203,7 @@ var GETParams = $.map( location.search.slice(1).split('&'), decodeURIComponent )
 
 if( noglobals )
 	GETParams.splice( ngindex, 1 );
-	
+
 var config = {
 	stats: {
 		all: 0,
@@ -265,7 +265,7 @@ $(window).load(function() {
 		$("li.fail:contains('missing test - untested code is broken code')").parent('ol').parent('li.fail')[this.checked ? 'hide' : 'show']();
 	});
 	$("#filter-missing").after('<label for="filter-missing">Hide missing tests (untested code is broken code)</label>');
-	runTest();	
+	runTest();
 });
 
 function synchronize(callback) {
@@ -305,11 +305,11 @@ function validTest( name ) {
 
 	if( !i )
 		return true;
-	
+
 	while( i-- ){
 		var filter = config.filters[i],
 			not = filter.charAt(0) == '!';
-		if( not ) 
+		if( not )
 			filter = filter.slice(1);
 		if( name.indexOf(filter) != -1 )
 			return !not;
@@ -339,7 +339,7 @@ var pollution;
 
 function saveGlobal(){
 	pollution = [ ];
-	
+
 	if( noglobals )
 		for( var key in window )
 			pollution.push(key);
@@ -347,7 +347,7 @@ function saveGlobal(){
 function checkPollution( name ){
 	var old = pollution;
 	saveGlobal();
-	
+
 	if( pollution.length > old.length ){
 		ok( false, "Introduced global variable(s): " + diff(old, pollution).join(", ") );
 		config.expected++;
@@ -367,10 +367,10 @@ function test(name, callback) {
 		setup: function() {},
 		teardown: function() {}
 	}, config.moduleLifecycle);
-	
+
 	if ( !validTest(name) )
 		return;
-	
+
 	synchronize(function() {
 		config.assertions = [];
 		config.expected = null;
@@ -414,11 +414,11 @@ function test(name, callback) {
 				console.warn(reset.toString());
 			}
 		}
-		
+
 		if(config.expected && config.expected != config.assertions.length) {
 			QUnit.ok( false, "Expected " + config.expected + " assertions, but " + config.assertions.length + " were run" );
 		}
-		
+
 		var good = 0, bad = 0;
 		var ol  = $("<ol/>").hide();
 		config.stats.all += config.assertions.length;
@@ -428,7 +428,7 @@ function test(name, callback) {
 			assertion.result ? good++ : bad++;
 		}
 		config.stats.bad += bad;
-	
+
 		var b = $("<strong/>").html(name + " <b style='color:black;'>(<b class='fail'>" + bad + "</b>, <b class='pass'>" + good + "</b>, " + config.assertions.length + ")</b>")
 		.click(function(){
 			$(this).next().toggle();
@@ -440,9 +440,9 @@ function test(name, callback) {
 				location.href = location.href.match(/^(.+?)(\?.*)?$/)[1] + "?" + encodeURIComponent($.trim(target.text()));
 			}
 		});
-		
+
 		$("<li/>").addClass(bad ? "fail" : "pass").append(b).append(ol).appendTo("#tests");
-	
+
 		if(bad) {
 			$("#filter-pass").attr("disabled", null);
 			$("#filter-missing").attr("disabled", null);
@@ -491,7 +491,7 @@ function ok(a, msg) {
 function isSet(a, b, msg) {
 	function serialArray( a ) {
 		var r = [];
-		
+
 		if ( a && a.length )
 	        for ( var i = 0; i < a.length; i++ ) {
 	            var str = a[i].nodeName;
@@ -503,7 +503,7 @@ function isSet(a, b, msg) {
 	                str = a[i];
 	            r.push( str );
 	        }
-	
+
 		return "[ " + r.join(", ") + " ]";
 	}
 	var ret = true;
@@ -521,7 +521,7 @@ function isSet(a, b, msg) {
  */
 function isObj(a, b, msg) {
 	var ret = true;
-	
+
 	if ( a && b ) {
 		for ( var i in a )
 			if ( a[i] != b[i] )
@@ -631,7 +631,7 @@ function triggerEvent( elem, type, event ) {
 		return '"' + str.toString().replace(/"/g, '\\"') + '"';
 	};
 	function literal( o ){
-		return o + '';	
+		return o + '';
 	};
 	function join( pre, arr, post ){
 		var s = jsDump.separator(),
@@ -644,21 +644,21 @@ function triggerEvent( elem, type, event ) {
 		return [ pre, inner + arr, base + post ].join(s);
 	};
 	function array( arr ){
-		var i = arr.length,	ret = Array(i);					
+		var i = arr.length,	ret = Array(i);
 		this.up();
 		while( i-- )
-			ret[i] = this.parse( arr[i] );				
+			ret[i] = this.parse( arr[i] );
 		this.down();
 		return join( '[', ret, ']' );
 	};
-	
+
 	var reName = /^function (\w+)/;
-	
+
 	var jsDump = window.jsDump = {
 		parse:function( obj, type ){//type is used mostly internally, you can fix a (custom)type in advance
 			var	parser = this.parsers[ type || this.typeOf(obj) ];
-			type = typeof parser;			
-			
+			type = typeof parser;
+
 			return type == 'function' ? parser.call( this, obj ) :
 				   type == 'string' ? parser :
 				   this.parsers.error;
@@ -701,7 +701,7 @@ function triggerEvent( elem, type, event ) {
 			this.parsers[name] = parser;
 		},
 		// The next 3 are exposed so you can use them
-		quote:quote, 
+		quote:quote,
 		literal:literal,
 		join:join,
 		//
@@ -720,7 +720,7 @@ function triggerEvent( elem, type, event ) {
 				if( name )
 					ret += ' ' + name;
 				ret += '(';
-				
+
 				ret = [ ret, this.parse( fn, 'functionArgs' ), '){'].join('');
 				return join( ret, this.parse(fn,'functionCode'), '}' );
 			},
@@ -738,10 +738,10 @@ function triggerEvent( elem, type, event ) {
 			node:function( node ){
 				var open = this.HTML ? '&lt;' : '<',
 					close = this.HTML ? '&gt;' : '>';
-					
+
 				var tag = node.nodeName.toLowerCase(),
 					ret = open + tag;
-					
+
 				for( var a in this.DOMAttrs ){
 					var val = node[this.DOMAttrs[a]];
 					if( val )
@@ -751,8 +751,8 @@ function triggerEvent( elem, type, event ) {
 			},
 			functionArgs:function( fn ){//function calls it internally, it's the arguments part of the function
 				var l = fn.length;
-				if( !l ) return '';				
-				
+				if( !l ) return '';
+
 				var args = Array(l);
 				while( l-- )
 					args[l] = String.fromCharCode(97+l);//97 is 'a'

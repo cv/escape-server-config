@@ -29,7 +29,7 @@ describe UserController do
 
         got = post('/user/somebody', {:email => email, :password => password})
         got.status.should == 201
-        
+
         got = get('/user')
         got.status.should == 200
         got.body.should == '["nobody","somebody"]'

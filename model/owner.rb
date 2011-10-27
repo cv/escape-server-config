@@ -24,7 +24,7 @@ class Owner < Sequel::Model(:owners)
         String :email, :null => false
         String :password, :null => false
     end
-    
+
     validates_uniqueness_of :name
     validates_uniqueness_of :email
 end
