@@ -101,7 +101,7 @@ describe UserController do
         got = post('/user/somebody?password=newpassword')
         got.status.should == 200
 
-        Owner[:name => "somebody"].password.should == MD5.hexdigest("newpassword")
+        Owner[:name => "somebody"].password.should == Digest::MD5.hexdigest("newpassword")
 
         authorize("somebody", "newpassword")
         got = post('/user/somebody?email=newemail')
