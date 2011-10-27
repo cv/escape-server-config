@@ -14,7 +14,7 @@ describe AuthController do
 
     before do
         reset_db
-        @me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
+        @me = Owner.create(:name => "me", :email => "me", :password => Digest::MD5.hexdigest("me"))
     end
 
     it 'should not need auth for /auth' do

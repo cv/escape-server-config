@@ -37,7 +37,7 @@ describe OwnerController do
     end
 
     it 'should set the owner of an environment to specified user on POST /owner/environment, and give it up on delete' do
-        me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
+        me = Owner.create(:name => "me", :email => "me", :password => Digest::MD5.hexdigest("me"))
         env = Environment.create(:name => "myenv")
 
         got = post('/owner/myenv')
@@ -67,7 +67,7 @@ describe OwnerController do
     end
 
     it 'should not be able to change the owner of the default environment' do
-        me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
+        me = Owner.create(:name => "me", :email => "me", :password => Digest::MD5.hexdigest("me"))
 
         authorize("me", "me")
         got = post('/owner/default')

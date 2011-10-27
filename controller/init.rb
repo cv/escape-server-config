@@ -70,7 +70,7 @@ class EscController < Ramaze::Controller
             (user, pass) = Base64.decode64(auth.split(" ")[1]).split(':')
             id = user if id.nil?
             owner = Owner[:name => user]
-            if owner && (owner.password == MD5.hexdigest(pass)) && (id == user)
+            if owner && (owner.password == Digest::MD5.hexdigest(pass)) && (id == user)
                 return user
             end
         end

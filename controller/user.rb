@@ -85,7 +85,7 @@ class UserController < EscController
         getUser(false)
 
         email = request["email"] rescue nil
-        password = MD5.hexdigest(request["password"]) rescue nil
+        password = Digest::MD5.hexdigest(request["password"]) rescue nil
 
         # No such user, we're creating...
         if @user.nil?
