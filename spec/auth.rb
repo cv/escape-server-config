@@ -3,7 +3,7 @@
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
 require 'base64'
-require 'md5'
+require 'digest/md5'
 
 describe AuthController do
     behaves_like :rack_test, :db_helper
@@ -11,14 +11,14 @@ describe AuthController do
     def encode_credentials(username, password)
         "Basic " + Base64.encode64("#{username}:#{password}")
     end
-    
+
     before do
         reset_db
         @me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
     end
 
     it 'should not need auth for /auth' do
-        got = get('/auth') 
+        got = get('/auth')
         got.status.should == 200
         got.body.should == "Public Info"
     end
@@ -120,15 +120,15 @@ describe AuthController do
         header("HTTP_CONTENT_LOCATION", "mine")
         got = post('/environments/yours')
         got.status.should == 201
-        
+
         got = get('/environments/yours')
-        got.status.should == 200 
+        got.status.should == 200
     end
 
     it 'should only get the public key of an owned environment on GET /crypt/environment' do
         got = put('/environments/mine')
         got.status.should == 201
-        
+
         authorize("me", "me")
         got = post('/owner/mine')
         got.status.should == 200
@@ -140,8 +140,8 @@ describe AuthController do
         got.body.should.not == "[]"
         got.body.should.include "-----BEGIN "
         got.body.should.include "-----END "
-        got.body.should.include " PUBLIC KEY-----" 
-        got.body.should.not.include " PRIVATE KEY-----" 
+        got.body.should.include " PUBLIC KEY-----"
+        got.body.should.not.include " PRIVATE KEY-----"
 
         got = get('/crypt/mine/public')
         got.status.should == 200
@@ -149,8 +149,8 @@ describe AuthController do
         got.body.should.not == "[]"
         got.body.should.include "-----BEGIN "
         got.body.should.include "-----END "
-        got.body.should.include " PUBLIC KEY-----" 
-        got.body.should.not.include " PRIVATE KEY-----" 
+        got.body.should.include " PUBLIC KEY-----"
+        got.body.should.not.include " PRIVATE KEY-----"
 
         got = get('/crypt/mine/private')
         got.status.should == 401
@@ -162,8 +162,8 @@ describe AuthController do
         got.body.should.not == "[]"
         got.body.should.include "-----BEGIN "
         got.body.should.include "-----END "
-        got.body.should.include " PUBLIC KEY-----" 
-        got.body.should.include " PRIVATE KEY-----" 
+        got.body.should.include " PUBLIC KEY-----"
+        got.body.should.include " PRIVATE KEY-----"
 
         authorize("me", "me")
         got = get('/crypt/mine/private')
@@ -172,14 +172,14 @@ describe AuthController do
         got.body.should.not == "[]"
         got.body.should.include "-----BEGIN "
         got.body.should.include "-----END "
-        got.body.should.not.include " PUBLIC KEY-----" 
-        got.body.should.include " PRIVATE KEY-----" 
+        got.body.should.not.include " PUBLIC KEY-----"
+        got.body.should.include " PRIVATE KEY-----"
     end
 
     it 'should only update or generate new keys for an owned environment when requested by the owner' do
         got = put('/environments/mine')
         got.status.should == 201
-        
+
         authorize("me", "me")
         got = post('/owner/mine')
         got.status.should == 200

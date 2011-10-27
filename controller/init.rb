@@ -19,7 +19,7 @@ require 'ramaze'
 
 require 'openssl'
 require 'base64'
-require 'md5'
+require 'digest/md5'
 
 class EscController < Ramaze::Controller
     private
@@ -51,11 +51,11 @@ class EscController < Ramaze::Controller
         end
 
         key = OpenSSL::PKey::RSA.generate(512)
-        private_key = key.to_pem 
+        private_key = key.to_pem
         public_key = key.public_key.to_pem
         @myEnv.update(:private_key => private_key, :public_key => public_key)
         response.status = 201
-        response.headers["Content-Type"] = "text/plain" 
+        response.headers["Content-Type"] = "text/plain"
         return public_key + "\n" + private_key
     end
 
@@ -86,7 +86,7 @@ class EscController < Ramaze::Controller
         checkAuth(@myEnv.owner.name, "Environment #{@env}")
     end
 
-    def checkUserAuth 
+    def checkUserAuth
         checkAuth(@name, "User #{@name}")
     end
 end

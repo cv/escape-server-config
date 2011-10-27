@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 require 'json'
-require 'md5'
+require 'digest/md5'
 
 class UserController < EscController
     map('/user')
@@ -63,11 +63,11 @@ class UserController < EscController
 
     def getUser(failOnError = true)
         respond("Undefined", 400) if @name.nil?
-        
+
         @user = Owner[:name => @name]
 
         if failOnError and not @user
-            respond("User #{@name} not found", 404) 
+            respond("User #{@name} not found", 404)
         end
     end
 
@@ -95,7 +95,7 @@ class UserController < EscController
             begin
                 Owner.create(:name => @name, :email => email, :password => password)
                 respond("Created user #{@name}", 201)
-            rescue 
+            rescue
                 respond("Error creating user. Does it already exist?", 403)
             end
         # User exists, we're updating

@@ -3,7 +3,7 @@
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
 require 'base64'
-require 'md5'
+require 'digest/md5'
 
 describe EnvironmentsController, 'Environment bits' do
     behaves_like :rack_test, :db_helper
@@ -47,7 +47,7 @@ describe EnvironmentsController, 'Environment bits' do
     it 'should not be able to create new environment using POST' do
         got = post('/environments/myenv')
         got.status.should == 406
-    
+
         got = get('/environments/myenv')
         got.status.should == 404
     end
@@ -62,7 +62,7 @@ describe EnvironmentsController, 'Environment bits' do
         got = get('/environments/myenv')
         got.status.should == 200
         got.body.should == '["myapp"]'
-        
+
         got = put('/environments/myenv')
         got.status.should == 200
 
@@ -81,23 +81,23 @@ describe EnvironmentsController, 'Environment bits' do
         got = put('/environments/not%20legal')
         got.status.should == 403
     end
-    
+
     it 'should delete an existing environment' do
         got = put('/environments/delete_me')
         got.status.should == 201
-      
+
         got = delete('/environments/delete_me')
         got.status.should == 200
-        
+
         got = get('/environments/delete_me')
         got.status.should == 404
     end
-    
+
     it 'should not delete a missing environment' do
         got = delete('/environments/i_dont_exist')
         got.status.should == 404
     end
-    
+
     it 'should not delete the default environment' do
         got = delete('/environments/default')
         got.status.should == 403
@@ -106,22 +106,22 @@ describe EnvironmentsController, 'Environment bits' do
     it 'should copy an environment' do
         got = put('/environments/copyme')
         got.status.should == 201
-         
+
         header('HTTP_CONTENT_LOCATION', "copyme")
         got = post('/environments/mycopy')
         got.status.should == 201
-        
+
         got = get('/environments/mycopy')
-        got.status.should == 200 
+        got.status.should == 200
     end
 
     it 'should throw a 409 error if trying to copy to an environment that already exists' do
         got = put('/environments/copyme')
         got.status.should == 201
-         
+
         got = put('/environments/mycopy')
         got.status.should == 201
-         
+
         header('HTTP_CONTENT_LOCATION', "copyme")
         got = post('/environments/mycopy')
         got.status.should == 409

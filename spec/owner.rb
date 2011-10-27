@@ -3,7 +3,7 @@
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 require 'init'
 require 'base64'
-require 'md5'
+require 'digest/md5'
 
 describe OwnerController do
     behaves_like :rack_test, :db_helper
