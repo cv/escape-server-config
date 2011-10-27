@@ -11,6 +11,6 @@ group :development do
   gem 'rack-test'
   gem 'bacon'
   gem 'Selenium'
-  gem 'selenium-client'
-
+  gem 'selenium-client', '= 1.2.10'
+  gem 'rspec', '= 1.1.12'
 end

@@ -11,7 +11,8 @@ GEM
       rack (>= 1.0)
     ramaze (2009.06.12)
       innate (= 2009.06.12)
-    selenium-client (1.2.18)
+    rspec (1.1.12)
+    selenium-client (1.2.10)
     sequel (3.2.0)
     sqlite3 (1.3.4)
 
@@ -25,6 +26,7 @@ DEPENDENCIES
   rack (~> 1.0.0)
   rack-test
   ramaze (= 2009.06.12)
-  selenium-client
+  rspec (= 1.1.12)
+  selenium-client (= 1.2.10)
   sequel (= 3.2.0)
   sqlite3
