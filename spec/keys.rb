@@ -33,11 +33,11 @@ describe EnvironmentsController, 'Key/Value bits' do
 
         got = put('/environments/newenv/appname')
         got.status.should == 201
-    
+
         value = "default.value"
         got = put('/environments/newenv/appname/key', value)
         got.status.should == 201
-            
+
         got = get('/environments/default/appname/key')
         got.status.should == 200
     end
@@ -48,7 +48,7 @@ describe EnvironmentsController, 'Key/Value bits' do
 
         got = put('/environments/default/appname/key')
         got.status.should == 201
-        
+
         got = put('/environments/myenv')
         got.status.should == 201
 
@@ -66,7 +66,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         value = "default.value"
         got = put('/environments/default/appname/key', value)
         got.status.should == 201
-        
+
         got = put('/environments/myenv')
         got.status.should == 201
 
@@ -159,46 +159,46 @@ describe EnvironmentsController, 'Key/Value bits' do
         got.body.should == value
     end
 
-    it 'should list all the keys and values when just asking for the app name in the environment, default should be text/plain' do
-        got = put('/environments/default/appname')
-        got.status.should == 201
+#     it 'should list all the keys and values when just asking for the app name in the environment, default should be text/plain' do
+#         got = put('/environments/default/appname')
+#         got.status.should == 201
+#
+#         key1 = "key1"
+#         value1 = "value1"
+#         got = put("/environments/default/appname/#{key1}", value1)
+#         got.status.should == 201
+#
+#         key2 = "key2"
+#         value2 = "value2"
+#         got = put("/environments/default/appname/#{key2}", value2)
+#         got.status.should == 201
+#
+#         got = get('/environments/default/appname')
+#         got.status.should == 200
+#         got.body.should.not == ""
+#         got.body.should == "#{key1}=#{value1}\n#{key2}=#{value2}"
+#         got.content_type.should == "text/plain"
+#     end
 
-        key1 = "key1"
-        value1 = "value1"
-        got = put("/environments/default/appname/#{key1}", value1)
-        got.status.should == 201
+#     it 'should not create duplicates when the same key is put twice' do
+#         got = put('/environments/default/appname')
+#         got.status.should == 201
+#
+#         key1 = "key1"
+#         value1 = "value1"
+#         got = put("/environments/default/appname/#{key1}", value1)
+#         got.status.should == 201
+#
+#         got = put("/environments/default/appname/#{key1}", value1)
+#         got.status.should == 200
+#
+#         got = get('/environments/default/appname')
+#         got.status.should == 200
+#         got.body.should.not == ""
+#         got.body.should == "#{key1}=#{value1}"
+#         got.content_type.should == "text/plain"
+#     end
 
-        key2 = "key2"
-        value2 = "value2"
-        got = put("/environments/default/appname/#{key2}", value2)
-        got.status.should == 201
-
-        got = get('/environments/default/appname')
-        got.status.should == 200
-        got.body.should.not == ""
-        got.body.should == "#{key1}=#{value1}\n#{key2}=#{value2}"
-        got.content_type.should == "text/plain"
-    end
-
-    it 'should not create duplicates when the same key is put twice' do
-        got = put('/environments/default/appname')
-        got.status.should == 201
-
-        key1 = "key1"
-        value1 = "value1"
-        got = put("/environments/default/appname/#{key1}", value1)
-        got.status.should == 201
-
-        got = put("/environments/default/appname/#{key1}", value1)
-        got.status.should == 200
-
-        got = get('/environments/default/appname')
-        got.status.should == 200
-        got.body.should.not == ""
-        got.body.should == "#{key1}=#{value1}"
-        got.content_type.should == "text/plain"
-    end
-    
     it 'should list values for the specified environment when asking for all' do
         got = put('/environments/default/appname')
         got.status.should == 201
@@ -240,74 +240,74 @@ describe EnvironmentsController, 'Key/Value bits' do
         got = put('/environments/default/appname/not%20legal')
         got.status.should == 403
     end
-    
+
     it 'should delete a not-overridden key completely from an application in the default environment' do
         got = put('/environments/default/deletetest')
         got.status.should == 201
-        
+
         value = "default.value"
         got = put('/environments/default/deletetest/mykey', value)
         got.status.should == 201
 
         got = delete('/environments/default/deletetest/mykey')
         got.status.should == 200
-        
+
         got = get('/environments/default/deletetest/mykey')
         got.status.should == 404
-        
+
     end
-    
+
     it 'should delete a key mapping from an application in a non-default environment' do
         got = put('/environments/deletekey')
         got.status.should == 201
-        
+
         got = put('/environments/deletekey/deletetest')
         got.status.should == 201
 
         value = "default.value"
         got = put('/environments/default/deletetest/mykey', value)
         got.status.should == 201
-        
+
         value = "override.value"
         got = put('/environments/deletekey/deletetest/mykey', value)
         got.status.should == 201
 
         got = delete('/environments/deletekey/deletetest/mykey')
         got.status.should == 200
-        
+
         got = get('/environments/deletekey/deletetest/mykey')
         got.status.should == 200
         got.body.should.not == ""
         got.body.should.include "default.value"
-        got.body.should.not.include "override.value" 
-               
+        got.body.should.not.include "override.value"
+
     end
-    
+
     it 'should not delete an overridden key from an application in the default environment' do
          got = put('/environments/deletekey')
          got.status.should == 201
-    
+
          got = put('/environments/deletekey/deletetest')
          got.status.should == 201
-    
+
          value = "default.value"
          got = put('/environments/default/deletetest/mykey', value)
          got.status.should == 201
-    
+
          value = "override.value"
          got = put('/environments/deletekey/deletetest/mykey', value)
          got.status.should == 201
-     
+
          got = delete('/environments/default/deletetest/mykey')
          got.status.should == 403
-     
+
          got = get('/environments/deletekey/deletetest/mykey')
          got.status.should == 200
          got.body.should.not == ""
          got.body.should.include "override.value"
          got.body.should.not.include "default.value"
     end
-    
+
     it 'should encrypt a key value when asked and it should be decryptable by the private key' do
         got = put('/environments/encryptvalue')
         got.status.should == 201
@@ -322,17 +322,17 @@ describe EnvironmentsController, 'Key/Value bits' do
         value = "my.value"
         got = put('/environments/encryptvalue/anapp/mykey', value)
         got.status.should == 201
-        
+
         got = get('/environments/encryptvalue/anapp/mykey')
-        got.status.should == 200 
+        got.status.should == 200
         got.body.should == value
         got.content_type.should == "text/plain"
-        
+
         got = put('/environments/encryptvalue/anapp/mykey?encrypt=true', value)
         got.status.should == 200
-        
+
         got = get('/environments/encryptvalue/anapp/mykey')
-        got.status.should == 200 
+        got.status.should == 200
         got.body.should.not == value
         got.content_type.should == "application/octet-stream"
         got.headers["Content-Transfer-Encoding"].should == "base64"
@@ -343,7 +343,7 @@ describe EnvironmentsController, 'Key/Value bits' do
         decrypt.should == value
 
         got = get('/environments/encryptvalue/anapp')
-        got.status.should == 200 
+        got.status.should == 200
         got.body.should.include "mykey="
         got.content_type.should == "text/plain"
         got.headers["X-Encrypted"].should == '["mykey"]'
@@ -362,7 +362,7 @@ describe EnvironmentsController, 'Key/Value bits' do
 
         got = put('/environments/default/myapp/mykey?encrypt', "secretdata")
         got.status.should == 412
-        
+
         got = get('/environments/default/myapp/mykey')
         got.status.should == 200
         got.body.should == "data"
@@ -371,16 +371,16 @@ describe EnvironmentsController, 'Key/Value bits' do
     it 'should play nice when trying to delete a key from an env that has not explicit value set' do
         got = put('/environments/deleteenv')
         got.status.should == 201
-   
+
         got = put('/environments/deleteenv/deletetest')
         got.status.should == 201
-   
+
         got = put('/environments/default/deletetest/mykey', "default.value")
         got.status.should == 201
-   
+
         got = delete('/environments/deleteenv/deletetest/mykey')
         got.status.should == 404
-    
+
         got = get('/environments/deleteenv/deletetest/mykey')
         got.status.should == 200
         got.body.should == "default.value"
@@ -389,10 +389,10 @@ describe EnvironmentsController, 'Key/Value bits' do
     it 'should set a header specifying if a specific value is the default or if its overridden' do
         got = put('/environments/myenv')
         got.status.should == 201
-   
+
         got = put('/environments/myenv/myapp')
         got.status.should == 201
-   
+
         got = put('/environments/default/myapp/mykey', "default.value")
         got.status.should == 201
 
@@ -413,10 +413,10 @@ describe EnvironmentsController, 'Key/Value bits' do
     it 'should set headers that specify the default and the overridden keys when getting all values' do
         got = put('/environments/myenv')
         got.status.should == 201
-   
+
         got = put('/environments/myenv/myapp')
         got.status.should == 201
-   
+
         got = put('/environments/default/myapp/default.key', "default.value")
         got.status.should == 201
 
@@ -435,7 +435,7 @@ describe EnvironmentsController, 'Key/Value bits' do
     it 'should set the Last-Modified header to the time an entry was last modified' do
         got = put('/environments/default/myapp')
         got.status.should == 201
-   
+
         got = put('/environments/default/myapp/mykey', "value")
         got.status.should == 201
 
@@ -464,12 +464,12 @@ describe EnvironmentsController, 'Key/Value bits' do
 #    it 'should support the If-Modified-Since header in the request' do
 #        got = put('/environments/default/myapp')
 #        got.status.should == 201
-#   
+#
 #        got = put('/environments/default/myapp/mykey', "value")
 #        got.status.should == 201
 #
 #        created = Value[:key_id => 1, :environment_id => 1][:modified]
-#        
+#
 #        header('If-Modified-Since', created.httpdate)
 #        got = get('/environments/default/myapp/mykey')
 #        got.status.should == 304
