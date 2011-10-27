@@ -1,0 +1,30 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    Selenium (1.1.14)
+    bacon (1.1.0)
+    innate (2009.06.12)
+      rack (~> 1.0.0)
+    json (1.6.1)
+    rack (1.0.1)
+    rack-test (0.6.1)
+      rack (>= 1.0)
+    ramaze (2009.06.12)
+      innate (= 2009.06.12)
+    selenium-client (1.2.18)
+    sequel (3.2.0)
+    sqlite3 (1.3.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  Selenium
+  bacon
+  json
+  rack (~> 1.0.0)
+  rack-test
+  ramaze (= 2009.06.12)
+  selenium-client
+  sequel (= 3.2.0)
+  sqlite3
