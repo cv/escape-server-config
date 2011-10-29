@@ -113,7 +113,7 @@ class EnvironmentsController < EscController
     end
 
     def deleteApp
-        getApp
+        get_app
 
         if @env == "default"
             if @myApp.environments.size == 1
@@ -132,7 +132,7 @@ class EnvironmentsController < EscController
 
     def deleteKey
         getEnv
-        getApp
+        get_app
         get_key
 
         if @env == "default"
@@ -204,7 +204,7 @@ class EnvironmentsController < EscController
     def listKeys
         # List keys and values for app in environment
         getEnv
-        getApp
+        get_app
 
         if @myEnv.apps.include? @myApp
             pairs = Array.new
@@ -243,7 +243,7 @@ class EnvironmentsController < EscController
 
     def getValue
         getEnv
-        getApp
+        get_app
 
         if not @myEnv.apps.include? @myApp
             respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
@@ -291,7 +291,7 @@ class EnvironmentsController < EscController
     def createApp
         getEnv
         check_env_auth
-        getApp(false)
+        get_app(false)
         respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @myEnv
 
         if @myApp.nil?
@@ -305,7 +305,7 @@ class EnvironmentsController < EscController
     def setValue
         getEnv
         check_env_auth
-        getApp
+        get_app
 
         value = request.body.read
         if request.env['QUERY_STRING'] =~ /encrypt/

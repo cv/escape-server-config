@@ -32,7 +32,7 @@ class EscController < Ramaze::Controller
         @defaultId = Environment[:name => "default"][:id]
     end
 
-    def getApp(failOnError = true)
+    def get_app(failOnError = true)
         @myApp = App[:name => @app]
         respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and failOnError
         @appId = @myApp[:id] unless @myApp.nil?
