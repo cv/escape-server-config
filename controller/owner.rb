@@ -61,7 +61,7 @@ class OwnerController < EscController
 
         if @myEnv.owner_id == 1
             #auth = check_auth(nil, "Environment #{@env}")
-            auth = getEnvAuth
+            auth = get_env_auth
         else
             auth = check_env_auth
         end

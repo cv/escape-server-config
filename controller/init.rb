@@ -78,7 +78,7 @@ class EscController < Ramaze::Controller
         respond 'Unauthorized', 401
     end
 
-    def getEnvAuth
+    def get_env_auth
         check_auth(nil, "Environment #{@env}")
     end
 
