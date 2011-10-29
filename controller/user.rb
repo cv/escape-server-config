@@ -31,7 +31,7 @@ class UserController < EscController
             if name.nil?
                 list_all_users
             else
-                get_userDetails
+                get_user_details
             end
 
         # Posting...
@@ -71,7 +71,7 @@ class UserController < EscController
         end
     end
 
-    def get_userDetails
+    def get_user_details
         get_user
 
         response.headers["Content-Type"] = "application/json"
