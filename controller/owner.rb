@@ -35,7 +35,7 @@ class OwnerController < EscController
         elsif request.post?
             set_owner
         elsif request.delete?
-            clearOwner
+            clear_owner
         else
             respond("Undefined", 400)
         end
@@ -75,7 +75,7 @@ class OwnerController < EscController
         return "Owner of environment #{@env} is now #{auth}"
     end
 
-    def clearOwner
+    def clear_owner
         get_env
 
         if @my_env.owner_id == 1
