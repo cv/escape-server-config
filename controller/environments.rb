@@ -87,7 +87,7 @@ class EnvironmentsController < EscController
                 response.status = 400
             # You're deleting an env
             elsif app.nil?
-                deleteEnv
+                delete_env
             # You're deleting an app
             elsif key.nil?
                 deleteApp
@@ -104,7 +104,7 @@ class EnvironmentsController < EscController
     # Deletion
     #
 
-    def deleteEnv
+    def delete_env
         respond("Not allowed to delete default environment!", 403) if @env == "default"
         get_env
         check_env_auth
