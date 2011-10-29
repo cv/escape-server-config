@@ -26,9 +26,9 @@ class EscController < Ramaze::Controller
 
     # Get instance info
     def get_env(fail_on_error = true)
-        @myEnv = Environment[:name => @env]
-        respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and fail_on_error
-        @envId = @myEnv[:id] unless @myEnv.nil?
+        @my_env = Environment[:name => @env]
+        respond("Environment '#{@env}' does not exist.", 404) if @my_env.nil? and fail_on_error
+        @envId = @my_env[:id] unless @my_env.nil?
         @defaultId = Environment[:name => "default"][:id]
     end
 
@@ -53,7 +53,7 @@ class EscController < Ramaze::Controller
         key = OpenSSL::PKey::RSA.generate(512)
         private_key = key.to_pem
         public_key = key.public_key.to_pem
-        @myEnv.update(:private_key => private_key, :public_key => public_key)
+        @my_env.update(:private_key => private_key, :public_key => public_key)
         response.status = 201
         response.headers["Content-Type"] = "text/plain"
         return public_key + "\n" + private_key
@@ -83,7 +83,7 @@ class EscController < Ramaze::Controller
     end
 
     def check_env_auth
-        check_auth(@myEnv.owner.name, "Environment #{@env}")
+        check_auth(@my_env.owner.name, "Environment #{@env}")
     end
 
     def checkUserAuth

@@ -61,16 +61,16 @@ class CryptController < EscController
         response.status = 200
         response.headers["Content-Type"] = "text/plain"
 
-        if (@pair == "pair") and (@myEnv.owner.name == "nobody")
-            return "#{@myEnv.public_key}" + "\n" +  "#{@myEnv.private_key}"
+        if (@pair == "pair") and (@my_env.owner.name == "nobody")
+            return "#{@my_env.public_key}" + "\n" +  "#{@my_env.private_key}"
         elsif (@pair == "pair") and request.env['HTTP_AUTHORIZATION']
             check_env_auth
-            return "#{@myEnv.public_key}" + "\n" +  "#{@myEnv.private_key}"
+            return "#{@my_env.public_key}" + "\n" +  "#{@my_env.private_key}"
         elsif @pair == "private"
             check_env_auth
-            return "#{@myEnv.private_key}"
+            return "#{@my_env.private_key}"
         elsif (@pair == "public") or (@pair == "pair")
-            return "#{@myEnv.public_key}"
+            return "#{@my_env.public_key}"
         else
             respond("Crypto keys can only be public or private or in a pair", 403)
         end
@@ -82,7 +82,7 @@ class CryptController < EscController
         else
             get_env
             check_env_auth
-            @myEnv.update(:private_key => nil, :public_key => nil)
+            @my_env.update(:private_key => nil, :public_key => nil)
             response.status = 200
         end
     end
@@ -102,7 +102,7 @@ class CryptController < EscController
                     respond("Error in key", 406)
                 end
 
-                @myEnv.update(:private_key => new_private_key.to_pem, :public_key => new_private_key.public_key.to_pem)
+                @my_env.update(:private_key => new_private_key.to_pem, :public_key => new_private_key.public_key.to_pem)
                 respond("Updated key", 201)
             else
                 # Creating new keys

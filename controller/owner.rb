@@ -46,7 +46,7 @@ class OwnerController < EscController
     def getOwner
         get_env
 
-        owner = Owner[:id => @myEnv.owner_id]
+        owner = Owner[:id => @my_env.owner_id]
 
         response.headers["Content-Type"] = "text/plain"
         return owner.name
@@ -59,7 +59,7 @@ class OwnerController < EscController
 
         get_env
 
-        if @myEnv.owner_id == 1
+        if @my_env.owner_id == 1
             #auth = check_auth(nil, "Environment #{@env}")
             auth = get_env_auth
         else
@@ -70,22 +70,22 @@ class OwnerController < EscController
 
         respond("Owner #{auth} not found", 404) if owner.nil?
 
-        @myEnv.owner = owner
-        @myEnv.save
+        @my_env.owner = owner
+        @my_env.save
         return "Owner of environment #{@env} is now #{auth}"
     end
 
     def clearOwner
         get_env
 
-        if @myEnv.owner_id == 1
+        if @my_env.owner_id == 1
             respond("Environment #{@env} is not owned by anyone", 200)
         else
             auth = check_env_auth
         end
 
-        @myEnv.owner = Owner[:name => "nobody"]
-        @myEnv.save
+        @my_env.owner = Owner[:name => "nobody"]
+        @my_env.save
         return "Owner of environment #{@env} is now nobody"
     end
 

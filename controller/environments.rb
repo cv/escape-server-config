@@ -108,7 +108,7 @@ class EnvironmentsController < EscController
         respond("Not allowed to delete default environment!", 403) if @env == "default"
         get_env
         check_env_auth
-        @myEnv.delete
+        @my_env.delete
         respond("Environment '#{@env}' deleted.", 200)
     end
 
@@ -125,7 +125,7 @@ class EnvironmentsController < EscController
         else
             get_env
             check_env_auth
-            @myApp.remove_environment(@myEnv)
+            @myApp.remove_environment(@my_env)
             respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
         end
     end
@@ -193,7 +193,7 @@ class EnvironmentsController < EscController
         get_env
 
         apps = Array.new
-        @myEnv.apps.each do |app|
+        @my_env.apps.each do |app|
             apps.push(app[:name])
         end
 
@@ -206,7 +206,7 @@ class EnvironmentsController < EscController
         get_env
         get_app
 
-        if @myEnv.apps.include? @myApp
+        if @my_env.apps.include? @myApp
             pairs = Array.new
             defaults = Array.new
             overrides = Array.new
@@ -245,13 +245,13 @@ class EnvironmentsController < EscController
         get_env
         get_app
 
-        if not @myEnv.apps.include? @myApp
+        if not @my_env.apps.include? @myApp
             respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
         end
 
         get_key(false)
 
-        value = @myApp.get_key_value(@myKey, @myEnv)
+        value = @myApp.get_key_value(@myKey, @my_env)
         if value.nil?
             respond("No default value", 404)
         else
@@ -282,7 +282,7 @@ class EnvironmentsController < EscController
     def createEnv
         respond("Environment '#{@env}' already exists.", 200) if Environment[:name => @env]
 
-        @myEnv = Environment.create(:name => @env)
+        @my_env = Environment.create(:name => @env)
         @pair = "pair"
         createCryptoKeys
         respond("Environment created.", 201)
@@ -292,12 +292,12 @@ class EnvironmentsController < EscController
         get_env
         check_env_auth
         get_app(false)
-        respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @myEnv
+        respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @my_env
 
         if @myApp.nil?
             @myApp = App.create(:name => @app)
         end
-        @myEnv.add_app(@myApp) unless @myEnv.apps.include? @myApp
+        @my_env.add_app(@myApp) unless @my_env.apps.include? @myApp
 
         respond("Application '#{@app}' created in environment '#{@env}'.", 201)
     end
@@ -312,14 +312,14 @@ class EnvironmentsController < EscController
             respond("Can't encrypt data in the default environment", 412) if @env == "default"
             encrypted = true
             # Do some encryption
-            public_key = OpenSSL::PKey::RSA.new(@myEnv.public_key)
+            public_key = OpenSSL::PKey::RSA.new(@my_env.public_key)
             encrypted_value = Base64.encode64(public_key.public_encrypt(value)).strip()
             value = encrypted_value
         else
             encrypted = false
         end
 
-        if @myApp.set_key_value(@key, @myEnv, value, encrypted)
+        if @myApp.set_key_value(@key, @my_env, value, encrypted)
           respond("Created key '#{@key}", 201)
         else
           respond("Updated key '#{@key}", 200)
@@ -333,18 +333,18 @@ class EnvironmentsController < EscController
         respond("Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404) if srcEnv.nil?
 
         get_env(false)
-        respond("Target environment #{@env} already exists.", 409) unless @myEnv.nil?
+        respond("Target environment #{@env} already exists.", 409) unless @my_env.nil?
 
         # Create new env
-        @myEnv = Environment.create(:name => @env)
+        @my_env = Environment.create(:name => @env)
         @pair = "pair"
         createCryptoKeys
 
         srcEnvId = srcEnv[:id]
-        destEnvId = @myEnv[:id]
+        destEnvId = @my_env[:id]
         # Copy applications into new env
         srcEnv.apps.each do |existingApp|
-            @myEnv.add_app(existingApp)
+            @my_env.add_app(existingApp)
             # Copy overridden values
             existingApp.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => srcEnvId]
