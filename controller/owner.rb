@@ -33,7 +33,7 @@ class OwnerController < EscController
         if request.get?
             get_owner
         elsif request.post?
-            setOwner
+            set_owner
         elsif request.delete?
             clearOwner
         else
@@ -52,7 +52,7 @@ class OwnerController < EscController
         return owner.name
     end
 
-    def setOwner
+    def set_owner
         if @env == "default"
             respond("No one can own the 'default' environment", 403)
         end
