@@ -31,7 +31,7 @@ class UserController < EscController
             if name.nil?
                 listAllUsers
             else
-                getUserDetails
+                get_userDetails
             end
 
         # Posting...
@@ -61,7 +61,7 @@ class UserController < EscController
         return data.sort.to_json
     end
 
-    def getUser(fail_on_error = true)
+    def get_user(fail_on_error = true)
         respond("Undefined", 400) if @name.nil?
 
         @user = Owner[:name => @name]
@@ -71,8 +71,8 @@ class UserController < EscController
         end
     end
 
-    def getUserDetails
-        getUser
+    def get_userDetails
+        get_user
 
         response.headers["Content-Type"] = "application/json"
         data = {}
@@ -82,7 +82,7 @@ class UserController < EscController
     end
 
     def createUpdateUser
-        getUser(false)
+        get_user(false)
 
         email = request["email"] rescue nil
         password = Digest::MD5.hexdigest(request["password"]) rescue nil
@@ -107,7 +107,7 @@ class UserController < EscController
     end
 
     def deleteUser
-        getUser
+        get_user
 
         check_user_auth
         @user.environments.each do |env|
