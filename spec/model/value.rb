@@ -13,8 +13,8 @@ describe Value do
   it "should return true if default" do
     my_app = App.create(:name => 'testapp')
     Environment.default.add_app(my_app)
-    aKey = Key.create(:name => 'key', :app_id => my_app[:id])
-    value = Value.create(:key_id => aKey[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => false)
+    key = Key.create(:name => 'key', :app_id => my_app[:id])
+    value = Value.create(:key_id => key[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => false)
     value.default?.should == true
   end
 
@@ -22,8 +22,8 @@ describe Value do
     env = Environment.create(:name => 'test')
     my_app = App.create(:name => 'testapp')
     env.add_app(my_app)
-    aKey = Key.create(:name => 'key', :app_id => my_app[:id])
-    value = Value.create(:key_id => aKey[:id], :environment_id => env[:id], :value => value, :is_encrypted => false)
+    key = Key.create(:name => 'key', :app_id => my_app[:id])
+    value = Value.create(:key_id => key[:id], :environment_id => env[:id], :value => value, :is_encrypted => false)
     value.default?.should == false
   end
 
