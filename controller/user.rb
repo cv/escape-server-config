@@ -61,12 +61,12 @@ class UserController < EscController
         return data.sort.to_json
     end
 
-    def getUser(failOnError = true)
+    def getUser(fail_on_error = true)
         respond("Undefined", 400) if @name.nil?
 
         @user = Owner[:name => @name]
 
-        if failOnError and not @user
+        if fail_on_error and not @user
             respond("User #{@name} not found", 404)
         end
     end

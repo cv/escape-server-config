@@ -25,22 +25,22 @@ class EscController < Ramaze::Controller
     private
 
     # Get instance info
-    def get_env(failOnError = true)
+    def get_env(fail_on_error = true)
         @myEnv = Environment[:name => @env]
-        respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and failOnError
+        respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and fail_on_error
         @envId = @myEnv[:id] unless @myEnv.nil?
         @defaultId = Environment[:name => "default"][:id]
     end
 
-    def get_app(failOnError = true)
+    def get_app(fail_on_error = true)
         @myApp = App[:name => @app]
-        respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and failOnError
+        respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and fail_on_error
         @appId = @myApp[:id] unless @myApp.nil?
     end
 
-    def get_key(failOnError = true)
+    def get_key(fail_on_error = true)
         @myKey = Key[:name => @key, :app_id => @appId]
-        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
+        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and fail_on_error
         @keyId = @myKey[:id] unless @myKey.nil?
     end
 
