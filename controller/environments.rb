@@ -61,7 +61,7 @@ class EnvironmentsController < EscController
             # You're copying an env
             elsif app.nil?
                 # env is the target, Location Header has the source
-                copyEnv
+                copy_env
             end
 
         # Creating...
@@ -326,7 +326,7 @@ class EnvironmentsController < EscController
         end
     end
 
-    def copyEnv
+    def copy_env
         respond("Missing Content-Location header. Can't copy environment", 406) unless request.env['HTTP_CONTENT_LOCATION']
 
         srcEnv = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
