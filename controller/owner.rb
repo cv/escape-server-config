@@ -31,7 +31,7 @@ class OwnerController < EscController
 
         # Getting...
         if request.get?
-            getOwner
+            get_owner
         elsif request.post?
             setOwner
         elsif request.delete?
@@ -43,7 +43,7 @@ class OwnerController < EscController
 
     private
 
-    def getOwner
+    def get_owner
         get_env
 
         owner = Owner[:id => @my_env.owner_id]
