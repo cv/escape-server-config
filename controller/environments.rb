@@ -284,7 +284,7 @@ class EnvironmentsController < EscController
 
         @my_env = Environment.create(:name => @env)
         @pair = "pair"
-        createCryptoKeys
+        create_crypto_keys
         respond("Environment created.", 201)
     end
 
@@ -338,7 +338,7 @@ class EnvironmentsController < EscController
         # Create new env
         @my_env = Environment.create(:name => @env)
         @pair = "pair"
-        createCryptoKeys
+        create_crypto_keys
 
         srcEnvId = srcEnv[:id]
         destEnvId = @my_env[:id]

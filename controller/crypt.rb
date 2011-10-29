@@ -106,7 +106,7 @@ class CryptController < EscController
                 respond("Updated key", 201)
             else
                 # Creating new keys
-                createCryptoKeys
+                create_crypto_keys
                 response.status = 201
             end
         end

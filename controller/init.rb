@@ -44,7 +44,7 @@ class EscController < Ramaze::Controller
         @keyId = @myKey[:id] unless @myKey.nil?
     end
 
-    def createCryptoKeys
+    def create_crypto_keys
         # Create a keypair
         if @env == "default"
             respond("Default environment doesn't have encryption", 401)
