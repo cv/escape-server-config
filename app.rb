@@ -69,7 +69,7 @@ rescue
     # MySQL over JDBC for JRuby
     #$connectionString = "jdbc:mysql://localhost/escape?user=escape&password=escape"
 
-    $listenPort = cfg["port"]
+    $listen_port = cfg["port"]
 end
 
 #
@@ -89,5 +89,5 @@ require 'controller/init'
 #log = Logger.new($accessLog)
 #Rack::CommonLogger.new(Ramaze::Log, log)
 
-#Ramaze.start :adapter => :mongrel, :port => $listenPort
+#Ramaze.start :adapter => :mongrel, :port => $listen_port
 
