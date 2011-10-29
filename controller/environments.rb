@@ -153,11 +153,11 @@ class EnvironmentsController < EscController
             end
         else
             check_env_auth
-            myValue = Value[:key_id => @keyId, :environment_id => @envId]
-            if myValue.nil?
+            my_value = Value[:key_id => @keyId, :environment_id => @envId]
+            if my_value.nil?
                 respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
             else
-                myValue.delete
+                my_value.delete
                 respond("Key '#{@key}' deleted from the '#{@env}' environment.", 200)
             end
         end
