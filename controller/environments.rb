@@ -133,7 +133,7 @@ class EnvironmentsController < EscController
     def deleteKey
         getEnv
         getApp
-        getKey
+        get_key
 
         if @env == "default"
             # Don't delete default if we have a value set in a non-default env
@@ -249,7 +249,7 @@ class EnvironmentsController < EscController
             respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
         end
 
-        getKey(false)
+        get_key(false)
 
         value = @myApp.get_key_value(@myKey, @myEnv)
         if value.nil?

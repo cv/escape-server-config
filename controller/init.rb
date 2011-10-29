@@ -38,7 +38,7 @@ class EscController < Ramaze::Controller
         @appId = @myApp[:id] unless @myApp.nil?
     end
 
-    def getKey(failOnError = true)
+    def get_key(failOnError = true)
         @myKey = Key[:name => @key, :app_id => @appId]
         respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
         @keyId = @myKey[:id] unless @myKey.nil?
