@@ -39,7 +39,7 @@ class CryptController < EscController
 
         # Getting...
         if request.get?
-            showCryptoKeys
+            show_crypto_keys
         # Updating...
         elsif request.post?
             @key = request.body.read
@@ -54,7 +54,7 @@ class CryptController < EscController
 
     private
 
-    def showCryptoKeys
+    def show_crypto_keys
         # Show keys in an environment
         get_env
 
