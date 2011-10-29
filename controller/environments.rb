@@ -116,8 +116,8 @@ class EnvironmentsController < EscController
         get_app
 
         if @env == "default"
-            if @myApp.environments.size == 1
-                @myApp.delete
+            if @my_app.environments.size == 1
+                @my_app.delete
                 respond("Applicaton '#{@app}' deleted.", 200)
             else
                 respond("Applicaton '#{@app}' is used in other environments.", 412)
@@ -125,7 +125,7 @@ class EnvironmentsController < EscController
         else
             get_env
             check_env_auth
-            @myApp.remove_environment(@my_env)
+            @my_app.remove_environment(@my_env)
             respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
         end
     end
@@ -206,13 +206,13 @@ class EnvironmentsController < EscController
         get_env
         get_app
 
-        if @my_env.apps.include? @myApp
+        if @my_env.apps.include? @my_app
             pairs = Array.new
             defaults = Array.new
             overrides = Array.new
             encrypted = Array.new
             modified = Array.new
-            @myApp.keys.each do |key|
+            @my_app.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => @envId]
 
                 if value.nil? # Got no value in specified env, what's in default and do we want defaults?
@@ -245,13 +245,13 @@ class EnvironmentsController < EscController
         get_env
         get_app
 
-        if not @my_env.apps.include? @myApp
+        if not @my_env.apps.include? @my_app
             respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
         end
 
         get_key(false)
 
-        value = @myApp.get_key_value(@myKey, @my_env)
+        value = @my_app.get_key_value(@myKey, @my_env)
         if value.nil?
             respond("No default value", 404)
         else
@@ -292,12 +292,12 @@ class EnvironmentsController < EscController
         get_env
         check_env_auth
         get_app(false)
-        respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @my_env
+        respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @my_app and @my_app.environments.include? @my_env
 
-        if @myApp.nil?
-            @myApp = App.create(:name => @app)
+        if @my_app.nil?
+            @my_app = App.create(:name => @app)
         end
-        @my_env.add_app(@myApp) unless @my_env.apps.include? @myApp
+        @my_env.add_app(@my_app) unless @my_env.apps.include? @my_app
 
         respond("Application '#{@app}' created in environment '#{@env}'.", 201)
     end
@@ -319,7 +319,7 @@ class EnvironmentsController < EscController
             encrypted = false
         end
 
-        if @myApp.set_key_value(@key, @my_env, value, encrypted)
+        if @my_app.set_key_value(@key, @my_env, value, encrypted)
           respond("Created key '#{@key}", 201)
         else
           respond("Updated key '#{@key}", 200)

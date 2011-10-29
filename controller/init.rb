@@ -33,9 +33,9 @@ class EscController < Ramaze::Controller
     end
 
     def get_app(fail_on_error = true)
-        @myApp = App[:name => @app]
-        respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and fail_on_error
-        @appId = @myApp[:id] unless @myApp.nil?
+        @my_app = App[:name => @app]
+        respond("Application '#{@app}' does not exist.", 404) if @my_app.nil? and fail_on_error
+        @appId = @my_app[:id] unless @my_app.nil?
     end
 
     def get_key(fail_on_error = true)
