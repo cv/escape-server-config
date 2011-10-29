@@ -74,7 +74,7 @@ class EnvironmentsController < EscController
                 create_env
             # You're creating a new app
             elsif key.nil?
-                createApp
+                create_app
             # Key stuff
             else
                 setValue
@@ -288,7 +288,7 @@ class EnvironmentsController < EscController
         respond("Environment created.", 201)
     end
 
-    def createApp
+    def create_app
         get_env
         check_env_auth
         get_app(false)
