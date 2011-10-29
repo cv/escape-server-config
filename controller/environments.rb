@@ -47,7 +47,7 @@ class EnvironmentsController < EscController
                 list_apps
             # List keys and values for app in environment
             elsif key.nil?
-                listKeys
+                list_keys
             # We're getting value for specific key
             else
                 getValue
@@ -201,7 +201,7 @@ class EnvironmentsController < EscController
         return apps.sort.to_json
     end
 
-    def listKeys
+    def list_keys
         # List keys and values for app in environment
         get_env
         get_app
