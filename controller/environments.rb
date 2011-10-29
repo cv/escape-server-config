@@ -168,7 +168,7 @@ class EnvironmentsController < EscController
     # Getters
     #
 
-    def checkLastModified(modified)
+    def check_last_modified(modified)
         return false unless request.env['HTTP_IF_MODIFIED_SINCE']
 
         if (modified <= Time.parse(request.env['HTTP_IF_MODIFIED_SINCE']))
@@ -227,7 +227,7 @@ class EnvironmentsController < EscController
                 modified.push(value[:modified])
             end
 
-            #return nil if checkLastModified(modified.max)
+            #return nil if check_last_modified(modified.max)
 
             response.headers["Content-Type"] = "text/plain"
             response.headers["X-Default-Values"] = defaults.sort.to_json
@@ -262,7 +262,7 @@ class EnvironmentsController < EscController
             end
         end
 
-        #checkLastModified(value[:modified])
+        #check_last_modified(value[:modified])
 
         if value[:is_encrypted]
             response.headers["Content-Type"] = "application/octet-stream"
