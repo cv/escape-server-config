@@ -41,7 +41,7 @@ class EnvironmentsController < EscController
         if request.get?
             # List all environments
             if env.nil?
-                listEnvs
+                list_envs
             # List all apps in specified environment
             elsif app.nil?
                 listApps
@@ -179,7 +179,7 @@ class EnvironmentsController < EscController
         return false
     end
 
-    def listEnvs
+    def list_envs
         envs = Array.new
         Environment.all.each do |env|
             envs.push(env[:name])
