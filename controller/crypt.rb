@@ -56,7 +56,7 @@ class CryptController < EscController
 
     def showCryptoKeys
         # Show keys in an environment
-        getEnv
+        get_env
 
         response.status = 200
         response.headers["Content-Type"] = "text/plain"
@@ -80,7 +80,7 @@ class CryptController < EscController
         if @env == "default"
             respond("Can't delete keys from default environment.", 403)
         else
-            getEnv
+            get_env
             check_env_auth
             @myEnv.update(:private_key => nil, :public_key => nil)
             response.status = 200
@@ -91,7 +91,7 @@ class CryptController < EscController
         if @env == "default"
             respond("Can't put keys into default environment.", 403)
         else
-            getEnv
+            get_env
             check_env_auth
 
             if @key && @key != ''

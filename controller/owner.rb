@@ -44,7 +44,7 @@ class OwnerController < EscController
     private
 
     def getOwner
-        getEnv
+        get_env
 
         owner = Owner[:id => @myEnv.owner_id]
 
@@ -57,7 +57,7 @@ class OwnerController < EscController
             respond("No one can own the 'default' environment", 403)
         end
 
-        getEnv
+        get_env
 
         if @myEnv.owner_id == 1
             #auth = check_auth(nil, "Environment #{@env}")
@@ -76,7 +76,7 @@ class OwnerController < EscController
     end
 
     def clearOwner
-        getEnv
+        get_env
 
         if @myEnv.owner_id == 1
             respond("Environment #{@env} is not owned by anyone", 200)

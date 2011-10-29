@@ -106,7 +106,7 @@ class EnvironmentsController < EscController
 
     def deleteEnv
         respond("Not allowed to delete default environment!", 403) if @env == "default"
-        getEnv
+        get_env
         check_env_auth
         @myEnv.delete
         respond("Environment '#{@env}' deleted.", 200)
@@ -123,7 +123,7 @@ class EnvironmentsController < EscController
                 respond("Applicaton '#{@app}' is used in other environments.", 412)
             end
         else
-            getEnv
+            get_env
             check_env_auth
             @myApp.remove_environment(@myEnv)
             respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
@@ -131,7 +131,7 @@ class EnvironmentsController < EscController
     end
 
     def deleteKey
-        getEnv
+        get_env
         get_app
         get_key
 
@@ -190,7 +190,7 @@ class EnvironmentsController < EscController
 
     def listApps
         # List all apps in specified environment
-        getEnv
+        get_env
 
         apps = Array.new
         @myEnv.apps.each do |app|
@@ -203,7 +203,7 @@ class EnvironmentsController < EscController
 
     def listKeys
         # List keys and values for app in environment
-        getEnv
+        get_env
         get_app
 
         if @myEnv.apps.include? @myApp
@@ -242,7 +242,7 @@ class EnvironmentsController < EscController
     end
 
     def getValue
-        getEnv
+        get_env
         get_app
 
         if not @myEnv.apps.include? @myApp
@@ -289,7 +289,7 @@ class EnvironmentsController < EscController
     end
 
     def createApp
-        getEnv
+        get_env
         check_env_auth
         get_app(false)
         respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @myEnv
@@ -303,7 +303,7 @@ class EnvironmentsController < EscController
     end
 
     def setValue
-        getEnv
+        get_env
         check_env_auth
         get_app
 
@@ -332,7 +332,7 @@ class EnvironmentsController < EscController
         srcEnv = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
         respond("Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404) if srcEnv.nil?
 
-        getEnv(false)
+        get_env(false)
         respond("Target environment #{@env} already exists.", 409) unless @myEnv.nil?
 
         # Create new env
