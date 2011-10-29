@@ -7,7 +7,7 @@ class AuthController < EscController
   end
 
   def secret
-    checkAuth
+    check_auth
     'Secret Info'
   end
 

@@ -59,7 +59,7 @@ class EscController < Ramaze::Controller
         return public_key + "\n" + private_key
     end
 
-    def checkAuth(id = nil, realm = "")
+    def check_auth(id = nil, realm = "")
         if id == "nobody"
             return id
         end
@@ -79,15 +79,15 @@ class EscController < Ramaze::Controller
     end
 
     def getEnvAuth
-        checkAuth(nil, "Environment #{@env}")
+        check_auth(nil, "Environment #{@env}")
     end
 
     def checkEnvAuth
-        checkAuth(@myEnv.owner.name, "Environment #{@env}")
+        check_auth(@myEnv.owner.name, "Environment #{@env}")
     end
 
     def checkUserAuth
-        checkAuth(@name, "User #{@name}")
+        check_auth(@name, "User #{@name}")
     end
 end
 
