@@ -90,7 +90,7 @@ class EnvironmentsController < EscController
                 delete_env
             # You're deleting an app
             elsif key.nil?
-                deleteApp
+                delete_app
             # You're deleting a key
             else
                 deleteKey
@@ -112,7 +112,7 @@ class EnvironmentsController < EscController
         respond("Environment '#{@env}' deleted.", 200)
     end
 
-    def deleteApp
+    def delete_app
         get_app
 
         if @env == "default"
