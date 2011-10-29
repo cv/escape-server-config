@@ -51,12 +51,12 @@ class App < Sequel::Model(:apps)
             true
         # We're updating the config
         else
-            myValue = Value[:key_id => myKey[:id], :environment_id => env[:id]]
-            if myValue.nil? # New value...
+            value = Value[:key_id => myKey[:id], :environment_id => env[:id]]
+            if value.nil? # New value...
                 Value.create(:key_id => myKey[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
                 true
             else # Updating the value
-                myValue.update(:value => value, :is_encrypted => encrypted)
+                value.update(:value => value, :is_encrypted => encrypted)
                 false
             end
         end
