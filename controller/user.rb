@@ -40,7 +40,7 @@ class UserController < EscController
 
         # Deleting...
         elsif request.delete?
-            deleteUser
+            delete_user
 
         # Not defined...
         else
@@ -106,7 +106,7 @@ class UserController < EscController
         end
     end
 
-    def deleteUser
+    def delete_user
         get_user
 
         check_user_auth
