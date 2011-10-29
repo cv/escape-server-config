@@ -43,7 +43,7 @@ class CryptController < EscController
         # Updating...
         elsif request.post?
             @key = request.body.read
-            updateCryptoKeys
+            update_crypto_keys
         # Deleting...
         elsif request.delete?
             delete_crypto_keys
@@ -87,7 +87,7 @@ class CryptController < EscController
         end
     end
 
-    def updateCryptoKeys
+    def update_crypto_keys
         if @env == "default"
             respond("Can't put keys into default environment.", 403)
         else
