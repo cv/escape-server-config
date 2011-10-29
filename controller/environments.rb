@@ -93,7 +93,7 @@ class EnvironmentsController < EscController
                 delete_app
             # You're deleting a key
             else
-                deleteKey
+                delete_key
             end
         end
     end
@@ -130,7 +130,7 @@ class EnvironmentsController < EscController
         end
     end
 
-    def deleteKey
+    def delete_key
         get_env
         get_app
         get_key
