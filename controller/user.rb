@@ -36,7 +36,7 @@ class UserController < EscController
 
         # Posting...
         elsif request.post?
-            createUpdateUser
+            create_update_user
 
         # Deleting...
         elsif request.delete?
@@ -81,7 +81,7 @@ class UserController < EscController
         return data.to_json
     end
 
-    def createUpdateUser
+    def create_update_user
         get_user(false)
 
         email = request["email"] rescue nil
