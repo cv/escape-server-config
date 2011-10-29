@@ -50,7 +50,7 @@ class EnvironmentsController < EscController
                 list_keys
             # We're getting value for specific key
             else
-                getValue
+                get_value
             end
 
         # Copying...
@@ -241,7 +241,7 @@ class EnvironmentsController < EscController
         end
     end
 
-    def getValue
+    def get_value
         get_env
         get_app
 
