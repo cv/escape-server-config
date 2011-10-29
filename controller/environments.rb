@@ -44,7 +44,7 @@ class EnvironmentsController < EscController
                 list_envs
             # List all apps in specified environment
             elsif app.nil?
-                listApps
+                list_apps
             # List keys and values for app in environment
             elsif key.nil?
                 listKeys
@@ -188,7 +188,7 @@ class EnvironmentsController < EscController
         return envs.sort.to_json
     end
 
-    def listApps
+    def list_apps
         # List all apps in specified environment
         get_env
 
