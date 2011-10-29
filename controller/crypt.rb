@@ -64,10 +64,10 @@ class CryptController < EscController
         if (@pair == "pair") and (@myEnv.owner.name == "nobody")
             return "#{@myEnv.public_key}" + "\n" +  "#{@myEnv.private_key}"
         elsif (@pair == "pair") and request.env['HTTP_AUTHORIZATION']
-            checkEnvAuth
+            check_env_auth
             return "#{@myEnv.public_key}" + "\n" +  "#{@myEnv.private_key}"
         elsif @pair == "private"
-            checkEnvAuth
+            check_env_auth
             return "#{@myEnv.private_key}"
         elsif (@pair == "public") or (@pair == "pair")
             return "#{@myEnv.public_key}"
@@ -81,7 +81,7 @@ class CryptController < EscController
             respond("Can't delete keys from default environment.", 403)
         else
             getEnv
-            checkEnvAuth
+            check_env_auth
             @myEnv.update(:private_key => nil, :public_key => nil)
             response.status = 200
         end
@@ -92,7 +92,7 @@ class CryptController < EscController
             respond("Can't put keys into default environment.", 403)
         else
             getEnv
-            checkEnvAuth
+            check_env_auth
 
             if @key && @key != ''
                 # Updating with provided values

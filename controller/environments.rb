@@ -107,7 +107,7 @@ class EnvironmentsController < EscController
     def deleteEnv
         respond("Not allowed to delete default environment!", 403) if @env == "default"
         getEnv
-        checkEnvAuth
+        check_env_auth
         @myEnv.delete
         respond("Environment '#{@env}' deleted.", 200)
     end
@@ -124,7 +124,7 @@ class EnvironmentsController < EscController
             end
         else
             getEnv
-            checkEnvAuth
+            check_env_auth
             @myApp.remove_environment(@myEnv)
             respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
         end
@@ -152,7 +152,7 @@ class EnvironmentsController < EscController
                 respond("Key #{@key} can't be deleted. It has non default values set.", 403)
             end
         else
-            checkEnvAuth
+            check_env_auth
             myValue = Value[:key_id => @keyId, :environment_id => @envId]
             if myValue.nil?
                 respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
@@ -290,7 +290,7 @@ class EnvironmentsController < EscController
 
     def createApp
         getEnv
-        checkEnvAuth
+        check_env_auth
         getApp(false)
         respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @myEnv
 
@@ -304,7 +304,7 @@ class EnvironmentsController < EscController
 
     def setValue
         getEnv
-        checkEnvAuth
+        check_env_auth
         getApp
 
         value = request.body.read

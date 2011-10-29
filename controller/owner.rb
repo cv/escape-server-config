@@ -63,7 +63,7 @@ class OwnerController < EscController
             #auth = check_auth(nil, "Environment #{@env}")
             auth = getEnvAuth
         else
-            auth = checkEnvAuth
+            auth = check_env_auth
         end
 
         owner = Owner[:name => auth]
@@ -81,7 +81,7 @@ class OwnerController < EscController
         if @myEnv.owner_id == 1
             respond("Environment #{@env} is not owned by anyone", 200)
         else
-            auth = checkEnvAuth
+            auth = check_env_auth
         end
 
         @myEnv.owner = Owner[:name => "nobody"]
