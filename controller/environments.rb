@@ -138,7 +138,7 @@ class EnvironmentsController < EscController
         if @env == "default"
             # Don't delete default if we have a value set in a non-default env
             set = false
-            @myKey.app.environments.each do |appenv|
+            @my_key.app.environments.each do |appenv|
                 if (not Value[:key_id => @keyId, :environment_id => appenv[:id]].nil?) and (appenv.name != "default")
                     set = true
                     break
@@ -146,7 +146,7 @@ class EnvironmentsController < EscController
             end
 
             if not set
-                @myKey.delete
+                @my_key.delete
                 respond("Key '#{@key}' deleted from application '#{@app}'.", 200)
             else
                 respond("Key #{@key} can't be deleted. It has non default values set.", 403)
@@ -251,7 +251,7 @@ class EnvironmentsController < EscController
 
         get_key(false)
 
-        value = @my_app.get_key_value(@myKey, @my_env)
+        value = @my_app.get_key_value(@my_key, @my_env)
         if value.nil?
             respond("No default value", 404)
         else

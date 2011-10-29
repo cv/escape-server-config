@@ -39,9 +39,9 @@ class EscController < Ramaze::Controller
     end
 
     def get_key(fail_on_error = true)
-        @myKey = Key[:name => @key, :app_id => @appId]
-        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and fail_on_error
-        @keyId = @myKey[:id] unless @myKey.nil?
+        @my_key = Key[:name => @key, :app_id => @appId]
+        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @my_key.nil? and fail_on_error
+        @keyId = @my_key[:id] unless @my_key.nil?
     end
 
     def create_crypto_keys

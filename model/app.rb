@@ -41,19 +41,19 @@ class App < Sequel::Model(:apps)
     end
 
     def set_key_value(key, env, value, encrypted)
-       myKey = Key[:name => key, :app_id => self[:id]]
+       my_key = Key[:name => key, :app_id => self[:id]]
         # New one, let's create
-        if myKey.nil?
-            myKey = Key.create(:name => key, :app_id => self[:id])
-            self.add_key(myKey)
-            Value.create(:key_id => myKey[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => encrypted)
-            Value.create(:key_id => myKey[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
+        if my_key.nil?
+            my_key = Key.create(:name => key, :app_id => self[:id])
+            self.add_key(my_key)
+            Value.create(:key_id => my_key[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => encrypted)
+            Value.create(:key_id => my_key[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
             true
         # We're updating the config
         else
-            my_value = Value[:key_id => myKey[:id], :environment_id => env[:id]]
+            my_value = Value[:key_id => my_key[:id], :environment_id => env[:id]]
             if my_value.nil? # New value...
-                Value.create(:key_id => myKey[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
+                Value.create(:key_id => my_key[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
                 true
             else # Updating the value
                 my_value.update(:value => value, :is_encrypted => encrypted)
