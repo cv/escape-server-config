@@ -86,7 +86,7 @@ class EscController < Ramaze::Controller
         check_auth(@my_env.owner.name, "Environment #{@env}")
     end
 
-    def checkUserAuth
+    def check_user_auth
         check_auth(@name, "User #{@name}")
     end
 end
