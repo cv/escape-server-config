@@ -19,11 +19,11 @@ describe Value do
   end
 
   it "should return false if not default" do
-    anEnv = Environment.create(:name => 'test')
+    env = Environment.create(:name => 'test')
     my_app = App.create(:name => 'testapp')
-    anEnv.add_app(my_app)
+    env.add_app(my_app)
     aKey = Key.create(:name => 'key', :app_id => my_app[:id])
-    value = Value.create(:key_id => aKey[:id], :environment_id => anEnv[:id], :value => value, :is_encrypted => false)
+    value = Value.create(:key_id => aKey[:id], :environment_id => env[:id], :value => value, :is_encrypted => false)
     value.default?.should == false
   end
 
