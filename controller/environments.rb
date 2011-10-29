@@ -153,7 +153,7 @@ class EnvironmentsController < EscController
             end
         else
             check_env_auth
-            my_value = Value[:key_id => @keyId, :environment_id => @envId]
+            my_value = Value[:key_id => @keyId, :environment_id => @env_id]
             if my_value.nil?
                 respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
             else
@@ -213,7 +213,7 @@ class EnvironmentsController < EscController
             encrypted = Array.new
             modified = Array.new
             @my_app.keys.each do |key|
-                value = Value[:key_id => key[:id], :environment_id => @envId]
+                value = Value[:key_id => key[:id], :environment_id => @env_id]
 
                 if value.nil? # Got no value in specified env, what's in default and do we want defaults?
                     value = Value[:key_id => key[:id], :environment_id => @defaultId]
