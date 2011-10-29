@@ -71,7 +71,7 @@ class EnvironmentsController < EscController
                 response.status = 400
             # You're creating a new env
             elsif app.nil?
-                createEnv
+                create_env
             # You're creating a new app
             elsif key.nil?
                 createApp
@@ -279,7 +279,7 @@ class EnvironmentsController < EscController
     # Creaters
     #
 
-    def createEnv
+    def create_env
         respond("Environment '#{@env}' already exists.", 200) if Environment[:name => @env]
 
         @my_env = Environment.create(:name => @env)
