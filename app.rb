@@ -53,10 +53,10 @@ end
 begin
     include Java
     import java.lang.System
-    $connectionString = cfg["jdbc.url"]
+    $connection_string = cfg["jdbc.url"]
 rescue
     # We're not in JRuby
-    $connectionString = cfg["database"]
+    $connection_string = cfg["database"]
     #
     # SQLite
     #$connectionString = "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db"

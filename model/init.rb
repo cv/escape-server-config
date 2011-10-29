@@ -21,7 +21,7 @@ require 'sequel'
 
 require 'logger'
 
-DB = Sequel.connect($connectionString)
+DB = Sequel.connect($connection_string)
 
 # Uncomment line below to turn on SQL debugging
 #DB.loggers << Logger.new($stdout)
