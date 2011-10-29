@@ -18,7 +18,7 @@ require 'base64'
 class CryptController < EscController
     map('/crypt')
 
-    def index(env = nil, puborpriv = nil)
+    def index(env = nil, public_or_private = nil)
         if env.nil?
             respond("Must supply and environment", 400)
         end
@@ -28,12 +28,12 @@ class CryptController < EscController
             respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
-        if puborpriv && (puborpriv != "public") && (puborpriv != "private")
+        if public_or_private && (public_or_private != "public") && (public_or_private != "private")
             respond("Must define keytype as either public or private", 403)
         end
 
-        puborpriv = "pair" if puborpriv.nil?
-        @pair = puborpriv
+        public_or_private = "pair" if public_or_private.nil?
+        @pair = public_or_private
 
         @env = env
 
