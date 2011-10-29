@@ -29,7 +29,7 @@ class UserController < EscController
         # Getting...
         if request.get?
             if name.nil?
-                listAllUsers
+                list_all_users
             else
                 get_userDetails
             end
@@ -50,7 +50,7 @@ class UserController < EscController
 
     private
 
-    def listAllUsers
+    def list_all_users
         response.headers["Content-Type"] = "application/json"
 
         data = []
