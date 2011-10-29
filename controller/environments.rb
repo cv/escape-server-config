@@ -77,7 +77,7 @@ class EnvironmentsController < EscController
                 create_app
             # Key stuff
             else
-                setValue
+                set_value
             end
 
         # Deleting...
@@ -302,7 +302,7 @@ class EnvironmentsController < EscController
         respond("Application '#{@app}' created in environment '#{@env}'.", 201)
     end
 
-    def setValue
+    def set_value
         get_env
         check_env_auth
         get_app
