@@ -46,7 +46,7 @@ class CryptController < EscController
             updateCryptoKeys
         # Deleting...
         elsif request.delete?
-            deleteCryptoKeys
+            delete_crypto_keys
         else
             respond("Unsupported method", 405)
         end
@@ -76,7 +76,7 @@ class CryptController < EscController
         end
     end
 
-    def deleteCryptoKeys
+    def delete_crypto_keys
         if @env == "default"
             respond("Can't delete keys from default environment.", 403)
         else
