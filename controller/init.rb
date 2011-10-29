@@ -29,7 +29,7 @@ class EscController < Ramaze::Controller
         @my_env = Environment[:name => @env]
         respond("Environment '#{@env}' does not exist.", 404) if @my_env.nil? and fail_on_error
         @env_id = @my_env[:id] unless @my_env.nil?
-        @defaultId = Environment[:name => "default"][:id]
+        @default_id = Environment[:name => "default"][:id]
     end
 
     def get_app(fail_on_error = true)

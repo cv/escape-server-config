@@ -216,7 +216,7 @@ class EnvironmentsController < EscController
                 value = Value[:key_id => key[:id], :environment_id => @env_id]
 
                 if value.nil? # Got no value in specified env, what's in default and do we want defaults?
-                    value = Value[:key_id => key[:id], :environment_id => @defaultId]
+                    value = Value[:key_id => key[:id], :environment_id => @default_id]
                     defaults.push(key[:name])
                 else
                     overrides.push(key[:name])
