@@ -14,8 +14,6 @@
 #   limitations under the License.
 
 require 'rubygems'
-
-gem 'ramaze', '=2009.06.12'
 require 'ramaze'
 
 # This is an ugly hack to get things working under Jetty/Tomcat.

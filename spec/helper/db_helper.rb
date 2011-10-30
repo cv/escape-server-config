@@ -1,7 +1,4 @@
-
 require 'rubygems'
-
-gem 'ramaze', '=2009.06.12'
 require 'ramaze'
 require 'ramaze/spec'
 
