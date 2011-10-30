@@ -25,6 +25,7 @@ class EscController < Ramaze::Controller
   def get_env(fail_on_error = true)
     @my_env = Environment[:name => @env]
     respond("Environment '#{@env}' does not exist.", 404) if @my_env.nil? and fail_on_error
+
     @env_id = @my_env[:id] unless @my_env.nil?
     @default_id = Environment[:name => "default"][:id]
   end
@@ -32,17 +33,19 @@ class EscController < Ramaze::Controller
   def get_app(fail_on_error = true)
     @my_app = App[:name => @app]
     respond("Application '#{@app}' does not exist.", 404) if @my_app.nil? and fail_on_error
+
     @app_id = @my_app[:id] unless @my_app.nil?
   end
 
   def get_key(fail_on_error = true)
     @my_key = Key[:name => @key, :app_id => @app_id]
     respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @my_key.nil? and fail_on_error
+
     @keyId = @my_key[:id] unless @my_key.nil?
   end
 
+  # Create a keypair
   def create_crypto_keys
-    # Create a keypair
     if @env == "default"
       respond("Default environment doesn't have encryption", 401)
     end
@@ -51,15 +54,14 @@ class EscController < Ramaze::Controller
     private_key = key.to_pem
     public_key = key.public_key.to_pem
     @my_env.update(:private_key => private_key, :public_key => public_key)
+
     response.status = 201
     response.headers["Content-Type"] = "text/plain"
     return public_key + "\n" + private_key
   end
 
   def check_auth(id = nil, realm = "")
-    if id == "nobody"
-      return id
-    end
+    return id if id == "nobody"
 
     response['WWW-Authenticate'] = "Basic realm=\"ESCAPE Server - #{realm}\""
 
@@ -76,15 +78,15 @@ class EscController < Ramaze::Controller
   end
 
   def get_env_auth
-    check_auth(nil, "Environment #{@env}")
+    check_auth nil, "Environment #{@env}"
   end
 
   def check_env_auth
-    check_auth(@my_env.owner.name, "Environment #{@env}")
+    check_auth @my_env.owner.name, "Environment #{@env}"
   end
 
   def check_user_auth
-    check_auth(@name, "User #{@name}")
+    check_auth @name, "User #{@name}"
   end
 end
 
