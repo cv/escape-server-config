@@ -38,7 +38,7 @@ rescue
       "port" => 7000
     }
 
-    File.new("#{home}/.escape/config", 'w') do |f|
+    File.open("#{home}/.escape/config", 'w') do |f|
       f.write(YAML.dump(cfg))
     end
 end
