@@ -8,11 +8,7 @@ require 'rexml/document'
 require 'timeout'
 require 'socket'
 
-CLEAN.include('escape.db')
-CLEAN.include('dist')
-CLEAN.include('reports')
-CLEAN.include('*.war')
-CLEAN.include('tmp')
+CLEAN << %w{escape.db reports tmp}
 
 task :default => [:test]
 
