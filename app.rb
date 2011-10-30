@@ -33,12 +33,14 @@ begin
 rescue
     # File is not there, let's create a default!
     FileUtils.makedirs("#{home}/.escape")
-    cfg = Hash.new
-    cfg["database"] = "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db"
-    cfg["port"] = 7000
-    f = File.new("#{home}/.escape/config", 'w')
-    f.write(YAML.dump(cfg))
-    f.close()
+    cfg = {
+      "database" => "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db",
+      "port" => 7000
+    }
+
+    File.new("#{home}/.escape/config", 'w') do |f|
+      f.write(YAML.dump(cfg))
+    end
 end
 
 $connection_string = cfg["database"]
