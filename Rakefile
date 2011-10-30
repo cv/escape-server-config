@@ -4,7 +4,6 @@ require 'bundler/setup'
 
 require 'rake/clean'
 require 'rake/packagetask'
-require 'rexml/document'
 require 'timeout'
 require 'socket'
 
@@ -14,7 +13,7 @@ task :default => [:test]
 
 desc 'Run all the spec tests'
 task :test => [:clean] do
-  FileList.new('spec/*.rb','spec/model/*.rb').each do |file|
+  Dir['spec/**/*.rb'].each do |file|
     ruby file
   end
 end

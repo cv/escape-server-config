@@ -1,9 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'rubygems'
-require 'ramaze'
-require 'ramaze/spec'
-
-require __DIR__('../../start')
+require 'ramaze/spec/bacon'
 
 module DBHelper
   def reset_db
