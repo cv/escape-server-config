@@ -54,8 +54,6 @@ $listen_port = cfg["port"]
 # any other working path
 $LOAD_PATH.unshift(__DIR__)
 
-EscapeVersion = 0.4
-
 # Initialize controllers and models
 require 'model/init'
 require 'controller/init'
