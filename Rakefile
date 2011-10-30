@@ -13,9 +13,7 @@ task :default => [:test]
 
 desc 'Run all the spec tests'
 task :test => [:clean] do
-  Dir['spec/**/*.rb'].each do |file|
-    ruby file
-  end
+  sh 'bacon', *Dir['spec/**/*.rb']
 end
 
 desc 'Run the selenium tests'
