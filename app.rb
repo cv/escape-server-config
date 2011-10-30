@@ -1,5 +1,5 @@
-# -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
+# -*- encoding : utf-8 -*-
 #   Copyright 2009 ThoughtWorks
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
