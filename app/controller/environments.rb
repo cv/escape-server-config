@@ -345,10 +345,10 @@ class EnvironmentsController < EscController
     src_env_id = src_env[:id]
     dest_env_id = @my_env[:id]
     # Copy applications into new env
-    src_env.apps.each do |existingApp|
-      @my_env.add_app(existingApp)
+    src_env.apps.each do |existing_app|
+      @my_env.add_app(existing_app)
       # Copy overridden values
-      existingApp.keys.each do |key|
+      existing_app.keys.each do |key|
         value = Value[:key_id => key[:id], :environment_id => src_env_id]
         Value.create(:key_id => key[:id], :environment_id => dest_env_id, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
       end
