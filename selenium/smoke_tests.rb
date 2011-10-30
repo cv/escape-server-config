@@ -1,5 +1,5 @@
-# -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
+# -*- encoding : utf-8 -*-
 
 require 'rubygems'
 gem "rspec", "=1.1.12"

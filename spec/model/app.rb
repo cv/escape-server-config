@@ -1,5 +1,5 @@
-# -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
+# -*- encoding : utf-8 -*-
 
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__) + "/.."))
 require 'init'

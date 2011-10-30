@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
 # Use this file directly like `ruby start.rb` if you don't want to use the
 # `ramaze start` command.
