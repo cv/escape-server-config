@@ -3,7 +3,7 @@ source :rubygems
 gem 'sqlite3'
 gem 'ramaze'
 gem 'rack'
-gem 'sequel'
+gem 'sequel', '~> 3.2.0'
 gem 'json'
 
 group :development do

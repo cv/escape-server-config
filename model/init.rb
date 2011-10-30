@@ -16,10 +16,7 @@
 # Here goes your database connection and options:
 
 require 'rubygems'
-
-gem 'sequel', '=3.2.0'
 require 'sequel'
-
 require 'logger'
 
 DB = Sequel.connect($connection_string)
