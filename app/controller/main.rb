@@ -22,8 +22,8 @@
 # this will force the controller to be mounted on: /otherurl
 
 class MainController < EscController
-    layout '/index'
-    helper :xhtml
+  layout '/index'
+  helper :xhtml
 
   # the index action is called automatically when no other action is specified
   def index

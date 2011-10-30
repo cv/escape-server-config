@@ -25,13 +25,13 @@ DB = Sequel.connect($connection_string)
 #DB.loggers << Logger.new($stdout)
 
 module EscData
-    def EscData.init_model(model)
-        if model.table_exists?
-            # TODO: Schema upgrade stuff
-        else
-            model.create_table
-        end
+  def EscData.init_model(model)
+    if model.table_exists?
+      # TODO: Schema upgrade stuff
+    else
+      model.create_table
     end
+  end
 end
 
 # Here go your requires for models:

@@ -8,7 +8,7 @@ describe Value do
   behaves_like :db_helper
 
   before do
-      reset_db
+    reset_db
   end
 
   it "should return true if default" do

@@ -8,38 +8,38 @@ describe App do
   behaves_like :db_helper
 
   before do
-      reset_db
+    reset_db
   end
 
   it "should return nil value if key does not exist" do
-     my_env = Environment.create(:name => 'testenv')
-     my_app = App.create(:name => 'testapp')
-     my_env.add_app(my_app)
-     value = my_app.get_key_value(nil, my_env)
-     value.nil?.should == true
+    my_env = Environment.create(:name => 'testenv')
+    my_app = App.create(:name => 'testapp')
+    my_env.add_app(my_app)
+    value = my_app.get_key_value(nil, my_env)
+    value.nil?.should == true
   end
 
   it "should get default value for key" do
-     my_env = Environment.create(:name => 'testenv')
-     my_app = App.create(:name => 'testapp')
-     my_env.add_app(my_app)
-     key = Key.create(:name => 'key', :app_id=>my_app[:id])
-     Value.create(:key_id => key[:id], :environment_id => Environment.default[:id], :value=>'defaultvalue')
-     value = my_app.get_key_value(key, my_env)
-     value[:value].should == 'defaultvalue'
-     value.default?.should == true
+    my_env = Environment.create(:name => 'testenv')
+    my_app = App.create(:name => 'testapp')
+    my_env.add_app(my_app)
+    key = Key.create(:name => 'key', :app_id=>my_app[:id])
+    Value.create(:key_id => key[:id], :environment_id => Environment.default[:id], :value=>'defaultvalue')
+    value = my_app.get_key_value(key, my_env)
+    value[:value].should == 'defaultvalue'
+    value.default?.should == true
   end
 
   it "should get actual value for key" do
-     my_env = Environment.create(:name => 'testenv')
-     my_app = App.create(:name => 'testapp')
-     my_env.add_app(my_app)
-     key = Key.create(:name => 'key', :app_id=>my_app[:id])
-     Value.create(:key_id => key[:id], :environment_id => Environment.default[:id], :value=>'defaultvalue')
-     Value.create(:key_id => key[:id], :environment_id => my_env[:id], :value=>'value')
-     value = my_app.get_key_value(key, my_env)
-     value[:value].should == 'value'
-     value.default?.should == false
+    my_env = Environment.create(:name => 'testenv')
+    my_app = App.create(:name => 'testapp')
+    my_env.add_app(my_app)
+    key = Key.create(:name => 'key', :app_id=>my_app[:id])
+    Value.create(:key_id => key[:id], :environment_id => Environment.default[:id], :value=>'defaultvalue')
+    Value.create(:key_id => key[:id], :environment_id => my_env[:id], :value=>'value')
+    value = my_app.get_key_value(key, my_env)
+    value[:value].should == 'value'
+    value.default?.should == false
   end
 
   it "should add new key value" do

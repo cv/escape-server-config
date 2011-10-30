@@ -15,54 +15,54 @@
 #   limitations under the License.
 
 class App < Sequel::Model(:apps)
-    plugin :validation_class_methods
-    plugin :schema
-    plugin :hook_class_methods
+  plugin :validation_class_methods
+  plugin :schema
+  plugin :hook_class_methods
 
-    many_to_many :environments, :class => :Environment
-    one_to_many :keys, :class => :Key
+  many_to_many :environments, :class => :Environment
+  one_to_many :keys, :class => :Key
 
-    set_schema do
-        primary_key :id, :null => false
-        String :name
+  set_schema do
+    primary_key :id, :null => false
+    String :name
+  end
+
+  validates_uniqueness_of :name
+
+  after_create do |app|
+    app.add_environment(Environment[:name => 'default'])
+  end
+
+  def get_key_value(key, env)
+    return nil if key.nil?
+    value = Value[:key_id => key[:id], :environment_id => env[:id]]
+    if value.nil?
+      value = Value[:key_id => key[:id], :environment_id => Environment.default[:id]]
     end
+    value
+  end
 
-    validates_uniqueness_of :name
-
-    after_create do |app|
-        app.add_environment(Environment[:name => 'default'])
-    end
-
-    def get_key_value(key, env)
-      return nil if key.nil?
-      value = Value[:key_id => key[:id], :environment_id => env[:id]]
-      if value.nil?
-          value = Value[:key_id => key[:id], :environment_id => Environment.default[:id]]
+  def set_key_value(key, env, value, encrypted)
+    my_key = Key[:name => key, :app_id => self[:id]]
+    # New one, let's create
+    if my_key.nil?
+      my_key = Key.create(:name => key, :app_id => self[:id])
+      self.add_key(my_key)
+      Value.create(:key_id => my_key[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => encrypted)
+      Value.create(:key_id => my_key[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
+      true
+      # We're updating the config
+    else
+      my_value = Value[:key_id => my_key[:id], :environment_id => env[:id]]
+      if my_value.nil? # New value...
+        Value.create(:key_id => my_key[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
+        true
+      else # Updating the value
+        my_value.update(:value => value, :is_encrypted => encrypted)
+        false
       end
-      value
     end
-
-    def set_key_value(key, env, value, encrypted)
-       my_key = Key[:name => key, :app_id => self[:id]]
-        # New one, let's create
-        if my_key.nil?
-            my_key = Key.create(:name => key, :app_id => self[:id])
-            self.add_key(my_key)
-            Value.create(:key_id => my_key[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => encrypted)
-            Value.create(:key_id => my_key[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
-            true
-        # We're updating the config
-        else
-            my_value = Value[:key_id => my_key[:id], :environment_id => env[:id]]
-            if my_value.nil? # New value...
-                Value.create(:key_id => my_key[:id], :environment_id => env[:id], :value => value, :is_encrypted => encrypted)
-                true
-            else # Updating the value
-                my_value.update(:value => value, :is_encrypted => encrypted)
-                false
-            end
-        end
-    end
+  end
 end
 
 EscData.init_model(App)

@@ -29,18 +29,18 @@ home = Etc.getpwuid.dir
 # If the file is not there we'll simply create it and make SQLite the db
 
 begin
-    cfg = YAML.load_file("#{home}/.escape/config")
+  cfg = YAML.load_file("#{home}/.escape/config")
 rescue
-    # File is not there, let's create a default!
-    FileUtils.makedirs("#{home}/.escape")
-    cfg = {
-      "database" => "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db",
-      "port" => 7000
-    }
+  # File is not there, let's create a default!
+  FileUtils.makedirs("#{home}/.escape")
+  cfg = {
+    "database" => "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db",
+    "port" => 7000
+  }
 
-    File.open("#{home}/.escape/config", 'w') do |f|
-      f.write(YAML.dump(cfg))
-    end
+  File.open("#{home}/.escape/config", 'w') do |f|
+    f.write(YAML.dump(cfg))
+  end
 end
 
 $connection_string = cfg["database"]
