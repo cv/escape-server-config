@@ -8,24 +8,6 @@ require 'rexml/document'
 require 'timeout'
 require 'socket'
 
-#require "selenium/client"
-#require 'selenium/rake/tasks'
-
-#Selenium::Rake::RemoteControlStartTask.new("rc_start") do |rc|
-#    rc.port = 4444
-#    rc.timeout_in_seconds = 3 * 60
-#    rc.background = false
-#    rc.wait_until_up_and_running = true
-#    rc.jar_file = "selenium/selenium-server.jar"
-#    rc.additional_args << "-singleWindow"
-#end
-
-#Selenium::Rake::RemoteControlStopTask.new("rc_stop") do |rc|
-#    rc.host = "localhost"
-#    rc.port = 4444
-#    rc.timeout_in_seconds = 3 * 60
-#end
-
 CLEAN.include('escape.db')
 CLEAN.include('dist')
 CLEAN.include('reports')
@@ -76,6 +58,3 @@ desc "Start up Selenium Server and Escape Server, then run the selenium tests...
 task :selenium do
     # TODO: Startup server and rc if they're not there. Call the tests, then stop
 end
-
-
-

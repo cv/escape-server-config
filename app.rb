@@ -59,9 +59,3 @@ EscapeVersion = 0.4
 # Initialize controllers and models
 require 'model/init'
 require 'controller/init'
-
-#log = Logger.new($accessLog)
-#Rack::CommonLogger.new(Ramaze::Log, log)
-
-#Ramaze.start :adapter => :mongrel, :port => $listen_port
-
