@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'rubygems'
+require 'bundler/setup'
+
 require 'rake/clean'
 require 'rake/packagetask'
 require 'rexml/document'

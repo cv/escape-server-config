@@ -15,10 +15,10 @@
 #   limitations under the License.
 
 require 'rubygems'
+require 'bundler/setup'
+
 require 'ramaze'
 require 'ramaze/spec/bacon'
 
 require __DIR__('helper/db_helper')
 require __DIR__('../start')
-
-
