@@ -55,5 +55,5 @@ $listen_port = cfg["port"]
 $LOAD_PATH.unshift(__DIR__)
 
 # Initialize controllers and models
-require 'model/init'
-require 'controller/init'
+require 'app/model/init'
+require 'app/controller/init'

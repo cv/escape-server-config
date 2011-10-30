@@ -37,10 +37,5 @@ end
 # Here go your requires for models:
 # require 'model/user'
 
-require 'model/app'
-require 'model/owner'
-require 'model/environment'
-require 'model/key'
-require 'model/value'
-require 'model/maps'
+%w[app owner environment key value maps].each { |f| require "app/model/#{f}" }
 
