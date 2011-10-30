@@ -17,18 +17,12 @@
 require 'rubygems'
 require 'ramaze'
 
-# This is an ugly hack to get things working under Jetty/Tomcat.
-# It works around a bug in jruby
-# I got the workaround from http://markmail.org/message/rn6hmt6nguzopypk?q=%22undefined+method+%60exclusive%27+for+Thread:Class%22
-require 'thread'
-
 require 'yaml'
 require 'etc'
 
 #
 # Configuration Area Start
 #
-
 home = Etc.getpwuid.dir
 
 # Configuration is loaded from ~/.escape/config
@@ -42,34 +36,13 @@ rescue
     cfg = Hash.new
     cfg["database"] = "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db"
     cfg["port"] = 7000
-    cfg["jdbc.url"] = "jdbc:mysql://localhost/escape?user=escape&password=escape"
     f = File.new("#{home}/.escape/config", 'w')
     f.write(YAML.dump(cfg))
     f.close()
 end
 
-# First check if we're running under JRuby. If we are, load the JDBC connection string from a file
-begin
-    include Java
-    import java.lang.System
-    $connection_string = cfg["jdbc.url"]
-rescue
-    # We're not in JRuby
-    $connection_string = cfg["database"]
-    #
-    # SQLite
-    #$connectionString = "sqlite:///#{File.expand_path(File.dirname(__FILE__))}/escape.db"
-    # MySQL
-    #$connectionString = "mysql://escape:escape@localhost/escape"
-    # Postgres
-    #$connectionString = "postgres://escape:escape@localhost/escape"
-    # Oracle
-    #$connectionString = "oracle://escape:escape@localhost/escape"
-    # MySQL over JDBC for JRuby
-    #$connectionString = "jdbc:mysql://localhost/escape?user=escape&password=escape"
-
-    $listen_port = cfg["port"]
-end
+$connection_string = cfg["database"]
+$listen_port = cfg["port"]
 
 #
 # Configuration Area End
