@@ -39,18 +39,3 @@ task :selenium_tests do
     ruby(file + " --color --require 'rubygems,selenium/rspec/reporting/selenium_test_report_formatter' --format=Selenium::RSpec::SeleniumTestReportFormatter:./reports/acceptance_tests_report.html --format=progress")
   end
 end
-
-desc 'Start up the server'
-task :run do
-  ruby 'start.rb'
-end
-
-desc 'Create release package'
-task :release => [:clean] do
-  sh "bash release.sh"
-end
-
-desc "Start up Selenium Server and Escape Server, then run the selenium tests..."
-task :selenium do
-  # TODO: Startup server and rc if they're not there. Call the tests, then stop
-end
