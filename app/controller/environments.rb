@@ -24,15 +24,15 @@ class EnvironmentsController < EscController
   def index(env = nil, app = nil, key = nil)
     # Sanity check what we've got first
     if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
-      respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
+      respond "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
     end
 
     if app && (not app =~ /\A[.a-zA-Z0-9_-]+\Z/)
-      respond("Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
+      respond "Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
     end
 
     if key && (not key =~ /\A[.a-zA-Z0-9_-]+\Z/)
-      respond("Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
+      respond "Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
     end
 
     @env = env
@@ -59,7 +59,7 @@ class EnvironmentsController < EscController
     elsif request.post?
       # Undefined
       if env.nil?
-        respond("Undefined", 400)
+        respond "Undefined", 400
         # You're copying an env
       elsif app.nil?
         # env is the target, Location Header has the source
@@ -107,11 +107,11 @@ class EnvironmentsController < EscController
   #
 
   def delete_env
-    respond("Not allowed to delete default environment!", 403) if @env == "default"
+    respond "Not allowed to delete default environment!", 403 if @env == "default"
     get_env
     check_env_auth
     @my_env.delete
-    respond("Environment '#{@env}' deleted.", 200)
+    respond "Environment '#{@env}' deleted.", 200
   end
 
   def delete_app
@@ -120,15 +120,15 @@ class EnvironmentsController < EscController
     if @env == "default"
       if @my_app.environments.size == 1
         @my_app.delete
-        respond("Applicaton '#{@app}' deleted.", 200)
+        respond "Applicaton '#{@app}' deleted.", 200
       else
-        respond("Applicaton '#{@app}' is used in other environments.", 412)
+        respond "Applicaton '#{@app}' is used in other environments.", 412
       end
     else
       get_env
       check_env_auth
-      @my_app.remove_environment(@my_env)
-      respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
+      @my_app.remove_environment @my_env
+      respond "Application '#{@app}' deleted from the '#{@env}' environment.", 200
     end
   end
 
@@ -149,18 +149,18 @@ class EnvironmentsController < EscController
 
       if not set
         @my_key.delete
-        respond("Key '#{@key}' deleted from application '#{@app}'.", 200)
+        respond "Key '#{@key}' deleted from application '#{@app}'.", 200
       else
-        respond("Key #{@key} can't be deleted. It has non default values set.", 403)
+        respond "Key #{@key} can't be deleted. It has non default values set.", 403
       end
     else
       check_env_auth
       my_value = Value[:key_id => @keyId, :environment_id => @env_id]
       if my_value.nil?
-        respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
+        respond "Key '#{@key}' has no value in the '#{@env}' environment.", 404
       else
         my_value.delete
-        respond("Key '#{@key}' deleted from the '#{@env}' environment.", 200)
+        respond "Key '#{@key}' deleted from the '#{@env}' environment.", 200
       end
     end
 
@@ -173,7 +173,7 @@ class EnvironmentsController < EscController
   def check_last_modified(modified)
     return false unless request.env['HTTP_IF_MODIFIED_SINCE']
 
-    if (modified <= Time.parse(request.env['HTTP_IF_MODIFIED_SINCE']))
+    if modified <= Time.parse(request.env['HTTP_IF_MODIFIED_SINCE'])
       response.status = 304
       return true
     end
@@ -196,7 +196,7 @@ class EnvironmentsController < EscController
 
     apps = []
     @my_env.apps.each do |app|
-      apps.push(app[:name])
+      apps.push app[:name]
     end
 
     response.headers["Content-Type"] = "application/json"
@@ -219,140 +219,140 @@ class EnvironmentsController < EscController
 
         if value.nil? # Got no value in specified env, what's in default and do we want defaults?
           value = Value[:key_id => key[:id], :environment_id => @default_id]
-          defaults.push(key[:name])
+          defaults.push key[:name]
         else
-          overrides.push(key[:name])
+          overrides.push key[:name]
         end
 
-        encrypted.push(key[:name]) if value[:is_encrypted]
-        pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
-          modified.push(value[:modified])
-        end
+        encrypted.push key[:name] if value[:is_encrypted]
+        pairs.push "#{key[:name]}=#{value[:value].gsub("\n", "")}\n"
+        modified.push value[:modified]
+      end
 
-        #return nil if check_last_modified(modified.max)
+      #return nil if check_last_modified(modified.max)
 
-        response.headers["Content-Type"] = "text/plain"
-        response.headers["X-Default-Values"] = defaults.sort.to_json
-        response.headers["X-Override-Values"] = overrides.sort.to_json
-        response.headers["X-Encrypted"] = encrypted.sort.to_json
-        response.headers["Last-Modified"] = modified.max.httpdate unless modified.empty?
+      response.headers["Content-Type"] = "text/plain"
+      response.headers["X-Default-Values"] = defaults.sort.to_json
+      response.headers["X-Override-Values"] = overrides.sort.to_json
+      response.headers["X-Encrypted"] = encrypted.sort.to_json
+      response.headers["Last-Modified"] = modified.max.httpdate unless modified.empty?
 
-        return pairs.sort
+      return pairs.sort
+    else
+      respond "Application '#{@app}' is not included in Environment '#{@env}'.", 404
+    end
+  end
+
+  def get_value
+    get_env
+    get_app
+
+    if not @my_env.apps.include? @my_app
+      respond "Application '#{@app}' is not included in Environment '#{@env}'.", 404
+    end
+
+    get_key false
+
+    value = @my_app.get_key_value(@my_key, @my_env)
+    if value.nil?
+      respond "No default value", 404
+    else
+      if value.default?
+        response.headers["X-Value-Type"] = "default"
       else
-        respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
+        response.headers["X-Value-Type"] = "override"
       end
     end
 
-    def get_value
-      get_env
-      get_app
+    #check_last_modified(value[:modified])
 
-      if not @my_env.apps.include? @my_app
-        respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
-      end
-
-      get_key(false)
-
-      value = @my_app.get_key_value(@my_key, @my_env)
-      if value.nil?
-        respond("No default value", 404)
-      else
-        if value.default?
-          response.headers["X-Value-Type"] = "default"
-        else
-          response.headers["X-Value-Type"] = "override"
-        end
-      end
-
-      #check_last_modified(value[:modified])
-
-      if value[:is_encrypted]
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers["Content-Transfer-Encoding"] = "base64"
-      else
-        response.headers["Content-Type"] = "text/plain"
-      end
-
-      response.headers["Last-Modified"] = value[:modified].httpdate
-      return value[:value]
+    if value[:is_encrypted]
+      response.headers["Content-Type"] = "application/octet-stream"
+      response.headers["Content-Transfer-Encoding"] = "base64"
+    else
+      response.headers["Content-Type"] = "text/plain"
     end
 
-    #
-    # Creaters
-    #
+    response.headers["Last-Modified"] = value[:modified].httpdate
+    return value[:value]
+  end
 
-    def create_env
-      respond("Environment '#{@env}' already exists.", 200) if Environment[:name => @env]
+  #
+  # Creaters
+  #
 
-      @my_env = Environment.create(:name => @env)
-      @pair = "pair"
-      create_crypto_keys
-      respond("Environment created.", 201)
+  def create_env
+    respond "Environment '#{@env}' already exists.", 200 if Environment[:name => @env]
+
+    @my_env = Environment.create :name => @env
+    @pair = "pair"
+    create_crypto_keys
+    respond "Environment created.", 201
+  end
+
+  def create_app
+    get_env
+    check_env_auth
+    get_app false
+    respond "Application '#{@app}' already exists in environment '#{@env}'.", 200 if @my_app and @my_app.environments.include? @my_env
+
+    if @my_app.nil?
+      @my_app = App.create :name => @app
+    end
+    @my_env.add_app @my_app unless @my_env.apps.include? @my_app
+
+    respond "Application '#{@app}' created in environment '#{@env}'.", 201
+  end
+
+  def set_value
+    get_env
+    check_env_auth
+    get_app
+
+    value = request.body.read
+    encrypted = if request.env['QUERY_STRING'] =~ /encrypt/
+      respond "Can't encrypt data in the default environment", 412 if @env == "default"
+      # Do some encryption
+      public_key = OpenSSL::PKey::RSA.new @my_env.public_key
+      encrypted_value = Base64.encode64(public_key.public_encrypt(value)).strip
+      value = encrypted_value
+      true
+    else
+      false
     end
 
-    def create_app
-      get_env
-      check_env_auth
-      get_app(false)
-      respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @my_app and @my_app.environments.include? @my_env
-
-      if @my_app.nil?
-        @my_app = App.create(:name => @app)
-      end
-      @my_env.add_app(@my_app) unless @my_env.apps.include? @my_app
-
-      respond("Application '#{@app}' created in environment '#{@env}'.", 201)
+    if @my_app.set_key_value @key, @my_env, value, encrypted
+      respond "Created key '#{@key}", 201
+    else
+      respond "Updated key '#{@key}", 200
     end
+  end
 
-    def set_value
-      get_env
-      check_env_auth
-      get_app
+  def copy_env
+    respond "Missing Content-Location header. Can't copy environment", 406 unless request.env['HTTP_CONTENT_LOCATION']
 
-      value = request.body.read
-      if request.env['QUERY_STRING'] =~ /encrypt/
-        respond("Can't encrypt data in the default environment", 412) if @env == "default"
-        encrypted = true
-        # Do some encryption
-        public_key = OpenSSL::PKey::RSA.new(@my_env.public_key)
-        encrypted_value = Base64.encode64(public_key.public_encrypt(value)).strip()
-        value = encrypted_value
-      else
-        encrypted = false
-      end
+    srcEnv = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
+    respond "Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404 if srcEnv.nil?
 
-      if @my_app.set_key_value(@key, @my_env, value, encrypted)
-        respond("Created key '#{@key}", 201)
-      else
-        respond("Updated key '#{@key}", 200)
-      end
-    end
+    get_env false
+    respond "Target environment #{@env} already exists.", 409 unless @my_env.nil?
 
-    def copy_env
-      respond("Missing Content-Location header. Can't copy environment", 406) unless request.env['HTTP_CONTENT_LOCATION']
+    # Create new env
+    @my_env = Environment.create(:name => @env)
+    @pair = "pair"
+    create_crypto_keys
 
-      srcEnv = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
-      respond("Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404) if srcEnv.nil?
-
-      get_env(false)
-      respond("Target environment #{@env} already exists.", 409) unless @my_env.nil?
-
-      # Create new env
-      @my_env = Environment.create(:name => @env)
-      @pair = "pair"
-      create_crypto_keys
-
-      srcEnvId = srcEnv[:id]
-      destEnvId = @my_env[:id]
-      # Copy applications into new env
-      srcEnv.apps.each do |existingApp|
-        @my_env.add_app(existingApp)
-        # Copy overridden values
-        existingApp.keys.each do |key|
-          value = Value[:key_id => key[:id], :environment_id => srcEnvId]
-          Value.create(:key_id => key[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
-        end
+    srcEnvId = srcEnv[:id]
+    destEnvId = @my_env[:id]
+    # Copy applications into new env
+    srcEnv.apps.each do |existingApp|
+      @my_env.add_app(existingApp)
+      # Copy overridden values
+      existingApp.keys.each do |key|
+        value = Value[:key_id => key[:id], :environment_id => srcEnvId]
+        Value.create(:key_id => key[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
       end
     end
   end
+end
 
