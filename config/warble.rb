@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # Disable automatic framework detection by uncommenting/setting to false
 # Warbler.framework_detection = false
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 #
 # NOTE:
 #   This file is overwritten by ext/thread/lib/thread.rb unless ruby

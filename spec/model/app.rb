@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
 
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__) + "/.."))
