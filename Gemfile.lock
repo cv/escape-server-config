@@ -3,14 +3,14 @@ GEM
   specs:
     Selenium (1.1.14)
     bacon (1.1.0)
-    innate (2009.10)
-      rack (~> 1.0.0)
+    innate (2011.10)
+      rack (>= 1.1.0)
     json (1.6.1)
-    rack (1.0.1)
+    rack (1.3.5)
     rack-test (0.6.1)
       rack (>= 1.0)
-    ramaze (2009.10)
-      innate (= 2009.10)
+    ramaze (2011.10.23)
+      innate (>= 2010.03)
     rspec (1.1.12)
     selenium-client (1.2.10)
     sequel (3.28.0)
@@ -23,7 +23,7 @@ DEPENDENCIES
   Selenium
   bacon
   json
-  rack (~> 1.0.0)
+  rack
   rack-test
   ramaze
   rspec (~> 1.1.12)

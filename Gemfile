@@ -2,7 +2,7 @@ source :rubygems
 
 gem 'sqlite3'
 gem 'ramaze'
-gem 'rack', '~> 1.0.0'
+gem 'rack'
 gem 'sequel'
 gem 'json'
 
