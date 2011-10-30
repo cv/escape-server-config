@@ -180,7 +180,7 @@ class EnvironmentsController < EscController
     end
 
     def list_envs
-        envs = Array.new
+        envs = []
         Environment.all.each do |env|
             envs.push(env[:name])
         end
@@ -192,7 +192,7 @@ class EnvironmentsController < EscController
         # List all apps in specified environment
         get_env
 
-        apps = Array.new
+        apps = []
         @my_env.apps.each do |app|
             apps.push(app[:name])
         end
@@ -207,11 +207,11 @@ class EnvironmentsController < EscController
         get_app
 
         if @my_env.apps.include? @my_app
-            pairs = Array.new
-            defaults = Array.new
-            overrides = Array.new
-            encrypted = Array.new
-            modified = Array.new
+            pairs = []
+            defaults = []
+            overrides = []
+            encrypted = []
+            modified = []
             @my_app.keys.each do |key|
                 value = Value[:key_id => key[:id], :environment_id => @env_id]
 

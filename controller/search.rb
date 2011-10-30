@@ -18,7 +18,7 @@ class SearchController < EscController
 
     def index(text = nil)
         respond("Usage: GET /search/text", 400) if text.nil? || !request.get?
-        envs = Array.new
+        envs = []
         Environment.where('name like ?', '%' + text + '%').each do |env|
             envs.push(env[:name])
         end
