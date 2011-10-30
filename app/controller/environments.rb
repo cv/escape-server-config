@@ -331,8 +331,8 @@ class EnvironmentsController < EscController
   def copy_env
     respond "Missing Content-Location header. Can't copy environment", 406 unless request.env['HTTP_CONTENT_LOCATION']
 
-    srcEnv = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
-    respond "Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404 if srcEnv.nil?
+    src_env = Environment[:name => request.env['HTTP_CONTENT_LOCATION']]
+    respond "Source environment '#{request.env['HTTP_CONTENT_LOCATION']}' does not exist.", 404 if src_env.nil?
 
     get_env false
     respond "Target environment #{@env} already exists.", 409 unless @my_env.nil?
@@ -342,14 +342,14 @@ class EnvironmentsController < EscController
     @pair = "pair"
     create_crypto_keys
 
-    srcEnvId = srcEnv[:id]
+    src_envId = src_env[:id]
     destEnvId = @my_env[:id]
     # Copy applications into new env
-    srcEnv.apps.each do |existingApp|
+    src_env.apps.each do |existingApp|
       @my_env.add_app(existingApp)
       # Copy overridden values
       existingApp.keys.each do |key|
-        value = Value[:key_id => key[:id], :environment_id => srcEnvId]
+        value = Value[:key_id => key[:id], :environment_id => src_envId]
         Value.create(:key_id => key[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
       end
     end
