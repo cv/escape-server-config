@@ -11,18 +11,12 @@ require 'socket'
 
 CLEAN << %w{escape.db reports tmp}
 
-task :default => [:test]
-
-require 'rspec/core/rake_task'
+task :default => :spec
+task :spec => :clean
 
 RSpec::Core::RakeTask.new do |t|
-  t.rspec_opts = ["-c", "-f progress", "-r ./spec/spec_helper.rb"]
+  t.rspec_opts = ["-c", "-f documentation", "-r ./spec/spec_helper.rb"]
   t.pattern = 'spec/**/*_spec.rb'
-end
-
-desc 'Run all the spec tests'
-task :test => [:clean] do
-  sh 'bacon', *Dir['spec/**/*.rb']
 end
 
 desc 'Run the selenium tests'
