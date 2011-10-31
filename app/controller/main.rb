@@ -4,6 +4,7 @@
 class MainController < EscController
   layout '/index'
   helper :xhtml
+  map '/'
 
   def index
     @title = "Esc Serves Config"
