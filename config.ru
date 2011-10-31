@@ -15,6 +15,10 @@
 # You can choose the adapter like `ramaze start -s mongrel` or set it in the
 # 'start.rb' and use `ruby start.rb` instead.
 
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require
+
 require File.join(File.dirname(__FILE__), 'app')
 Ramaze.start(:root => __DIR__, :started => true)
 run Ramaze
