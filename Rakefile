@@ -4,12 +4,21 @@ require 'bundler/setup'
 
 require 'rake/clean'
 require 'rake/packagetask'
+require 'rspec/core/rake_task'
+
 require 'timeout'
 require 'socket'
 
 CLEAN << %w{escape.db reports tmp}
 
 task :default => [:test]
+
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new do |t|
+  t.rspec_opts = ["-c", "-f progress", "-r ./spec/spec_helper.rb"]
+  t.pattern = 'spec/**/*_spec.rb'
+end
 
 desc 'Run all the spec tests'
 task :test => [:clean] do

@@ -3,6 +3,7 @@ GEM
   specs:
     Selenium (1.1.14)
     bacon (1.1.0)
+    diff-lcs (1.1.3)
     innate (2011.10)
       rack (>= 1.1.0)
     json (1.6.1)
@@ -11,7 +12,14 @@ GEM
       rack (>= 1.0)
     ramaze (2011.10.23)
       innate (>= 2010.03)
-    rspec (1.1.12)
+    rspec (2.7.0)
+      rspec-core (~> 2.7.0)
+      rspec-expectations (~> 2.7.0)
+      rspec-mocks (~> 2.7.0)
+    rspec-core (2.7.1)
+    rspec-expectations (2.7.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.7.0)
     selenium-client (1.2.10)
     sequel (3.2.0)
     sqlite3 (1.3.4)
@@ -26,7 +34,7 @@ DEPENDENCIES
   rack
   rack-test
   ramaze
-  rspec (~> 1.1.12)
+  rspec
   selenium-client (= 1.2.10)
   sequel (~> 3.2.0)
   sqlite3

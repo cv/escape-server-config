@@ -12,5 +12,5 @@ group :development do
   gem 'bacon'
   gem 'Selenium'
   gem 'selenium-client', '= 1.2.10'
-  gem 'rspec', '~> 1.1.12'
+  gem 'rspec'
 end
