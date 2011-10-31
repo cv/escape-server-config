@@ -2,7 +2,7 @@
 # -*- encoding : utf-8 -*-
 
 class MainController < EscController
-  layout '/index'
+  layout 'index'
   helper :xhtml
   map '/'
 
