@@ -12,12 +12,12 @@ module DBHelper
     AppsEnvironments.create_table!
 
     if Environment[:name => 'default'].nil?
-      Environment.create(:name => 'default')
+      Environment.create :name => 'default'
     end
 
     if Owner[:name => 'nobody'].nil?
-      nobody = Owner.create(:name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing')
-      nobody.add_environment(Environment[:name => 'default'])
+      nobody = Owner.create :name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing'
+      nobody.add_environment Environment[:name => 'default']
     end
   end
 
