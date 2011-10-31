@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 # -*- encoding : utf-8 -*-
+require 'spec_helper'
 
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-require 'init'
 require 'base64'
 require 'digest/md5'
 
 describe AuthController do
-  behaves_like :rack_test, :db_helper
 
   def encode_credentials(username, password)
     "Basic " + Base64.encode64("#{username}:#{password}")

@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 # -*- encoding : utf-8 -*-
+require 'spec_helper'
 
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-require 'init'
 require 'openssl'
 require 'base64'
 
 describe EnvironmentsController, 'Key/Value bits' do
-  behaves_like :rack_test, :db_helper
 
   before do
     reset_db
@@ -98,7 +96,7 @@ describe EnvironmentsController, 'Key/Value bits' do
     got = get('/environments/default/appname/key')
     got.status.should == 200
     got.body.should == newvalue
-    got.body.should.not == value
+    got.body.should_not == value
   end
 
   it 'should not return the default value if it is set for the given environment' do
@@ -126,7 +124,7 @@ describe EnvironmentsController, 'Key/Value bits' do
     got = get('/environments/myenv/appname/key')
     got.status.should == 200
     got.body.should == newvalue
-    got.body.should.not == value
+    got.body.should_not == value
   end
 
   it 'should return 404 for non existing key' do
@@ -176,7 +174,7 @@ describe EnvironmentsController, 'Key/Value bits' do
   #
   #         got = get('/environments/default/appname')
   #         got.status.should == 200
-  #         got.body.should.not == ""
+  #         got.body.should_not == ""
   #         got.body.should == "#{key1}=#{value1}\n#{key2}=#{value2}"
   #         got.content_type.should == "text/plain"
   #     end
@@ -195,7 +193,7 @@ describe EnvironmentsController, 'Key/Value bits' do
   #
   #         got = get('/environments/default/appname')
   #         got.status.should == 200
-  #         got.body.should.not == ""
+  #         got.body.should_not == ""
   #         got.body.should == "#{key1}=#{value1}"
   #         got.content_type.should == "text/plain"
   #     end
@@ -213,22 +211,22 @@ describe EnvironmentsController, 'Key/Value bits' do
     key1 = "key1"
     value1 = "value1"
     got = put("/environments/default/appname/#{key1}", value1)
-      got.status.should == 201
+    got.status.should == 201
 
     key2 = "key2"
     value2 = "value2"
     got = put("/environments/default/appname/#{key2}", value2)
-      got.status.should == 201
+    got.status.should == 201
 
     newvalue2 = "new.value2"
     got = put("/environments/myenv/appname/#{key2}", newvalue2)
-      got.status.should == 201
+    got.status.should == 201
 
     got = get('/environments/myenv/appname')
     got.status.should == 200
-    got.body.should.not == ""
-    got.body.should.include "#{key1}=#{value1}"
-      got.body.should.include "#{key2}=#{newvalue2}"
+    got.body.should_not == ""
+    got.body.should include "#{key1}=#{value1}"
+    got.body.should include "#{key2}=#{newvalue2}"
   end
 
   it 'should only accept \A[.a-zA-Z0-9_-]+\Z as key name' do
@@ -278,9 +276,9 @@ describe EnvironmentsController, 'Key/Value bits' do
 
     got = get('/environments/deletekey/deletetest/mykey')
     got.status.should == 200
-    got.body.should.not == ""
-    got.body.should.include "default.value"
-    got.body.should.not.include "override.value"
+    got.body.should_not == ""
+    got.body.should include "default.value"
+    got.body.should_not include "override.value"
 
   end
 
@@ -304,9 +302,9 @@ describe EnvironmentsController, 'Key/Value bits' do
 
     got = get('/environments/deletekey/deletetest/mykey')
     got.status.should == 200
-    got.body.should.not == ""
-    got.body.should.include "override.value"
-    got.body.should.not.include "default.value"
+    got.body.should_not == ""
+    got.body.should include "override.value"
+    got.body.should_not include "default.value"
   end
 
   it 'should encrypt a key value when asked and it should be decryptable by the private key' do
@@ -334,7 +332,7 @@ describe EnvironmentsController, 'Key/Value bits' do
 
     got = get('/environments/encryptvalue/anapp/mykey')
     got.status.should == 200
-    got.body.should.not == value
+    got.body.should_not == value
     got.content_type.should == "application/octet-stream"
     got.headers["Content-Transfer-Encoding"].should == "base64"
 
@@ -345,7 +343,7 @@ describe EnvironmentsController, 'Key/Value bits' do
 
     got = get('/environments/encryptvalue/anapp')
     got.status.should == 200
-    got.body.should.include "mykey="
+    got.body.should include "mykey="
     got.content_type.should == "text/plain"
     got.headers["X-Encrypted"].should == '["mykey"]'
   end
@@ -426,8 +424,8 @@ describe EnvironmentsController, 'Key/Value bits' do
 
     got = get('/environments/myenv/myapp')
     got.status.should == 200
-    got.body.should.include "default.key=default.value"
-    got.body.should.include "override.key=override.value"
+    got.body.should include "default.key=default.value"
+    got.body.should include "override.key=override.value"
     got.headers["X-Default-Values"].should == '["default.key"]'
     got.headers["X-Override-Values"].should == '["override.key"]'
     got.headers["X-Encrypted"].should == '[]'

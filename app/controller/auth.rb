@@ -2,7 +2,7 @@
 # -*- encoding : utf-8 -*-
 
 class AuthController < EscController
-  map('/auth')
+  map '/auth'
 
   def index
     'Public Info'

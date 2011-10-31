@@ -1,13 +1,10 @@
 #!/usr/bin/env ruby
 # -*- encoding : utf-8 -*-
-
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-require 'init'
+require 'spec_helper'
 
 require 'openssl'
 
 describe CryptController, 'Encryption bits' do
-  behaves_like :rack_test, :db_helper
 
   before do
     reset_db
@@ -45,11 +42,11 @@ describe CryptController, 'Encryption bits' do
     got = get('/crypt/anenv')
     got.status.should == 200
     got.content_type.should == "text/plain"
-    got.body.should.not == "[]"
-    got.body.should.include "-----BEGIN "
-    got.body.should.include "-----END "
-    got.body.should.include " PUBLIC KEY-----"
-    got.body.should.include " PRIVATE KEY-----"
+    got.body.should_not == "[]"
+    got.body.should include "-----BEGIN "
+    got.body.should include "-----END "
+    got.body.should include " PUBLIC KEY-----"
+    got.body.should include " PRIVATE KEY-----"
   end
 
   it 'should get just a public key when trying to GET a public key' do
@@ -59,11 +56,11 @@ describe CryptController, 'Encryption bits' do
     got = get('/crypt/anenv/public')
     got.status.should == 200
     got.content_type.should == "text/plain"
-    got.body.should.not == "[]"
-    got.body.should.include "-----BEGIN "
-    got.body.should.include "-----END "
-    got.body.should.include " PUBLIC KEY-----"
-    got.body.should.not.include " PRIVATE KEY-----"
+    got.body.should_not == "[]"
+    got.body.should include "-----BEGIN "
+    got.body.should include "-----END "
+    got.body.should include " PUBLIC KEY-----"
+    got.body.should_not include " PRIVATE KEY-----"
   end
 
   it 'should get just a private key when trying to GET a private key' do
@@ -73,11 +70,11 @@ describe CryptController, 'Encryption bits' do
     got = get('/crypt/anenv/private')
     got.status.should == 200
     got.content_type.should == "text/plain"
-    got.body.should.not == "[]"
-    got.body.should.not.include " PUBLIC KEY-----"
-    got.body.should.include "-----BEGIN "
-    got.body.should.include "-----END "
-    got.body.should.include " PRIVATE KEY-----"
+    got.body.should_not == "[]"
+    got.body.should_not include " PUBLIC KEY-----"
+    got.body.should include "-----BEGIN "
+    got.body.should include "-----END "
+    got.body.should include " PRIVATE KEY-----"
   end
 
   it 'should delete an existing keypair' do
@@ -89,8 +86,8 @@ describe CryptController, 'Encryption bits' do
 
     got = get('/crypt/delete_me')
     got.status.should == 200
-    got.body.should.not.include " PUBLIC KEY-----"
-    got.body.should.not.include " PRIVATE KEY-----"
+    got.body.should_not include " PUBLIC KEY-----"
+    got.body.should_not include " PRIVATE KEY-----"
   end
 
   it 'should not delete default keys' do
@@ -101,8 +98,8 @@ describe CryptController, 'Encryption bits' do
   it 'should not encrypt the default environment' do
     got = get('/crypt/default')
     got.status.should == 200
-    got.body.should.not.include " PUBLIC KEY-----"
-    got.body.should.not.include " PRIVATE KEY-----"
+    got.body.should_not include " PUBLIC KEY-----"
+    got.body.should_not include " PRIVATE KEY-----"
   end
 
   it 'should generate new keypair for an existing environment' do
@@ -115,25 +112,25 @@ describe CryptController, 'Encryption bits' do
     old_pub = get('/crypt/updatemykeys/public')
     old_pub.status.should == 200
 
-    old_pub.body.should.not.equal? old_priv.body
+    old_pub.body.should_not be_equal old_priv.body
 
     got = post('/crypt/updatemykeys', '')
     got.status.should == 201
 
     got = get('/crypt/updatemykeys')
     got.status.should == 200
-    got.body.should.include " PUBLIC KEY-----"
-    got.body.should.include " PRIVATE KEY-----"
+    got.body.should include " PUBLIC KEY-----"
+    got.body.should include " PRIVATE KEY-----"
 
     new_priv = get('/crypt/updatemykeys/private')
     new_priv.status.should == 200
-    new_priv.body.should.not.equal? old_priv.body
+    new_priv.body.should_not be_equal old_priv.body
 
     new_pub = get('/crypt/updatemykeys/public')
     new_pub.status.should == 200
-    new_pub.body.should.not.equal? old_pub.body
+    new_pub.body.should_not be_equal old_pub.body
 
-    new_pub.body.should.not.equal? new_priv.body
+    new_pub.body.should_not be_equal new_priv.body
   end
 
   it 'should upload new keypair for an existing environment' do
@@ -150,12 +147,12 @@ describe CryptController, 'Encryption bits' do
     got = get('/crypt/updatemykeys/public')
     got.status.should == 200
     got.body.should == new_key.public_key.to_pem.strip!
-    got.body.should.not == old_key.public_key.to_pem.strip!
+    got.body.should_not == old_key.public_key.to_pem.strip!
 
     got = get('/crypt/updatemykeys/private')
     got.status.should == 200
     got.body.should == new_key.to_pem.strip!
-    got.body.should.not == old_key.to_pem.strip!
+    got.body.should_not == old_key.to_pem.strip!
   end
 
   it 'should generate a new keypair on demand if one is not supplied' do
@@ -169,11 +166,11 @@ describe CryptController, 'Encryption bits' do
 
     got = get('/crypt/updatemykeys/public')
     got.status.should == 200
-    got.body.should.not == old_key.public_key.to_pem.strip!
+    got.body.should_not == old_key.public_key.to_pem.strip!
 
     got = get('/crypt/updatemykeys/private')
     got.status.should == 200
-    got.body.should.not == old_key.to_pem.strip!
+    got.body.should_not == old_key.to_pem.strip!
   end
 
   it 'should reject invalid key' do
@@ -187,4 +184,4 @@ describe CryptController, 'Encryption bits' do
     got = post('/crypt/updatemykeys/', new_key)
     got.status.should == 406
   end
-  end
+end

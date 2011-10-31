@@ -1,11 +1,8 @@
 #!/usr/bin/env ruby
 # -*- encoding : utf-8 -*-
-
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-require 'init'
+require 'spec_helper'
 
 describe EnvironmentsController, 'Application bits' do
-  behaves_like :rack_test, :db_helper
 
   before do
     reset_db
@@ -18,7 +15,7 @@ describe EnvironmentsController, 'Application bits' do
 
     got = get('/environments/default')
     got.status.should == 200
-    got.body.should.include "appname"
+    got.body.should include "appname"
   end
 
   it 'should list apps in an environment' do
@@ -27,7 +24,7 @@ describe EnvironmentsController, 'Application bits' do
 
     got = get('/environments/default')
     got.status.should == 200
-    got.body.should.include "appname"
+    got.body.should include "appname"
   end
 
   it 'should return 404 for non existing app' do
@@ -58,8 +55,8 @@ describe EnvironmentsController, 'Application bits' do
 
     got = get('/environments/myenv')
     got.status.should == 200
-    got.body.should.not.include "appname"
-    got.body.should.include "myapp"
+    got.body.should_not include "appname"
+    got.body.should include "myapp"
   end
 
   it 'should always add new apps to the default environment' do
@@ -74,8 +71,8 @@ describe EnvironmentsController, 'Application bits' do
 
     got = get('/environments/default')
     got.status.should == 200
-    got.body.should.include "appname"
-    got.body.should.include "myapp"
+    got.body.should include "appname"
+    got.body.should include "myapp"
   end
 
   it 'should not allow apps to be created in non existing environments' do

@@ -1,19 +1,34 @@
 require 'rubygems'
-require 'bundler/setup'
+require 'bundler'
+Bundler.require :default, :development
 
-require 'ramaze'
-require 'ramaze/spec/bacon'
+require File.join(File.dirname(__FILE__), '..', 'app')
 
-require __DIR__('helper/db_helper')
-require __DIR__('../start')
+RSpec.configure do
 
-# compatibility between RSpec 1.x and Bacon
-
-def behaves_like(*whatever)
   include Rack::Test::Methods
-  include DBHelper
-end
 
-def app
-  Ramaze.middleware
+  def app
+    Ramaze.middleware
+  end
+
+  def reset_db
+    App.create_table!
+    Environment.create_table!
+    Owner.create_table!
+    Key.create_table!
+    Value.create_table!
+    AppsEnvironments.create_table!
+
+    if Environment[:name => 'default'].nil?
+      Environment.create :name => 'default'
+    end
+
+    if Owner[:name => 'nobody'].nil?
+      nobody = Owner.create :name => 'nobody', :email => 'nobody@nowhere.com', :password => 'nothing'
+      nobody.add_environment Environment[:name => 'default']
+    end
+
+  end
+
 end

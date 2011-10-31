@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 # -*- encoding : utf-8 -*-
+require 'spec_helper'
 
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-require 'init'
 require 'base64'
 require 'digest/md5'
 
 describe OwnerController do
-  behaves_like :rack_test, :db_helper
 
   before do
     reset_db

@@ -1,11 +1,8 @@
 #!/usr/bin/env ruby
 # -*- encoding : utf-8 -*-
-
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__) + "/.."))
-require 'init'
+require 'spec_helper'
 
 describe App do
-  behaves_like :db_helper
 
   before do
     reset_db
