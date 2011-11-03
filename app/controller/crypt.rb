@@ -8,7 +8,7 @@ class CryptController < EscController
 
   def index(env = nil, public_or_private = nil)
     if env.nil?
-      respond "Must supply and environment", 400
+      respond "Must supply an environment", 400
     end
 
     # Sanity check what we've got first
