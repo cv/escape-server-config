@@ -80,10 +80,10 @@ describe AuthController do
     got = delete('/environments/mine/myapp/mykey')
     got.status.should == 200
 
-    # TODO: This is a little screwy...
-    #        got = get('/environments/mine/myapp/mykey')
-    #        got.status.should == 200
-    #        got.body.should.not == "myvalue"
+    got = get('/environments/mine/myapp/mykey')
+    got.status.should == 200
+    # TODO why does this fail?
+    # got.body.should_not == "myvalue"
 
     authorize("you", "you")
     got = delete('/environments/mine/myapp')
@@ -108,121 +108,120 @@ describe AuthController do
     got.status.should == 404
   end
 
-  # TODO why are these failing!?
-  #
-  #     it 'should be able to copy an environment owned by someone else without needing auth' do
-  #         got = put('/environments/mine')
-  #         got.status.should == 201
-  #
-  #         authorize("me", "me")
-  #         got = post('/owner/mine')
-  #         got.status.should == 200
-  #
-  #         header("HTTP_CONTENT_LOCATION", "mine")
-  #         got = post('/environments/yours')
-  #         got.status.should == 201
-  #
-  #         got = get('/environments/yours')
-  #         got.status.should == 200
-  #     end
-  #
-  #     it 'should only get the public key of an owned environment on GET /crypt/environment' do
-  #         got = put('/environments/mine')
-  #         got.status.should == 201
-  #
-  #         authorize("me", "me")
-  #         got = post('/owner/mine')
-  #         got.status.should == 200
-  #
-  #         header('HTTP_AUTHORIZATION', nil)
-  #         got = get('/crypt/mine')
-  #         got.status.should == 200
-  #         got.content_type.should == "text/plain"
-  #         got.body.should.not == "[]"
-  #         got.body.should.include "-----BEGIN "
-  #         got.body.should.include "-----END "
-  #         got.body.should.include " PUBLIC KEY-----"
-  #         got.body.should.not.include " PRIVATE KEY-----"
-  #
-  #         got = get('/crypt/mine/public')
-  #         got.status.should == 200
-  #         got.content_type.should == "text/plain"
-  #         got.body.should.not == "[]"
-  #         got.body.should.include "-----BEGIN "
-  #         got.body.should.include "-----END "
-  #         got.body.should.include " PUBLIC KEY-----"
-  #         got.body.should.not.include " PRIVATE KEY-----"
-  #
-  #         got = get('/crypt/mine/private')
-  #         got.status.should == 401
-  #
-  #         authorize("me", "me")
-  #         got = get('/crypt/mine')
-  #         got.status.should == 200
-  #         got.content_type.should == "text/plain"
-  #         got.body.should.not == "[]"
-  #         got.body.should.include "-----BEGIN "
-  #         got.body.should.include "-----END "
-  #         got.body.should.include " PUBLIC KEY-----"
-  #         got.body.should.include " PRIVATE KEY-----"
-  #
-  #         authorize("me", "me")
-  #         got = get('/crypt/mine/private')
-  #         got.status.should == 200
-  #         got.content_type.should == "text/plain"
-  #         got.body.should.not == "[]"
-  #         got.body.should.include "-----BEGIN "
-  #         got.body.should.include "-----END "
-  #         got.body.should.not.include " PUBLIC KEY-----"
-  #         got.body.should.include " PRIVATE KEY-----"
-  #     end
-  #
-  #     it 'should only update or generate new keys for an owned environment when requested by the owner' do
-  #         got = put('/environments/mine')
-  #         got.status.should == 201
-  #
-  #         authorize("me", "me")
-  #         got = post('/owner/mine')
-  #         got.status.should == 200
-  #
-  #         header('HTTP_AUTHORIZATION', nil)
-  #         got = post('/crypt/mine', '')
-  #         got.status.should == 401
-  #
-  #         authorize("me", "me")
-  #         got = post('/crypt/mine', '')
-  #         got.status.should == 201
-  #
-  #         mykeypair = "
-  # -----BEGIN RSA PUBLIC KEY-----
-  # MEgCQQCsEJqRpZbUL8jDKuz8O651LDSI50/7nE5EzI+1IussWGpDgrm5mNtEJay
-  # KEZqWGC3Xv+7YOiW+naT3Uuwpv8uzAgMBAAE=
-  # -----END RSA PUBLIC KEY-----
-  #
-  # -----BEGIN RSA PRIVATE KEY-----
-  # MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY
-  # 20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe
-  # 4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU
-  # 6QIhANJlI/W8w0CpwO0r0rYm7PUvB2EirNluzSu1peANJme1AiEA0VyDPnoCWQ5T
-  # 6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI
-  # N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
-  # kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
-  # -----END RSA PRIVATE KEY-----"
-  #
-  #         header('HTTP_AUTHORIZATION', nil)
-  #         got = post('/crypt/mine', :input => mykeypair)
-  #         got.status.should == 401
-  #
-  #         authorize("me", "me")
-  #         got = post('/crypt/mine', mykeypair)
-  #         got.status.should == 201
-  #
-  #         header('HTTP_AUTHORIZATION', nil)
-  #         got = delete('/crypt/mine')
-  #         got.status.should == 401
-  #
-  #         authorize("me", "me")
-  #         got = delete('/crypt/mine')
-  #         got.status.should == 200
-  #     end
+  pending 'should be able to copy an environment owned by someone else without needing auth' do
+    got = put('/environments/mine')
+    got.status.should == 201
+
+    authorize("me", "me")
+    got = post('/owner/mine')
+    got.status.should == 200
+
+    header("HTTP_CONTENT_LOCATION", "mine")
+    got = post('/environments/yours')
+    got.status.should == 201
+
+    got = get('/environments/yours')
+    got.status.should == 200
   end
+
+  pending 'should only get the public key of an owned environment on GET /crypt/environment' do
+    got = put('/environments/mine')
+    got.status.should == 201
+
+    authorize("me", "me")
+    got = post('/owner/mine')
+    got.status.should == 200
+
+    header('HTTP_AUTHORIZATION', nil)
+    got = get('/crypt/mine')
+    got.status.should == 200
+    got.content_type.should == "text/plain"
+    got.body.should.not == "[]"
+    got.body.should.include "-----BEGIN "
+    got.body.should.include "-----END "
+    got.body.should.include " PUBLIC KEY-----"
+    got.body.should.not.include " PRIVATE KEY-----"
+
+    got = get('/crypt/mine/public')
+    got.status.should == 200
+    got.content_type.should == "text/plain"
+    got.body.should.not == "[]"
+    got.body.should.include "-----BEGIN "
+    got.body.should.include "-----END "
+    got.body.should.include " PUBLIC KEY-----"
+    got.body.should.not.include " PRIVATE KEY-----"
+
+    got = get('/crypt/mine/private')
+    got.status.should == 401
+
+    authorize("me", "me")
+    got = get('/crypt/mine')
+    got.status.should == 200
+    got.content_type.should == "text/plain"
+    got.body.should.not == "[]"
+    got.body.should.include "-----BEGIN "
+    got.body.should.include "-----END "
+    got.body.should.include " PUBLIC KEY-----"
+    got.body.should.include " PRIVATE KEY-----"
+
+    authorize("me", "me")
+    got = get('/crypt/mine/private')
+    got.status.should == 200
+    got.content_type.should == "text/plain"
+    got.body.should.not == "[]"
+    got.body.should.include "-----BEGIN "
+    got.body.should.include "-----END "
+    got.body.should.not.include " PUBLIC KEY-----"
+    got.body.should.include " PRIVATE KEY-----"
+  end
+
+  pending 'should only update or generate new keys for an owned environment when requested by the owner' do
+    got = put('/environments/mine')
+    got.status.should == 201
+
+    authorize("me", "me")
+    got = post('/owner/mine')
+    got.status.should == 200
+
+    header('HTTP_AUTHORIZATION', nil)
+    got = post('/crypt/mine', '')
+    got.status.should == 401
+
+    authorize("me", "me")
+    got = post('/crypt/mine', '')
+    got.status.should == 201
+
+    mykeypair = <<PAIR
+-----BEGIN RSA PUBLIC KEY-----
+MEgCQQCsEJqRpZbUL8jDKuz8O651LDSI50/7nE5EzI+1IussWGpDgrm5mNtEJay
+KEZqWGC3Xv+7YOiW+naT3Uuwpv8uzAgMBAAE=
+-----END RSA PUBLIC KEY-----
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOgIBAAJBAKwQmpGlltQvyMMq7Pw7rnUsNIjnT/ucTkTMj7Ui6yxYakOCubmY
+20QlrIoRmpYYLde/7tg6Jb6dpPdS7Cm/y7MCAwEAAQJAT2F9nfISCqRc78Vu/dMe
+4knZlst4d/Edntns9rk8XAFQpXo8NyX1WIQvzfZFF4vuzw7eBSkADkV+2+EH5kuU
+6QIhANJlI/W8w0CpwO0r0rYm7PUvB2EirNluzSu1peANJme1AiEA0VyDPnoCWQ5T
+6ZMuR5N1TfzPPGrOFffc5MaiY6QRNscCICO6Sx36vQlpCjr8Ox71gz2ri8xB8CpI
+N40Znp5qfUAVAiEAhWhfFVOn5Vm07NTlm6SCDkT3RTeFxQfhkUJlvfqRIYcCIHjk
+kFDyd3XHD/9WeQfPCMX7iODSLXzvU6HuVzsn5T6X
+-----END RSA PRIVATE KEY-----
+PAIR
+
+    header('HTTP_AUTHORIZATION', nil)
+    got = post('/crypt/mine', :input => mykeypair)
+    got.status.should == 401
+
+    authorize("me", "me")
+    got = post('/crypt/mine', mykeypair)
+    got.status.should == 201
+
+    header('HTTP_AUTHORIZATION', nil)
+    got = delete('/crypt/mine')
+    got.status.should == 401
+
+    authorize("me", "me")
+    got = delete('/crypt/mine')
+    got.status.should == 200
+  end
+end
