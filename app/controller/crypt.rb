@@ -49,16 +49,23 @@ class CryptController < EscController
     response.status = 200
     response.headers["Content-Type"] = "text/plain"
 
-    if (@pair == "pair") and (@my_env.owner.name == "nobody")
-      return "#{@my_env.public_key}" + "\n" +  "#{@my_env.private_key}"
-    elsif (@pair == "pair") and request.env['HTTP_AUTHORIZATION']
-      check_env_auth
-      return "#{@my_env.public_key}" + "\n" +  "#{@my_env.private_key}"
+    if @pair == "pair"
+      if @my_env.owner.name == "nobody"
+        return "#{@my_env.public_key}\n#{@my_env.private_key}"
+      end
+
+      if request.env['HTTP_AUTHORIZATION']
+        check_env_auth
+        return "#{@my_env.public_key}\n#{@my_env.private_key}"
+      end
+
     elsif @pair == "private"
       check_env_auth
       return "#{@my_env.private_key}"
-    elsif (@pair == "public") or (@pair == "pair")
+
+    elsif ['public', 'pair'].include? @pair
       return "#{@my_env.public_key}"
+
     else
       respond "Crypto keys can only be public or private or in a pair", 403
     end
