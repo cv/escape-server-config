@@ -1,12 +1,8 @@
 #!/usr/bin/env ruby
 # -*- encoding : utf-8 -*-
 require 'rubygems'
-
 require 'etc'
 
-#
-# Configuration Area Start
-#
 home = Etc.getpwuid.dir
 
 # Configuration is loaded from ~/.escape/config
@@ -29,14 +25,6 @@ end
 
 $connection_string = cfg["database"]
 $listen_port = cfg["port"]
-
-#
-# Configuration Area End
-#
-
-# Add directory start.rb is in to the load path, so you can run the app from
-# any other working path
-$LOAD_PATH.unshift File.dirname(__FILE__)
 
 # Initialize controllers and models
 require 'app/model/init'
