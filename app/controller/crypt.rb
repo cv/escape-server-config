@@ -16,7 +16,7 @@ class CryptController < EscController
       respond "Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403
     end
 
-    if public_or_private && (public_or_private != "public") && (public_or_private != "private")
+    if public_or_private && !['public', 'private'].include?(public_or_private)
       respond "Must define keytype as either public or private", 403
     end
 
