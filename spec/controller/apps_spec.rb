@@ -145,14 +145,14 @@ describe EnvironmentsController, 'Application bits' do
 
     got = get('/environments/myenv/myapp')
     got.status.should == 200
-    got.body.should == ""
+    got.body.should == "[]"
 
     got = delete('/environments/myenv/myapp')
     got.status.should == 200
 
     got = get('/environments/default/myapp')
     got.status.should == 200
-    got.body.should == ""
+    got.body.should == "[]"
 
     got = get('/environments/myenv/myapp')
     got.status.should == 404
