@@ -27,5 +27,5 @@ $connection_string = cfg["database"]
 $listen_port = cfg["port"]
 
 # Initialize controllers and models
-require 'app/model/init'
-require 'app/controller/init'
+require_relative 'app/model/init'
+require_relative 'app/controller/init'

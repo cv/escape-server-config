@@ -77,4 +77,4 @@ class EscController < Ramaze::Controller
 end
 
 # Here go your requires for subclasses of Controller:
-%w[main environments crypt owner user auth search].each { |f| require "app/controller/#{f}" }
+%w[main environments crypt owner user auth search].each { |f| require_relative f }

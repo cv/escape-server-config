@@ -22,5 +22,5 @@ end
 # Here go your requires for models:
 # require 'model/user'
 
-%w[app owner environment key value maps].each { |f| require "app/model/#{f}" }
+%w[app owner environment key value maps].each { |f| require_relative f }
 
