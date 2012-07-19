@@ -1,5 +1,6 @@
 source :rubygems
 
+gem 'rake'
 gem 'sqlite3'
 gem 'ramaze'
 gem 'rack'
