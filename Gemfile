@@ -11,6 +11,6 @@ group :development do
 
   gem 'rack-test', :require => 'rack/test'
   gem 'Selenium'
-  gem 'selenium-client', '= 1.2.10'
+  gem 'selenium-client'
   gem 'rspec'
 end
