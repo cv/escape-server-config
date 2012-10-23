@@ -1,1 +1,1 @@
-rvm --create ree@escape
+rvm --create 1.9.3@escape
